@@ -1,0 +1,33 @@
+{
+    "compilerOptions": {
+        /* Platform & language */
+        "target": "esnext",
+        "module": "esnext",
+        "moduleResolution": "bundler",
+
+        /* Type checking only (no JS output) */
+        "noEmit": true,
+        "emitDeclarationOnly": false,
+
+        /* Max strictness (Java-like discipline) */
+        "strict": true,
+        "exactOptionalPropertyTypes": true,
+        "noUncheckedIndexedAccess": true,
+        "noImplicitOverride": true,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+        "useUnknownInCatchVariables": true,
+        "noPropertyAccessFromIndexSignature": true,
+        "alwaysStrict": true,
+        "forceConsistentCasingInFileNames": true,
+
+        /* Import/Export hygiene */
+        "verbatimModuleSyntax": true,
+        "esModuleInterop": false,
+        "skipLibCheck": false,
+        "resolveJsonModule": true,
+        "isolatedModules": true
+    },
+    "include": ["src"],
+    "exclude": ["node_modules", "dist", "build"]
+}
