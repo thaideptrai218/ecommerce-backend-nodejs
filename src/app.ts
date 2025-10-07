@@ -11,6 +11,10 @@ app.use(helmet());
 app.use(compression());
 
 // init db
+require("./databases/init_mongoose");
+const { checkOverload } = require("./helpers/check-connect");
+
+checkOverload();
 
 // init routes
 app.get("/", (req, res, next) => {
