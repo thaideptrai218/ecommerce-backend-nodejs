@@ -1,23 +1,18 @@
 import express from "express";
-import morgan from "morgan";
-import helmet from "helmet";
-import compression from "compression";
+import router from "./v1/routers/ecommerce-router";
+import dotenv from "dotenv";
+import Database from "./v1/databases/init.mongodb";
+
+dotenv.config();
+Database.getInstance();
 
 const app = express();
 
-// init middlewares
-app.use(morgan("dev"));
-app.use(helmet());
-app.use(compression());
-
-// init db
-require("./databases/init_mongoose");
-const { checkOverload } = require("./helpers/check-connect");
-
-checkOverload();
+app.use(express.json());
+app.use("/v1/ecommerce", router);
 
 // init routes
-app.get("/", (req, res, next) => {
+app.get("/", (req, res) => {
     const strCompress = "Hello From TipsJs";
     return res.status(200).json({
         message: "Welcome Fantipsjs!",

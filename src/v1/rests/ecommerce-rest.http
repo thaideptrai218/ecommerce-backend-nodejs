@@ -1,0 +1,41 @@
+### Create a new Product
+POST http://localhost:3055/v1/ecommerce/products
+Content-Type: application/json
+
+{
+  "product": {
+    "productId": 101,
+    "code": "APPLE_IPHONE_15_PRO_256",
+    "name": "iPhone 15 Pro",
+    "brand": "Apple",
+    "description": "The latest iPhone with a powerful A17 Bionic chip and a new titanium design.",
+    "release_date": "2023-09-22T00:00:00.000Z",
+    "spec": [
+      { "k": "Storage", "v": "256GB" },
+      { "k": "Color", "v": "Natural Titanium" },
+      { "k": "Display", "v": "6.1-inch Super Retina XDR display" }
+    ]
+  }
+}
+
+### Create a new Inventory entry
+POST http://localhost:3055/v1/ecommerce/inventories
+Content-Type: application/json
+
+{
+  "inventory": {
+    "productId": 101,
+    "quantity": 50,
+    "reservations": []
+  }
+}
+
+### Add a product to the cart
+POST http://localhost:3055/v1/ecommerce/carts/add-product
+Content-Type: application/json
+
+{
+  "userId": 123,
+  "productId": 101,
+  "quantity": 1
+}

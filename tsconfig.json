@@ -20,7 +20,6 @@
         "noPropertyAccessFromIndexSignature": true,
         "alwaysStrict": true,
         "forceConsistentCasingInFileNames": true,
-        "noImplicitAny": true,
         "strictNullChecks": true,
         "strictFunctionTypes": true,
         "strictBindCallApply": true,
