@@ -39,3 +39,21 @@ Content-Type: application/json
   "productId": 101,
   "quantity": 1
 }
+
+
+### put comment
+
+POST http://localhost:3055/v1/comment/comments
+Content-Type: application/json
+
+{
+  "slug": "RRR",
+  "parent_slug": "888",
+  "discuss_id": 1,
+  "text": "Unstoppable Force",
+  "author": {"name": "Malphite Stone", "avt": "Maphite"},
+  "isDEL": "NO" 
+}
+
+### list comments
+GET http://localhost:3055/v1/comment/comments?discuss_id=1&slug=888
