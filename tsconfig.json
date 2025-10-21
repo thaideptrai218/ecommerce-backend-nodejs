@@ -29,7 +29,7 @@
 
         /* Import/Export hygiene */
         "verbatimModuleSyntax": true,
-        "esModuleInterop": false,
+        "esModuleInterop": true,
         "skipLibCheck": false,
         "resolveJsonModule": true,
         "isolatedModules": true
