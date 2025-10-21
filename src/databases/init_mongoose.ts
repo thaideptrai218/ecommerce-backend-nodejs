@@ -1,7 +1,10 @@
 import mongoose from "mongoose";
 import { countConnect, checkOverload } from "../helpers/check-connect";
+import dbconfig from "../configs/config-mongodb";
 
-const connectString = `mongodb://localhost:27017/shopDEV`;
+const connectString = `mongodb://${dbconfig.db.host}:${dbconfig.db.port}/${dbconfig.db.name}`;
+
+console.log(`connectionString:: `, connectString);
 
 class Database {
     static instance: any;
