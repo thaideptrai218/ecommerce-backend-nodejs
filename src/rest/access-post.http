@@ -6,7 +6,8 @@ Content-Type: application/json
 x-api-key: 5df2c72d81480cecc1d81577bbbef37b7e9bdb0c8dfcc4c3dd81a1048d909300c24525333e177671ca6e0f69c1acda8a4ffb1237bd43022ca40b6de3257f78af
 
 {
-    "name": "THai DInh",
-    "email": "thadinh@gmail.com",
-    "password": "abc123"
+    "name": "T",
+    "email": "t@gmail123.com",
+    "password": "abc123",
+    "asdasd": "LOL"
 }

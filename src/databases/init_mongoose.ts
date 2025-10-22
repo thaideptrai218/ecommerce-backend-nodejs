@@ -26,7 +26,9 @@ class Database {
                     `Connected success, number of connections ${countConnect()}`
                 )
             )
-            .catch((err) => console.log(`Database error: ${err}`));
+            .catch((err) => {
+                throw err;
+            });
     }
     static getInstance() {
         if (!Database.instance) {

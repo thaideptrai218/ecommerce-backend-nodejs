@@ -8,15 +8,11 @@ export class KeyTokenService {
         userid: string | any;
         secretKey: string;
     }) => {
-        try {
-            const token = await keyTokenModel.create({
-                user: userid,
-                secretKey,
-            });
+        const token = await keyTokenModel.create({
+            user: userid,
+            secretKey,
+        });
 
-            return token ? token.secretKey : null;
-        } catch (error) {
-            return error;
-        }
+        return token ? token.secretKey : null;
     };
 }
