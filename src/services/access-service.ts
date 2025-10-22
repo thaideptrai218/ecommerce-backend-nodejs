@@ -5,6 +5,7 @@ import { KeyTokenService } from "./key-token-service";
 import { createTokenPair } from "../auth/auth-util";
 import { getInfoData } from "../utils/object-utils";
 import { BadRequestError, ConflictRequestError } from "../core/error-respone";
+import { Created } from "../core/success-respone";
 
 enum RoleShop {
     SHOP = "SHOP",
@@ -38,36 +39,36 @@ class AccessService {
             roles: RoleShop.SHOP,
         });
 
-        if (newShop) {
-            const secretKey = crypto.randomBytes(64).toString("hex");
-
-            const keyStore = await KeyTokenService.createKeyToken({
-                userid: newShop._id,
-                secretKey,
-            });
-
-            if (!keyStore) {
-                throw new BadRequestError("keyStore error");
-            }
-
-            const token = await createTokenPair(
-                { userId: newShop._id, email },
-                secretKey
-            );
-
-            return {
-                code: 201,
-                metadata: {
-                    shop: getInfoData({
-                        fields: ["_id", "name", "email"],
-                        object: newShop,
-                    }),
-                    token,
-                },
-            };
+        if (!newShop) {
+            throw new BadRequestError("Shop creation failed");
         }
 
-        return new Error("Internel ERRORRRRRR");
+        const secretKey = crypto.randomBytes(64).toString("hex");
+
+        const keyStore = await KeyTokenService.createKeyToken({
+            userid: newShop._id,
+            secretKey,
+        });
+
+        if (!keyStore) {
+            throw new BadRequestError("keyStore error");
+        }
+
+        const token = await createTokenPair(
+            { userId: newShop._id, email },
+            secretKey
+        );
+
+        return new Created(
+            "Shop registered successfully!",
+            {
+                shop: getInfoData({
+                    fields: ["_id", "name", "email"],
+                    object: newShop,
+                }),
+                token,
+            }
+        );
     };
 }
 
