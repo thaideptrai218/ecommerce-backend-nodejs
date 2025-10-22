@@ -3,18 +3,18 @@ import keyTokenModel from "../models/key-token-model";
 export class KeyTokenService {
     static createKeyToken = async ({
         userid,
-        publicKey,
+        secretKey,
     }: {
         userid: string | any;
-        publicKey: string;
+        secretKey: string;
     }) => {
         try {
             const token = await keyTokenModel.create({
                 user: userid,
-                publicKey,
+                secretKey,
             });
 
-            return token ? token.publicKey : null;
+            return token ? token.secretKey : null;
         } catch (error) {
             return error;
         }

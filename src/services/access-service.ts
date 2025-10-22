@@ -1,9 +1,8 @@
 import { shopModel } from "../models/shop-model";
 import bcrypt from "bcrypt";
-import crypto from "crypto";
+import crypto from "node:crypto";
 import { KeyTokenService } from "./key-token-service";
 import { createTokenPair } from "../auth/auth-util";
-import { connect } from "http2";
 import { getInfoData } from "../utils/object-utils";
 
 enum RoleShop {
@@ -43,42 +42,24 @@ class AccessService {
             });
 
             if (newShop) {
-                // Create privateKey, publicKey
-                const { privateKey, publicKey } = crypto.generateKeyPairSync(
-                    "rsa",
-                    {
-                        modulusLength: 2048,
-                        publicKeyEncoding: {
-                            type: "spki",
-                            format: "pem",
-                        },
-                        privateKeyEncoding: {
-                            type: "pkcs8",
-                            format: "pem",
-                        },
-                    }
-                );
+                const secretKey = crypto.randomBytes(64).toString("hex");
 
-                const publicKeyString = await KeyTokenService.createKeyToken({
+                const keyStore = await KeyTokenService.createKeyToken({
                     userid: newShop._id,
-                    publicKey,
+                    secretKey,
                 });
 
-                if (!publicKeyString) {
+                if (!keyStore) {
                     return {
                         code: "xxxx",
-                        message: "publicKeyStringError",
+                        message: "keyStoreError",
                     };
                 }
-                const publicKeyObject = crypto.createPublicKey(publicKey);
-                console.log(publicKeyObject);
 
                 const token = await createTokenPair(
                     { userId: newShop._id, email },
-                    publicKeyString,
-                    privateKey
+                    secretKey
                 );
-                console.log(`Created Token Success::`, token);
 
                 return {
                     code: 201,

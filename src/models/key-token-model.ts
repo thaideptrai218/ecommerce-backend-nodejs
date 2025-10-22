@@ -11,7 +11,7 @@ const keyTokenSchema = new Schema(
             ref: "Shop",
         },
 
-        publicKey: {
+        secretKey: {
             type: String,
             require: true,
         },
