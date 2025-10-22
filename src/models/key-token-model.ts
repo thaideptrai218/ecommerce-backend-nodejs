@@ -1,3 +1,4 @@
+import { TOO_MANY_REQUESTS } from "http-status-codes";
 import { Schema, SchemaType, model } from "mongoose";
 
 const DOCUMENT_NAME = "Key";
@@ -7,18 +8,23 @@ const keyTokenSchema = new Schema(
     {
         user: {
             type: Schema.Types.ObjectId,
-            require: true,
+            required: true,
             ref: "Shop",
         },
 
         secretKey: {
             type: String,
-            require: true,
+            required: true,
+        },
+
+        refreshTokenUsed: {
+            type: Array,
+            default: [],
         },
 
         refreshToken: {
-            type: Array,
-            default: [],
+            type: String,
+            required: true,
         },
     },
     {

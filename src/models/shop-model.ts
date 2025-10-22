@@ -4,7 +4,7 @@ const DOCUMENT_NAME = "Shop";
 const COLLECTION_NAME = "shops";
 
 // Declare the Schema of the Mongo model
-var userSchema = new Schema(
+const userSchema = new Schema(
     {
         name: {
             type: String,

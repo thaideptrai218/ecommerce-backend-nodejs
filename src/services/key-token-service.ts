@@ -2,17 +2,24 @@ import keyTokenModel from "../models/key-token-model";
 
 export class KeyTokenService {
     static createKeyToken = async ({
-        userid,
+        userId,
         secretKey,
+        refreshToken,
     }: {
-        userid: string | any;
+        userId: string | any;
         secretKey: string;
+        refreshToken: string;
     }) => {
-        const token = await keyTokenModel.create({
-            user: userid,
-            secretKey,
-        });
+        const filter = { user: userId };
+        const update = { secretKey, refreshTokenUsed: [], refreshToken };
+        const options = { upsert: true, new: true };
 
-        return token ? token.secretKey : null;
+        const keyStore = await keyTokenModel.findOneAndUpdate(
+            filter,
+            update,
+            options
+        );
+
+        return keyStore ? keyStore.secretKey : null;
     };
 }

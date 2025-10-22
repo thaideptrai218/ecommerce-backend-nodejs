@@ -1,6 +1,11 @@
 import JWT from "jsonwebtoken";
 
-export const createTokenPair = async (payload, secretKey) => {
+interface JWTPayload {
+    userId: string;
+    email: string;
+}
+
+export const createTokenPair = async (payload: JWTPayload, secretKey) => {
     const accessToken = JWT.sign(payload, secretKey, {
         algorithm: "HS256",
         expiresIn: "2 days",

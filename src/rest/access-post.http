@@ -11,3 +11,13 @@ x-api-key: 5df2c72d81480cecc1d81577bbbef37b7e9bdb0c8dfcc4c3dd81a1048d909300c2452
     "password": "abc123",
     "asdasd": "LOL"
 }
+
+### login
+POST {{url_dev}}/v1/api/shop/login
+Content-Type: application/json
+x-api-key: 5df2c72d81480cecc1d81577bbbef37b7e9bdb0c8dfcc4c3dd81a1048d909300c24525333e177671ca6e0f69c1acda8a4ffb1237bd43022ca40b6de3257f78af
+
+{
+    "email": "t123123@gmail123.com",
+    "password": "abc123"
+}
