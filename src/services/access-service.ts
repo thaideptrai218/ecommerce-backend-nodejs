@@ -59,16 +59,13 @@ class AccessService {
             secretKey
         );
 
-        return new Created(
-            "Shop registered successfully!",
-            {
-                shop: getInfoData({
-                    fields: ["_id", "name", "email"],
-                    object: newShop,
-                }),
-                token,
-            }
-        );
+        return new Created("Shop registered successfully!", {
+            shop: getInfoData({
+                fields: ["_id", "name", "email"],
+                object: newShop,
+            }),
+            token,
+        });
     };
 }
 
