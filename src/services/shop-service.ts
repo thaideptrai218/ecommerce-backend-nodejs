@@ -1,5 +1,3 @@
-import type { ProjectionType } from "mongoose";
-
 import { shopModel } from "../models/shop-model";
 
 export const findByEmail = async ({

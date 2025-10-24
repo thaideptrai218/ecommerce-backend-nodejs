@@ -5,7 +5,7 @@ interface JWTPayload {
     email: string;
 }
 
-export const createTokenPair = async (payload: JWTPayload, secretKey) => {
+export const createTokenPair = async (payload: JWTPayload, secretKey: string) => {
     const accessToken = JWT.sign(payload, secretKey, {
         algorithm: "HS256",
         expiresIn: "2 days",

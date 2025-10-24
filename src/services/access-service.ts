@@ -11,7 +11,7 @@ import {
     DatabaseError,
 } from "../core/error-respone";
 import { Created } from "../core/success-respone";
-import { findByEmail } from "./shop-server";
+import { findByEmail } from "./shop-service";
 
 enum RoleShop {
     SHOP = "SHOP",

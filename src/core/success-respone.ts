@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
 
 class SuccessResponse {
