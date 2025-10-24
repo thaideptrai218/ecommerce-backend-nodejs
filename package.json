@@ -20,6 +20,7 @@
     "@types/compression": "^1.8.1",
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10",
+    "@types/lodash": "^4.17.20",
     "@types/morgan": "^1.9.10",
     "bcrypt": "^6.0.0",
     "compression": "^1.8.1",

@@ -6,10 +6,9 @@ Content-Type: application/json
 x-api-key: 5df2c72d81480cecc1d81577bbbef37b7e9bdb0c8dfcc4c3dd81a1048d909300c24525333e177671ca6e0f69c1acda8a4ffb1237bd43022ca40b6de3257f78af
 
 {
-    "name": "T123123",
-    "email": "t123123@gmail123.com",
-    "password": "abc123",
-    "asdasd": "LOL"
+    "name": "thadinhcong",
+    "email": "welterial218@gmail.com",
+    "password": "Thaihbvn218"
 }
 
 ### login
@@ -18,6 +17,14 @@ Content-Type: application/json
 x-api-key: 5df2c72d81480cecc1d81577bbbef37b7e9bdb0c8dfcc4c3dd81a1048d909300c24525333e177671ca6e0f69c1acda8a4ffb1237bd43022ca40b6de3257f78af
 
 {
-    "email": "t123123@gmail123.com",
-    "password": "abc123"
+    "email": "welterial218@gmail.com",
+    "password": "Thaihbvn218"
 }
+
+### logout
+
+POST {{url_dev}}/v1/api/shop/logout
+Content-Type: application/json
+x-api-key: 5df2c72d81480cecc1d81577bbbef37b7e9bdb0c8dfcc4c3dd81a1048d909300c24525333e177671ca6e0f69c1acda8a4ffb1237bd43022ca40b6de3257f78af
+x-client-id: 68faf8be0aed27e75e01a594
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZhZjhiZTBhZWQyN2U3NWUwMWE1OTQiLCJlbWFpbCI6IndlbHRlcmlhbDIxOEBnbWFpbC5jb20iLCJpYXQiOjE3NjEyNzg4NjYsImV4cCI6MTc2MTQ1MTY2Nn0.v3ypgyhkLNMgfr0TyWiYywA-jWqI9oT7IO6TnpH1oX0

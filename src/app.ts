@@ -4,8 +4,8 @@ import helmet from "helmet";
 import compression from "compression";
 import dotenv from "dotenv";
 
-import { router } from "./routers";
-import { NotFoundError, ErrorResponse } from "./core/error-respone";
+import router from "./routers";
+import { NotFoundError } from "./core/error-respone";
 dotenv.config({
     quiet: true,
     debug: true,
@@ -35,8 +35,9 @@ app.use((req, res, next) => {
     next(new NotFoundError("Not Found"));
 });
 
-app.use((error, req, res, next) => {
+app.use((error, req, res, next) => {``
     const statusCode = error.status || 500;
+    console.log(error);
     return res.status(statusCode).json({
         status: "error",
         code: statusCode,

@@ -1,5 +1,5 @@
 import express from "express";
-import { router as accessRouter } from "./access";
+import accessRouter from "./access";
 import { apiKey, permission } from "../auth/check-auth";
 
 const router = express.Router();
@@ -10,4 +10,4 @@ router.use(permission("0000"));
 
 router.use("/v1/api", accessRouter);
 
-export { router };
+export default router;

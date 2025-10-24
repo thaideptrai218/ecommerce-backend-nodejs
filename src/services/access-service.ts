@@ -71,6 +71,11 @@ class AccessService {
         });
     };
 
+    static logout = async ({ keyStore }) => {
+        const delKey = await KeyTokenService.removeKeyById(keyStore._id);
+        return new Created("logout successfully", delKey);
+    };
+
     static signUp = async ({
         name,
         email,
