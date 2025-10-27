@@ -1,8 +1,10 @@
+@authorization = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZmNzIwYmY2NTY5OWEyNTUwMDc2MTMiLCJlbWFpbCI6ImNvbmNhY0BnbWFpbC5jb20iLCJuYW1lIjoiY29uY2FjIiwiaWF0IjoxNzYxNTg0NTcwLCJleHAiOjE3NjE1ODU0NzB9.AqAjf1-7iM2qurUuC0AvIbmeING-W4vpjVeDAi6tqUE
+
 ### Create a new Clothing Product
 POST http://localhost:3055/v1/api/product
 x-api-key: niggar-api-key
-authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZmMDQyYmY1Mzg4NDJiNmRlZjUyMzciLCJlbWFpbCI6ImNvbmNhY0BnbWFpbC5jb20iLCJuYW1lIjoiY29uY2FjIiwiaWF0IjoxNzYxNTU4Nzc3LCJleHAiOjE3NjE1NTk2Nzd9.gpwMZ20E8JEqB3O2rOsJss77-dKSyAyll413PaMbQKw
-x-client-id: 68ff042bf538842b6def5237
+authorization: {{authorization}}
+x-client-id: 68ff720bf65699a255007613
 Content-Type: application/json
 
 {
@@ -12,7 +14,7 @@ Content-Type: application/json
     "product_description": "A comfortable and stylish cotton t-shirt.",
     "product_price": 29.99,
     "product_quantity": 200,
-    "product_shop": "68ff042bf538842b6def5237",
+    "product_shop": "68ff720bf65699a255007613",
     "product_attributes": {
         "brand": "UrbanWear",
         "size": "L",
@@ -25,8 +27,8 @@ Content-Type: application/json
 ### Create a new Electronic Product
 POST http://localhost:3055/v1/api/product
 x-api-key: niggar-api-key
-authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZmMDQyYmY1Mzg4NDJiNmRlZjUyMzciLCJlbWFpbCI6ImNvbmNhY0BnbWFpbC5jb20iLCJuYW1lIjoiY29uY2FjIiwiaWF0IjoxNzYxNTU3MDY0LCJleHAiOjE3NjE1NTc5NjR9.dFSjd3SsiWFoSdUFB6vtK_bzEqc_c5uPVxzYz9s0vMg
-x-client-id: 68ff042bf538842b6def5237
+authorization: {{authorization}}
+x-client-id: 68ff720bf65699a255007613
 Content-Type: application/json
 
 {
@@ -36,7 +38,7 @@ Content-Type: application/json
     "product_description": "Advanced smartwatch with health tracking.",
     "product_price": 249.99,
     "product_quantity": 75,
-    "product_shop": "68ff042bf538842b6def5237",
+    "product_shop": "68ff720bf65699a255007613",
     "product_attributes": {
         "manufacturer": "FutureTech",
         "model": "SW-Pro-X",
@@ -44,3 +46,38 @@ Content-Type: application/json
         "features": ["GPS", "Heart Rate Monitor", "Waterproof"]
     }
 }
+
+###
+GET http://localhost:3055/v1/api/product/drafts/all
+x-api-key: niggar-api-key
+authorization: {{authorization}}
+x-client-id: 68ff720bf65699a255007613
+Content-Type: application/json
+
+###
+GET http://localhost:3055/v1/api/product/published/all
+x-api-key: niggar-api-key
+authorization: {{authorization}}
+x-client-id: 68ff720bf65699a255007613
+Content-Type: application/json
+
+### Publish a Product
+PATCH http://localhost:3055/v1/api/product/publish/68ff8fb54f1bf02bfc88a3a4
+x-api-key: niggar-api-key
+authorization: {{authorization}}
+x-client-id: 68ff720bf65699a255007613
+Content-Type: application/json
+
+### Unpublish a Product
+PATCH http://localhost:3055/v1/api/product/unpublish/68ff8ee44f1bf02bfc88a382
+x-api-key: niggar-api-key
+authorization: {{authorization}}
+x-client-id: 68ff720bf65699a255007613
+Content-Type: application/json
+
+### Search Products
+GET http://localhost:3055/v1/api/product/search/Smartwatch
+x-api-key: niggar-api-key
+authorization: {{authorization}}
+x-client-id: 68ff720bf65699a255007613
+Content-Type: application/json

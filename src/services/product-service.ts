@@ -2,6 +2,7 @@ import { productModel, clothingModel, electronicModel } from "../models/product-
 import { BadRequestError } from "../core/error-respone";
 import { Created } from "../core/success-respone";
 import { Types } from "mongoose"; // Import Types for ObjectId
+import ProductRepository from "../models/repositories/product.repo";
 
 // --- Base Product Class (Abstract) ---
 // This class defines the common interface for creating type-specific product details.
@@ -31,9 +32,8 @@ class ClothingProduct extends Product {
     async createTypeSpecificProduct(): Promise<any> {
         const newClothing = await clothingModel.create({
             _id: this.commonPayload._id,
-            product_id: this.commonPayload._id,
             product_shop: this.commonPayload.product_shop,
-            product_attributes: this.productAttributes,
+            ...this.productAttributes,
         });
         if (!newClothing) throw new BadRequestError("Create new Clothing error");
         return newClothing;
@@ -44,9 +44,8 @@ class ElectronicProduct extends Product {
     async createTypeSpecificProduct(): Promise<any> {
         const newElectronic = await electronicModel.create({
             _id: this.commonPayload._id,
-            product_id: this.commonPayload._id,
             product_shop: this.commonPayload.product_shop,
-            product_attributes: this.productAttributes,
+            ...this.productAttributes,
         });
         if (!newElectronic) throw new BadRequestError("Create new Electronic error");
         return newElectronic;
@@ -98,6 +97,7 @@ class ProductService {
         // 1. Create base product entry in the general 'products' collection
         const newProduct = await productModel.create({
             ...commonPayload,
+            product_attributes,
             product_type: product_type, // Ensure product_type is set
         });
         if (!newProduct) throw new BadRequestError("Create new Product error");
@@ -135,6 +135,70 @@ class ProductService {
     static async deleteProduct(productId: string) {
         // Implement logic to delete a product by ID
         return null;
+    }
+
+    static async findAllDraftForShop({
+        product_shop,
+        limit = 50,
+        skip = 0,
+    }: {
+        product_shop: Types.ObjectId;
+        limit?: number;
+        skip?: number;
+    }) {
+        const query = { product_shop, isDraft: true };
+        return await ProductRepository.findAllDraftForShop({
+            query,
+            limit,
+            skip,
+        });
+    }
+
+    static async findAllPublishForShop({
+        product_shop,
+        limit = 50,
+        skip = 0,
+    }: {
+        product_shop: Types.ObjectId;
+        limit?: number;
+        skip?: number;
+    }) {
+        const query = { product_shop, isPublished: true };
+        return await ProductRepository.findAllDraftForShop({
+            query,
+            limit,
+            skip,
+        });
+    }
+
+    static async unpublishProductByShop({
+        product_shop,
+        product_id,
+    }: {
+        product_shop: Types.ObjectId;
+        product_id: Types.ObjectId;
+    }) {
+        return await ProductRepository.unpublishProductByShop({
+            product_shop,
+            product_id,
+        });
+    }
+
+        static async publishProductByShop({
+        product_shop,
+        product_id,
+    }: {
+        product_shop: Types.ObjectId;
+        product_id: Types.ObjectId;
+    }) {
+        return await ProductRepository.publishProductByShop({
+            product_shop,
+            product_id,
+        });
+    }
+
+    static async searchProductByUser({ keySearch }: { keySearch: string }) {
+        return await ProductRepository.searchProductByUser({ keySearch });
     }
 }
 

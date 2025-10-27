@@ -7,7 +7,7 @@ import {
 } from "../core/error-respone";
 import { asyncHandler } from "../helpers/asyncHandler";
 import { KeyTokenService } from "../services/key-token-service";
-import JWT from "jsonwebtoken";
+import JWT, { decode } from "jsonwebtoken";
 
 const HEADER = {
     API_KEY: "x-api-key",
@@ -16,40 +16,40 @@ const HEADER = {
     REFRESHTOKEN: "refreshtoken",
 };
 
-export const apiKey = asyncHandler(async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
-    try {
-        const key = req.headers[HEADER.API_KEY]?.toString();
+export const apiKey = asyncHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const key = req.headers[HEADER.API_KEY]?.toString();
 
-        if (!key) {
-            throw new AuthFailureError("Forbidden Error");
+            if (!key) {
+                throw new AuthFailureError("Forbidden Error");
+            }
+
+            // check key in db.
+            const objectKey = await findById(key);
+
+            if (!objectKey) {
+                throw new AuthFailureError("Forbidden Error");
+            }
+
+            req["objectKey"] = objectKey;
+            return next();
+        } catch (error) {
+            next(error);
         }
-
-        // check key in db.
-        const objectKey = await findById(key);
-
-        if (!objectKey) {
-            throw new AuthFailureError("Forbidden Error");
-        }
-
-        req["objectKey"] = objectKey;
-        return next();
-    } catch (error) {
-        next(error);
     }
-});
+);
 
 export const permission = (required: string): RequestHandler => {
-    return asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-        const permissions: string[] = req.objectKey?.permissions ?? [];
-        if (!permissions.includes(required)) {
-            throw new ForbiddenError("Permission denied");
+    return asyncHandler(
+        async (req: Request, res: Response, next: NextFunction) => {
+            const permissions: string[] = req.objectKey?.permissions ?? [];
+            if (!permissions.includes(required)) {
+                throw new ForbiddenError("Permission denied");
+            }
+            next();
         }
-        next();
-    });
+    );
 };
 
 export const authentication = asyncHandler(
@@ -72,6 +72,9 @@ export const authentication = asyncHandler(
 
         req.keyStore = keyStore;
         req.user = decodeUser;
+        
+        console.log(decodeUser);
+        console.log(keyStore);
         return next();
     }
 );
@@ -96,6 +99,9 @@ export const authenticationV2 = asyncHandler(
         req.keyStore = keyStore;
         req.user = decodeUser;
         req.refreshToken = refreshToken;
+
+        console.log(decodeUser);
+        console.log(keyStore);
         return next();
     }
 );
