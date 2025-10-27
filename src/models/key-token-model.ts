@@ -1,4 +1,3 @@
-import { TOO_MANY_REQUESTS } from "http-status-codes";
 import { Schema, SchemaType, model } from "mongoose";
 
 const DOCUMENT_NAME = "Key";

@@ -2,16 +2,19 @@ import { shopModel } from "../models/shop-model";
 import bcrypt from "bcrypt";
 import crypto from "node:crypto";
 import { KeyTokenService } from "./key-token-service";
-import { createTokenPair } from "../auth/auth-util";
+import { createTokenPair, verifyJWT } from "../auth/auth-util";
 import { getInfoData } from "../utils/object-utils";
 import {
     AuthFailureError,
     BadRequestError,
     ConflictRequestError,
     DatabaseError,
+    ForbiddenError,
 } from "../core/error-respone";
 import { Created } from "../core/success-respone";
 import { findByEmail } from "./shop-service";
+import type { JwtPayload } from "jsonwebtoken";
+import type { IKeyToken } from "../models/key-token";
 
 enum RoleShop {
     SHOP = "SHOP",
@@ -20,7 +23,56 @@ enum RoleShop {
     ADMIN = "ADMIN",
 }
 
+interface HandleRefreshTokenParams {
+    refreshToken: string;
+    user: JwtPayload;
+    keyStore: IKeyToken;
+}
+
 class AccessService {
+    static handleRefreshToken = async ({
+        refreshToken,
+        user,
+        keyStore,
+    }: HandleRefreshTokenParams) => {
+        const { userId, email } = user;
+
+        if (keyStore.refreshTokenUsed.includes(refreshToken)) {
+            await KeyTokenService.deletekey(keyStore._id);
+            throw new ForbiddenError(
+                " Something went wrong happend !!!. Please relogin"
+            );
+        }
+
+        if (keyStore.refreshToken != refreshToken) {
+            throw new AuthFailureError("Shop is not registerd 1");
+        }
+
+        const foundShop = await findByEmail({ email });
+        if (!foundShop) throw new AuthFailureError("Shop is not registered 2");
+
+        // create another token pair
+        const tokens = await createTokenPair(
+            { userId, email, name: foundShop.name },
+            keyStore.secretKey
+        );
+
+        // update token
+        await keyStore.updateOne({
+            $set: {
+                refreshToken: tokens.refreshToken,
+            },
+            $addToSet: {
+                refreshTokenUsed: refreshToken,
+            },
+        });
+
+        return new Created("Get token successfully!", {
+            user: { userId, email },
+            tokens,
+        });
+    };
+
     /**
      * 1. Find shop in the database by email.
      *      - If the shop doesn't exist, throw a `BadRequestError`.
@@ -36,7 +88,15 @@ class AccessService {
      * 6. Return the login response.
      *      - Include basic shop info and the generated tokens.
      */
-    static login = async ({ email, password, refreshToken = null }) => {
+    static login = async ({
+        email,
+        password,
+        refreshToken = null,
+    }: {
+        email: string;
+        password: string;
+        refreshToken?: string | null;
+    }) => {
         const holderShop = await shopModel.findOne({ email }).lean();
 
         if (!holderShop) throw new BadRequestError("Shop is not existed");
@@ -49,7 +109,7 @@ class AccessService {
         const secretKey = crypto.randomBytes(64).toString("hex");
 
         const tokens = await createTokenPair(
-            { userId: shopId, email },
+            { userId: shopId, email, name: holderShop.name },
             secretKey
         );
 
@@ -71,7 +131,7 @@ class AccessService {
         });
     };
 
-    static logout = async ({ keyStore }) => {
+    static logout = async ({ keyStore }: { keyStore: IKeyToken }) => {
         const delKey = await KeyTokenService.removeKeyById(keyStore._id);
         return new Created("logout successfully", delKey);
     };

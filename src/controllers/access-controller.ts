@@ -2,8 +2,19 @@ import type { Request, Response, NextFunction } from "express";
 import AccessService from "../services/access-service";
 import { asyncHandler } from "../helpers/asyncHandler";
 import { sendSuccessResponse } from "../helpers/responseHandler";
+import { Created } from "../core/success-respone";
 
 class AccessController {
+    handleRefreshToken = asyncHandler(
+        async (req: Request, res: Response, next: NextFunction) => {
+            const response = await AccessService.handleRefreshToken({
+                refreshToken: req.refreshToken,
+                user: req.user,
+                keyStore: req.keyStore,
+            });
+            return sendSuccessResponse(res, response);
+        }
+    );
     logout = asyncHandler(
         async (req: Request, res: Response, next: NextFunction) => {
             const response = await AccessService.logout({

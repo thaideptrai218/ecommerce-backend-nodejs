@@ -13,6 +13,7 @@ const HEADER = {
     API_KEY: "x-api-key",
     AUTHORIZATION: "authorization",
     CLINET_ID: "x-client-id",
+    REFRESHTOKEN: "refreshtoken",
 };
 
 export const apiKey = async (
@@ -93,13 +94,44 @@ export const authentication = asyncHandler(
 
         const accessToken = req.headers[HEADER.AUTHORIZATION];
 
-        if (!accessToken) throw new AuthFailureError("Invalid AUTHORIZATION header");
+        if (!accessToken)
+            throw new AuthFailureError("Invalid AUTHORIZATION header");
 
         const decodeUser = JWT.verify(accessToken, keyStore.secretKey);
-        if (userId !== decodeUser.userId)
+        if (userId !== decodeUser.userId) {
             throw new AuthFailureError("Invalid UserId ");
+        }
 
         req.keyStore = keyStore;
+        req.user = decodeUser;
+        return next();
+    }
+);
+
+export const authenticationV2 = asyncHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+        const userId = req.headers[HEADER.CLINET_ID];
+        if (!userId) throw new AuthFailureError("Invalid request");
+
+        const keyStore = await KeyTokenService.findByUserId(userId);
+        if (!keyStore) throw new NotFoundError("Not found keyStore");
+
+        console.log("KEY STORE::::", keyStore);
+
+        const refreshToken = req.headers[HEADER.REFRESHTOKEN] as string;
+
+        console.log("refresh TOKEN", refreshToken);
+
+        if (!refreshToken) {
+            throw new AuthFailureError("No refreshToken Header!");
+        }
+
+        const decodeUser = JWT.verify(refreshToken, keyStore.secretKey);
+        if (userId != decodeUser.userId)
+            throw new AuthFailureError("Invalid UserId");
+        req.keyStore = keyStore;
+        req.user = decodeUser;
+        req.refreshToken = refreshToken;
         return next();
     }
 );
