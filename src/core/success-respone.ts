@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
+import { Response } from "express"; // Import Response type
 
 class SuccessResponse {
     public message: string;
@@ -17,6 +18,15 @@ class SuccessResponse {
         this.status = status;
         this.metadata = metadata;
         this.options = options;
+    }
+
+    // Add a send method to send the response
+    send(res: Response) {
+        return res.status(this.status).json({
+            message: this.message,
+            metadata: this.metadata,
+            // options: this.options, // Optionally include options in the response
+        });
     }
 }
 

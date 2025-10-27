@@ -13,22 +13,20 @@ router.post("/shop/login", asyncHandler(accessController.login));
 router.use(authentication);
 
 // profile route
-router.get(
-    "/shop/profile",
-    asyncHandler(async (req, res) => {
-        return res.status(200).json({
-            message: "User profile data",
-            user: req.user,
-        });
-    })
-);
+router.get("/shop/profile", asyncHandler(async (req, res) => {
+    return res.status(200).json({
+        message: "User profile data",
+        user: req.user,
+    });
+}));
 
-router.use(authenticationV2);
 // logout
-router.post("/shop/logout", asyncHandler(accessController.logout));
+router.post("/shop/logout", authentication, asyncHandler(accessController.logout));
 router.post(
     "/shop/refresh-token",
+    authenticationV2, // Apply authenticationV2 directly to this route
     asyncHandler(accessController.handleRefreshToken)
 );
 
 export default router;
+
