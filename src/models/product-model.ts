@@ -3,6 +3,7 @@ import { Schema, model, Types } from "mongoose";
 const DOCUMENT_NAME = "Product";
 const COLLECTION_NAME = "products";
 
+// Base Product Schema - stores common product information
 const productSchema = new Schema(
     {
         product_name: {
@@ -34,10 +35,6 @@ const productSchema = new Schema(
             type: Schema.Types.ObjectId,
             ref: "Shop",
         },
-        product_attributes: {
-            type: Schema.Types.Mixed, // Can be any type, useful for flexible attributes
-            required: true,
-        },
     },
     {
         collection: COLLECTION_NAME,
@@ -47,15 +44,11 @@ const productSchema = new Schema(
 
 export const productModel = model(DOCUMENT_NAME, productSchema);
 
-// Define Clothing Schema and Model
+// Define Clothing Schema and Model - stores type-specific attributes
 const clothingSchema = new Schema(
     {
-        product_name: { type: String, required: true },
-        product_thumb: { type: String, required: true },
-        product_description: { type: String, required: true },
-        product_price: { type: Number, required: true },
-        product_quantity: { type: Number, required: true },
-        product_type: { type: String, required: true, enum: ["Clothing"] },
+        _id: { type: Schema.Types.ObjectId, auto: false }, // Shared _id with base product
+        product_id: { type: Schema.Types.ObjectId, required: true, ref: 'Product' },
         product_shop: {
             type: Schema.Types.ObjectId,
             ref: "Shop",
@@ -75,15 +68,11 @@ const clothingSchema = new Schema(
 
 export const clothingModel = model("Clothing", clothingSchema);
 
-// Define Electronic Schema and Model
+// Define Electronic Schema and Model - stores type-specific attributes
 const electronicSchema = new Schema(
     {
-        product_name: { type: String, required: true },
-        product_thumb: { type: String, required: true },
-        product_description: { type: String, required: true },
-        product_price: { type: Number, required: true },
-        product_quantity: { type: Number, required: true },
-        product_type: { type: String, required: true, enum: ["Electronics"] },
+        _id: { type: Schema.Types.ObjectId, auto: false }, // Shared _id with base product
+        product_id: { type: Schema.Types.ObjectId, required: true, ref: 'Product' },
         product_shop: {
             type: Schema.Types.ObjectId,
             ref: "Shop",

@@ -53,7 +53,7 @@
                 accessToken: null,
                 refreshToken: null,
                 userId: null,
-                apiKey: "your_api_key_here", // IMPORTANT: Set your API key
+                apiKey: "niggar-api-key", // IMPORTANT: Set your API key
             };
 
             // --- API INSTANCE with AXIOS ---
@@ -82,26 +82,39 @@
                     const originalRequest = error.config;
 
                     // Check if the error is 403 (Forbidden) and if we haven't already tried to refresh
-                    if (error.response.status === 403 && !originalRequest._retry) {
+                    if (
+                        error.response.status === 403 &&
+                        !originalRequest._retry
+                    ) {
                         originalRequest._retry = true; // Mark that we've tried to refresh
-                        log("Access token expired or invalid. Attempting to refresh...");
+                        log(
+                            "Access token expired or invalid. Attempting to refresh..."
+                        );
 
                         try {
                             // Call the refresh token endpoint
-                            const { data } = await api.post("/shop/refresh-token", {
-                                refreshToken: tokenData.refreshToken,
-                            });
+                            const { data } = await api.post(
+                                "/shop/refresh-token",
+                                {
+                                    refreshToken: tokenData.refreshToken,
+                                }
+                            );
 
                             log("Successfully refreshed tokens.");
                             // Update the stored tokens
-                            tokenData.accessToken = data.metadata.tokens.accessToken;
-                            tokenData.refreshToken = data.metadata.tokens.refreshToken;
+                            tokenData.accessToken =
+                                data.metadata.tokens.accessToken;
+                            tokenData.refreshToken =
+                                data.metadata.tokens.refreshToken;
 
                             // Update the header of the original request and retry it
-                            originalRequest.headers["authorization"] = tokenData.accessToken;
+                            originalRequest.headers["authorization"] =
+                                tokenData.accessToken;
                             return api(originalRequest);
                         } catch (refreshError) {
-                            log("Failed to refresh token. User must log in again.");
+                            log(
+                                "Failed to refresh token. User must log in again."
+                            );
                             // If refresh fails, clear tokens and effectively log the user out
                             logout();
                             return Promise.reject(refreshError);
@@ -128,7 +141,11 @@
                     log("Login successful!");
                     log(`User ID: ${tokenData.userId}`);
                 } catch (err) {
-                    log(`Login failed: ${err.response?.data?.message || err.message}`);
+                    log(
+                        `Login failed: ${
+                            err.response?.data?.message || err.message
+                        }`
+                    );
                 }
             };
 
@@ -144,7 +161,11 @@
                     log("Successfully fetched profile:");
                     log(JSON.stringify(response.data, null, 2));
                 } catch (err) {
-                    log(`Failed to fetch profile: ${err.response?.data?.message || err.message}`);
+                    log(
+                        `Failed to fetch profile: ${
+                            err.response?.data?.message || err.message
+                        }`
+                    );
                 }
             };
 
@@ -157,9 +178,15 @@
             };
 
             // --- EVENT LISTENERS ---
-            document.getElementById("loginBtn").addEventListener("click", login);
-            document.getElementById("profileBtn").addEventListener("click", getProfile);
-            document.getElementById("logoutBtn").addEventListener("click", logout);
+            document
+                .getElementById("loginBtn")
+                .addEventListener("click", login);
+            document
+                .getElementById("profileBtn")
+                .addEventListener("click", getProfile);
+            document
+                .getElementById("logoutBtn")
+                .addEventListener("click", logout);
         </script>
     </body>
 </html>

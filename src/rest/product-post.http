@@ -1,7 +1,7 @@
 ### Create a new Clothing Product
 POST http://localhost:3055/v1/api/product
 x-api-key: niggar-api-key
-authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZmMDQyYmY1Mzg4NDJiNmRlZjUyMzciLCJlbWFpbCI6ImNvbmNhY0BnbWFpbC5jb20iLCJuYW1lIjoiY29uY2FjIiwiaWF0IjoxNzYxNTU3MDY0LCJleHAiOjE3NjE1NTc5NjR9.dFSjd3SsiWFoSdUFB6vtK_bzEqc_c5uPVxzYz9s0vMg
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZmMDQyYmY1Mzg4NDJiNmRlZjUyMzciLCJlbWFpbCI6ImNvbmNhY0BnbWFpbC5jb20iLCJuYW1lIjoiY29uY2FjIiwiaWF0IjoxNzYxNTU4Nzc3LCJleHAiOjE3NjE1NTk2Nzd9.gpwMZ20E8JEqB3O2rOsJss77-dKSyAyll413PaMbQKw
 x-client-id: 68ff042bf538842b6def5237
 Content-Type: application/json
 
@@ -18,7 +18,8 @@ Content-Type: application/json
         "size": "L",
         "material": "Organic Cotton",
         "color": "Black"
-    }
+    },
+    "NIGGAR": "123123123123"
 }
 
 ### Create a new Electronic Product

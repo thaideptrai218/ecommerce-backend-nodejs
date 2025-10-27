@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import ProductService from "../services/product-service";
 import { Created } from "../core/success-respone";
 
