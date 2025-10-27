@@ -3,6 +3,7 @@ import morgan from "morgan";
 import helmet from "helmet";
 import compression from "compression";
 import dotenv from "dotenv";
+import cors from "cors";
 
 import router from "./routers";
 import { NotFoundError } from "./core/error-respone";
@@ -25,6 +26,8 @@ app.use(
     })
 );
 
+app.use(cors());
+
 // init db
 require("./databases/init_mongoose");
 // init routes
@@ -35,7 +38,7 @@ app.use((req, res, next) => {
     next(new NotFoundError("Not Found"));
 });
 
-app.use((error, req, res, next) => {``
+app.use((error, req, res, next) => {
     const statusCode = error.status || 500;
     console.log(error);
     return res.status(statusCode).json({

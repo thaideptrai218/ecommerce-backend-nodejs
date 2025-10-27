@@ -2,7 +2,7 @@ import { shopModel } from "../models/shop-model";
 import bcrypt from "bcrypt";
 import crypto from "node:crypto";
 import { KeyTokenService } from "./key-token-service";
-import { createTokenPair, verifyJWT } from "../auth/auth-util";
+import { createTokenPair } from "../auth/auth-util";
 import { getInfoData } from "../utils/object-utils";
 import {
     AuthFailureError,
@@ -13,8 +13,6 @@ import {
 } from "../core/error-respone";
 import { Created } from "../core/success-respone";
 import { findByEmail } from "./shop-service";
-import type { JwtPayload } from "jsonwebtoken";
-import type { IKeyToken } from "../models/key-token";
 
 enum RoleShop {
     SHOP = "SHOP",
@@ -23,18 +21,8 @@ enum RoleShop {
     ADMIN = "ADMIN",
 }
 
-interface HandleRefreshTokenParams {
-    refreshToken: string;
-    user: JwtPayload;
-    keyStore: IKeyToken;
-}
-
 class AccessService {
-    static handleRefreshToken = async ({
-        refreshToken,
-        user,
-        keyStore,
-    }: HandleRefreshTokenParams) => {
+    static handleRefreshToken = async ({ refreshToken, user, keyStore }) => {
         const { userId, email } = user;
 
         if (keyStore.refreshTokenUsed.includes(refreshToken)) {

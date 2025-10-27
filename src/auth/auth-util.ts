@@ -12,12 +12,12 @@ export const createTokenPair = async (
 ) => {
     const accessToken = JWT.sign(payload, secretKey, {
         algorithm: "HS256",
-        expiresIn: "2 days",
+        expiresIn: "15m",
     });
 
     const refreshToken = JWT.sign(payload, secretKey, {
         algorithm: "HS256",
-        expiresIn: "7 days",
+        expiresIn: "7d",
     });
 
     return { accessToken, refreshToken };
