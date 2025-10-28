@@ -1,9 +1,14 @@
 import { unset } from "lodash";
 import { getSelectData, getUnSelectData } from "../../utils";
-import { productModel } from "../product-model";
-import { Types } from "mongoose";
+import { productModel, clothingModel, electronicModel } from "../product-model";
+import { removeUndefinedNull, updateNestedObjectParser } from "../../utils";
 
 class ProductRepository {
+    static async updateProductById({ productId, payload, model }) {
+        const cleanedPayload = removeUndefinedNull(payload);
+        const updatePayload = updateNestedObjectParser(cleanedPayload);
+        return await model.findByIdAndUpdate(productId, { $set: updatePayload }, { new: true }).lean();
+    }
     static async findAllDraftForShop({
         query,
         limit,

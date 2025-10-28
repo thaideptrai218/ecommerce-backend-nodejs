@@ -100,3 +100,20 @@ x-api-key: niggar-api-key
 authorization: {{authorization}}
 x-client-id: {{clientId}}
 Content-Type: application/json
+
+### Update a Product
+PATCH http://localhost:3055/v1/api/product/69003a15b67a52859b72fef0
+x-api-key: niggar-api-key
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "product_name": "Updated Stylish T-Shirt",
+    "product_price": 39.99,
+    "product_attributes": {
+        "size": "XL",
+        "color": "SEX ROBLOX",
+        "brand": "NIGGAR"
+    }
+}

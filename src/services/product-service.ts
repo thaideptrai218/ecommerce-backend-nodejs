@@ -3,18 +3,17 @@ import {
     clothingModel,
     electronicModel,
 } from "../models/product-model";
-import { BadRequestError } from "../core/error-respone";
+import { BadRequestError, NotFoundError } from "../core/error-respone";
 import { Created } from "../core/success-respone";
 import { Types } from "mongoose"; // Import Types for ObjectId
 import ProductRepository from "../models/repositories/product.repo";
+import { removeUndefinedNull, updateNestedObjectParser } from "../utils";
 
 // --- Base Product Class (Abstract) ---
-// This class defines the common interface for creating type-specific product details.
 abstract class Product {
     constructor(
-        protected commonPayload: {
-            // This payload now contains all common fields
-            _id: Types.ObjectId; // The _id from the base product
+        protected commonPayload?: {
+            _id: Types.ObjectId;
             product_name: string;
             product_thumb: string;
             product_description: string;
@@ -22,17 +21,22 @@ abstract class Product {
             product_quantity: number;
             product_type: string;
             product_shop: Types.ObjectId;
-            // ... any other common fields from productModel
         },
-        protected productAttributes: any // Type-specific attributes
+        protected productAttributes?: any
     ) {}
 
-    // Abstract method to be implemented by concrete product types
     abstract createTypeSpecificProduct(): Promise<any>;
+
+    async updateProduct(productId: string, payload: any) {
+        return await ProductRepository.updateProductById({
+            productId,
+            payload,
+            model: productModel,
+        });
+    }
 }
 
 // --- Concrete Product Implementations ---
-
 class ClothingProduct extends Product {
     async createTypeSpecificProduct(): Promise<any> {
         const newClothing = await clothingModel.create({
@@ -40,9 +44,22 @@ class ClothingProduct extends Product {
             product_shop: this.commonPayload.product_shop,
             ...this.productAttributes,
         });
-        if (!newClothing)
-            throw new BadRequestError("Create new Clothing error");
+        if (!newClothing) throw new BadRequestError("Create new Clothing error");
         return newClothing;
+    }
+
+    async updateProduct(productId: string, payload: any): Promise<any> {
+        const { product_attributes, ...commonPayload } = payload;
+
+        if (product_attributes && Object.keys(product_attributes).length > 0) {
+            await ProductRepository.updateProductById({
+                productId,
+                payload: product_attributes,
+                model: clothingModel,
+            });
+        }
+
+        return await super.updateProduct(productId, payload);
     }
 }
 
@@ -53,14 +70,26 @@ class ElectronicProduct extends Product {
             product_shop: this.commonPayload.product_shop,
             ...this.productAttributes,
         });
-        if (!newElectronic)
-            throw new BadRequestError("Create new Electronic error");
+        if (!newElectronic) throw new BadRequestError("Create new Electronic error");
         return newElectronic;
+    }
+
+    async updateProduct(productId: string, payload: any): Promise<any> {
+        const { product_attributes, ...commonPayload } = payload;
+
+        if (product_attributes && Object.keys(product_attributes).length > 0) {
+            await ProductRepository.updateProductById({
+                productId,
+                payload: product_attributes,
+                model: electronicModel,
+            });
+        }
+
+        return await super.updateProduct(productId, payload);
     }
 }
 
 // --- Product Factory ---
-// This factory is responsible for instantiating the correct Product subclass.
 class ProductFactory {
     private static productRegistry: { [key: string]: typeof Product } = {};
 
@@ -70,18 +99,8 @@ class ProductFactory {
 
     static createProductInstance(
         type: string,
-        commonPayload: {
-            // All common fields
-            _id: Types.ObjectId;
-            product_name: string;
-            product_thumb: string;
-            product_description: string;
-            product_price: number;
-            product_quantity: number;
-            product_type: string;
-            product_shop: Types.ObjectId;
-        },
-        productAttributes: any
+        commonPayload?: any,
+        productAttributes?: any
     ): Product {
         const ProductClass = ProductFactory.productRegistry[type];
         if (!ProductClass) {
@@ -91,60 +110,60 @@ class ProductFactory {
     }
 }
 
-// Register product types with their concrete classes
 ProductFactory.registerProductType("Clothing", ClothingProduct);
 ProductFactory.registerProductType("Electronics", ElectronicProduct);
 
 // --- Main Product Service ---
-// This is the public API for product-related operations.
 class ProductService {
     static async createProduct(
         product_type: string,
         payload: any
     ): Promise<Created> {
-        // Separate common product fields from type-specific attributes
         const { product_attributes, ...commonPayload } = payload;
 
-        // 1. Create base product entry in the general 'products' collection
         const newProduct = await productModel.create({
             ...commonPayload,
             product_attributes,
-            product_type: product_type, // Ensure product_type is set
+            product_type: product_type,
         });
         if (!newProduct) throw new BadRequestError("Create new Product error");
 
-        // 2. Create type-specific product using the base product's _id
         const productInstance = ProductFactory.createProductInstance(
             product_type,
-            { ...commonPayload, _id: newProduct._id }, // Pass common fields + _id
+            { ...commonPayload, _id: newProduct._id },
             product_attributes
         );
-        const typeSpecificProduct =
-            await productInstance.createTypeSpecificProduct();
+        await productInstance.createTypeSpecificProduct();
 
-        return new Created("Product created successfully!", {
-            product: newProduct,
-            typeSpecificProduct: typeSpecificProduct, // Return both for clarity
-        });
+        return new Created("Product created successfully!", newProduct);
     }
 
-    // Placeholder for other common product operations
+    static async updateProduct(
+        product_id: string,
+        payload: any
+    ): Promise<any> {
+        const product = await productModel.findById(product_id).lean();
+        if (!product) {
+            throw new NotFoundError("Product not found");
+        }
+
+        const productInstance = ProductFactory.createProductInstance(
+            product.product_type
+        );
+
+        return await productInstance.updateProduct(product_id, payload);
+    }
+
+    // ... (rest of the service remains the same)
     static async getProductById(productId: string) {
-        // Implement logic to find a product by ID across all types
         return null;
     }
 
     static async getAllProducts() {
-        // Implement logic to get all products across all types
         return [];
     }
 
-    static async updateProduct(productId: string, payload: any) {
-        return null;
-    }
-
     static async deleteProduct(productId: string) {
-        // Implement logic to delete a product by ID
         return null;
     }
 

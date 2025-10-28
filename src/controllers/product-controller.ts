@@ -86,6 +86,15 @@ class ProductController {
         }
         return new OK("GET PRODUCT DATA successfully!", product).send(res);
     }
+
+    static async updateProduct(req: Request, res: Response) {
+        const { productId } = req.params;
+        const updatedProduct = await ProductService.updateProduct(
+            productId,
+            req.body
+        );
+        return new OK("Product updated successfully!", updatedProduct).send(res);
+    }
 }
 
 export default ProductController;
