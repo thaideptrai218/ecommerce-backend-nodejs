@@ -6,8 +6,8 @@ Content-Type: application/json
 x-api-key: niggar-api-key
 
 {
-    "name": "concac",
-    "email": "concac@gmail.com",
+    "name": "Thai Dinh",
+    "email": "welterial@gmail.com",
     "password": "Thaihbvn218"
 }
 
@@ -17,7 +17,7 @@ Content-Type: application/json
 x-api-key: niggar-api-key
 
 {
-    "email": "concac@gmail.com",
+    "email": "welterial@gmail.com",
     "password": "Thaihbvn218"
 }
 

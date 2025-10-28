@@ -1,10 +1,10 @@
-@authorization = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZmNzIwYmY2NTY5OWEyNTUwMDc2MTMiLCJlbWFpbCI6ImNvbmNhY0BnbWFpbC5jb20iLCJuYW1lIjoiY29uY2FjIiwiaWF0IjoxNzYxNTg0NTcwLCJleHAiOjE3NjE1ODU0NzB9.AqAjf1-7iM2qurUuC0AvIbmeING-W4vpjVeDAi6tqUE
-
+@authorization = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTAwMzc4ZGJkZGZjNGQ5MzViNjg1NmIiLCJlbWFpbCI6IndlbHRlcmlhbEBnbWFpbC5jb20iLCJuYW1lIjoiVGhhaSBEaW5oIiwiaWF0IjoxNzYxNjIzMDAyLCJleHAiOjE3NjI5MTkwMDJ9.MCKkyJ-HDMrXPoEF69hW8MehFARxc_6kR_HSaTnqMGQ
+@clientId = 6900378dbddfc4d935b6856b
 ### Create a new Clothing Product
 POST http://localhost:3055/v1/api/product
 x-api-key: niggar-api-key
 authorization: {{authorization}}
-x-client-id: 68ff720bf65699a255007613
+x-client-id: {{clientId}}
 Content-Type: application/json
 
 {
@@ -14,21 +14,20 @@ Content-Type: application/json
     "product_description": "A comfortable and stylish cotton t-shirt.",
     "product_price": 29.99,
     "product_quantity": 200,
-    "product_shop": "68ff720bf65699a255007613",
+    "product_shop": "{{clientId}}",
     "product_attributes": {
         "brand": "UrbanWear",
         "size": "L",
         "material": "Organic Cotton",
         "color": "Black"
-    },
-    "NIGGAR": "123123123123"
+    }
 }
 
 ### Create a new Electronic Product
 POST http://localhost:3055/v1/api/product
 x-api-key: niggar-api-key
 authorization: {{authorization}}
-x-client-id: 68ff720bf65699a255007613
+x-client-id: {{clientId}}
 Content-Type: application/json
 
 {
@@ -38,7 +37,7 @@ Content-Type: application/json
     "product_description": "Advanced smartwatch with health tracking.",
     "product_price": 249.99,
     "product_quantity": 75,
-    "product_shop": "68ff720bf65699a255007613",
+    "product_shop": "{{clientId}}",
     "product_attributes": {
         "manufacturer": "FutureTech",
         "model": "SW-Pro-X",
@@ -51,33 +50,53 @@ Content-Type: application/json
 GET http://localhost:3055/v1/api/product/drafts/all
 x-api-key: niggar-api-key
 authorization: {{authorization}}
-x-client-id: 68ff720bf65699a255007613
+x-client-id: {{clientId}}
 Content-Type: application/json
 
 ###
 GET http://localhost:3055/v1/api/product/published/all
 x-api-key: niggar-api-key
 authorization: {{authorization}}
-x-client-id: 68ff720bf65699a255007613
+x-client-id: {{clientId}}
 Content-Type: application/json
 
 ### Publish a Product
-PATCH http://localhost:3055/v1/api/product/publish/68ff8fb54f1bf02bfc88a3a4
+PATCH http://localhost:3055/v1/api/product/publish/69003a28b67a52859b72fef6
 x-api-key: niggar-api-key
 authorization: {{authorization}}
-x-client-id: 68ff720bf65699a255007613
+x-client-id: {{clientId}}
 Content-Type: application/json
 
 ### Unpublish a Product
 PATCH http://localhost:3055/v1/api/product/unpublish/68ff8ee44f1bf02bfc88a382
 x-api-key: niggar-api-key
 authorization: {{authorization}}
-x-client-id: 68ff720bf65699a255007613
+x-client-id: {{clientId}}
 Content-Type: application/json
 
 ### Search Products
 GET http://localhost:3055/v1/api/product/search/Smartwatch
 x-api-key: niggar-api-key
 authorization: {{authorization}}
-x-client-id: 68ff720bf65699a255007613
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### FIND ALL PRODUCTS
+GET http://localhost:3055/v1/api/product/
+x-api-key: niggar-api-key
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+GET http://localhost:3055/v1/api/product/
+x-api-key: niggar-api-key
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### Find a product
+GET http://localhost:3055/v1/api/product/69003a15b67a52859b72fef0
+x-api-key: niggar-api-key
+authorization: {{authorization}}
+x-client-id: {{clientId}}
 Content-Type: application/json

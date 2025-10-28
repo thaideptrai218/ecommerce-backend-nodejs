@@ -9,11 +9,8 @@ import router from "./routers";
 import { NotFoundError } from "./core/error-respone";
 dotenv.config({
     quiet: true,
-    debug: true,
 });
 const app = express();
-
-console.log(`Process: `, process.env);
 
 // init middlewares
 app.use(morgan("dev"));

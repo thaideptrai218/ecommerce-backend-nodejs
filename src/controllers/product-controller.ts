@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import ProductService from "../services/product-service";
+import { NotFoundError } from "../core/error-respone";
 import { Created, OK } from "../core/success-respone";
 import { Types } from "mongoose";
 
@@ -26,7 +27,9 @@ class ProductController {
         const products = await ProductService.findAllDraftForShop({
             product_shop: new Types.ObjectId(userId),
         });
-        return new OK("Get all draft products successfully!", products).send(res);
+        return new OK("Get all draft products successfully!", products).send(
+            res
+        );
     }
 
     static async findAllPublishForShop(req: Request, res: Response) {
@@ -34,12 +37,16 @@ class ProductController {
         const products = await ProductService.findAllPublishForShop({
             product_shop: new Types.ObjectId(userId),
         });
-        return new OK("Get all publish products successfully!", products).send(res);
+        return new OK("Get all publish products successfully!", products).send(
+            res
+        );
     }
 
     static async searchProductByUser(req: Request, res: Response) {
         const { keySearch } = req.params;
-        const products = await ProductService.searchProductByUser({ keySearch });
+        const products = await ProductService.searchProductByUser({
+            keySearch,
+        });
         return new OK("Search products successfully!", products).send(res);
     }
 
@@ -61,6 +68,23 @@ class ProductController {
             product_id: new Types.ObjectId(id),
         });
         return new OK("Unpublish product successfully!", products).send(res);
+    }
+
+    static async findAllProducts(req: Request, res: Response) {
+        const param = req.params;
+        const products = await ProductService.findAllProducts(param);
+        return new OK("Find all products successfully!", products).send(res);
+    }
+
+    static async findProduct(req: Request, res: Response) {
+        const param = req.params;
+        const product = await ProductService.findProduct({
+            product_id: param.product_id,
+        });
+        if (!product) {
+            throw new NotFoundError("Product not found");
+        }
+        return new OK("GET PRODUCT DATA successfully!", product).send(res);
     }
 }
 

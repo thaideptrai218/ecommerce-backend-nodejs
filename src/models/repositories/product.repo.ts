@@ -1,3 +1,5 @@
+import { unset } from "lodash";
+import { getSelectData, getUnSelectData } from "../../utils";
 import { productModel } from "../product-model";
 import { Types } from "mongoose";
 
@@ -93,7 +95,44 @@ class ProductRepository {
         await foundShop.save();
         return foundShop;
     }
+
+    static findAllProduct = async ({
+        limit,
+        sort,
+        page,
+        filter,
+        select,
+    }: {
+        limit: number;
+        sort: string;
+        page: number;
+        filter: any;
+        select: string[];
+    }) => {
+        const skip = (page - 1) * limit;
+        const sortBy = sort === "ctime" ? { _id: -1 } : { _id: 1 };
+        const products = await productModel
+            .find(filter)
+            .sort(sortBy)
+            .skip(skip)
+            .limit(limit)
+            .select(getSelectData(select))
+            .lean()
+            .exec();
+        return products;
+    };
+
+    static findProduct = async ({
+        product_id,
+        unSelect,
+    }: {
+        product_id: string;
+        unSelect: string[];
+    }) => {
+        return await productModel
+            .findById(product_id)
+            .select(getUnSelectData(unSelect));
+    };
 }
 
 export default ProductRepository;
-

@@ -1,4 +1,8 @@
-import { productModel, clothingModel, electronicModel } from "../models/product-model";
+import {
+    productModel,
+    clothingModel,
+    electronicModel,
+} from "../models/product-model";
 import { BadRequestError } from "../core/error-respone";
 import { Created } from "../core/success-respone";
 import { Types } from "mongoose"; // Import Types for ObjectId
@@ -8,7 +12,8 @@ import ProductRepository from "../models/repositories/product.repo";
 // This class defines the common interface for creating type-specific product details.
 abstract class Product {
     constructor(
-        protected commonPayload: { // This payload now contains all common fields
+        protected commonPayload: {
+            // This payload now contains all common fields
             _id: Types.ObjectId; // The _id from the base product
             product_name: string;
             product_thumb: string;
@@ -35,7 +40,8 @@ class ClothingProduct extends Product {
             product_shop: this.commonPayload.product_shop,
             ...this.productAttributes,
         });
-        if (!newClothing) throw new BadRequestError("Create new Clothing error");
+        if (!newClothing)
+            throw new BadRequestError("Create new Clothing error");
         return newClothing;
     }
 }
@@ -47,7 +53,8 @@ class ElectronicProduct extends Product {
             product_shop: this.commonPayload.product_shop,
             ...this.productAttributes,
         });
-        if (!newElectronic) throw new BadRequestError("Create new Electronic error");
+        if (!newElectronic)
+            throw new BadRequestError("Create new Electronic error");
         return newElectronic;
     }
 }
@@ -63,7 +70,8 @@ class ProductFactory {
 
     static createProductInstance(
         type: string,
-        commonPayload: { // All common fields
+        commonPayload: {
+            // All common fields
             _id: Types.ObjectId;
             product_name: string;
             product_thumb: string;
@@ -90,7 +98,10 @@ ProductFactory.registerProductType("Electronics", ElectronicProduct);
 // --- Main Product Service ---
 // This is the public API for product-related operations.
 class ProductService {
-    static async createProduct(product_type: string, payload: any): Promise<Created> {
+    static async createProduct(
+        product_type: string,
+        payload: any
+    ): Promise<Created> {
         // Separate common product fields from type-specific attributes
         const { product_attributes, ...commonPayload } = payload;
 
@@ -108,7 +119,8 @@ class ProductService {
             { ...commonPayload, _id: newProduct._id }, // Pass common fields + _id
             product_attributes
         );
-        const typeSpecificProduct = await productInstance.createTypeSpecificProduct();
+        const typeSpecificProduct =
+            await productInstance.createTypeSpecificProduct();
 
         return new Created("Product created successfully!", {
             product: newProduct,
@@ -128,7 +140,6 @@ class ProductService {
     }
 
     static async updateProduct(productId: string, payload: any) {
-        // Implement logic to update a product by ID
         return null;
     }
 
@@ -184,7 +195,7 @@ class ProductService {
         });
     }
 
-        static async publishProductByShop({
+    static async publishProductByShop({
         product_shop,
         product_id,
     }: {
@@ -199,6 +210,28 @@ class ProductService {
 
     static async searchProductByUser({ keySearch }: { keySearch: string }) {
         return await ProductRepository.searchProductByUser({ keySearch });
+    }
+
+    static async findAllProducts({
+        limit = 50,
+        sort = "ctime",
+        page = 1,
+        filter = { isPublished: true },
+    }) {
+        return await ProductRepository.findAllProduct({
+            limit,
+            sort,
+            filter,
+            page,
+            select: ["product_name", "product_price", "product_thumb"],
+        });
+    }
+
+    static async findProduct({ product_id }) {
+        return await ProductRepository.findProduct({
+            product_id,
+            unSelect: ["__v", "product_ratingsAverage"],
+        });
     }
 }
 

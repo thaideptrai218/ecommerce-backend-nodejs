@@ -72,9 +72,6 @@ export const authentication = asyncHandler(
 
         req.keyStore = keyStore;
         req.user = decodeUser;
-        
-        console.log(decodeUser);
-        console.log(keyStore);
         return next();
     }
 );
