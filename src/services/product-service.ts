@@ -7,7 +7,7 @@ import { BadRequestError, NotFoundError } from "../core/error-respone";
 import { Created } from "../core/success-respone";
 import { Types } from "mongoose"; // Import Types for ObjectId
 import ProductRepository from "../models/repositories/product.repo";
-import { removeUndefinedNull, updateNestedObjectParser } from "../utils";
+import { InventoryRepository } from "../models/repositories/inventory-repo";
 
 // --- Base Product Class (Abstract) ---
 abstract class Product {
@@ -44,7 +44,8 @@ class ClothingProduct extends Product {
             product_shop: this.commonPayload.product_shop,
             ...this.productAttributes,
         });
-        if (!newClothing) throw new BadRequestError("Create new Clothing error");
+        if (!newClothing)
+            throw new BadRequestError("Create new Clothing error");
         return newClothing;
     }
 
@@ -70,7 +71,8 @@ class ElectronicProduct extends Product {
             product_shop: this.commonPayload.product_shop,
             ...this.productAttributes,
         });
-        if (!newElectronic) throw new BadRequestError("Create new Electronic error");
+        if (!newElectronic)
+            throw new BadRequestError("Create new Electronic error");
         return newElectronic;
     }
 
@@ -115,10 +117,7 @@ ProductFactory.registerProductType("Electronics", ElectronicProduct);
 
 // --- Main Product Service ---
 class ProductService {
-    static async createProduct(
-        product_type: string,
-        payload: any
-    ): Promise<Created> {
+    static async createProduct(product_type: string, payload: any) {
         const { product_attributes, ...commonPayload } = payload;
 
         const newProduct = await productModel.create({
@@ -135,13 +134,17 @@ class ProductService {
         );
         await productInstance.createTypeSpecificProduct();
 
-        return new Created("Product created successfully!", newProduct);
+        if (newProduct) {
+            InventoryRepository.insertInventory({
+                productId: newProduct._id,
+                shopId: newProduct.product_shop,
+                stock: newProduct.product_quantity,
+            });
+        }
+        return newProduct;
     }
 
-    static async updateProduct(
-        product_id: string,
-        payload: any
-    ): Promise<any> {
+    static async updateProduct(product_id: string, payload: any): Promise<any> {
         const product = await productModel.findById(product_id).lean();
         if (!product) {
             throw new NotFoundError("Product not found");

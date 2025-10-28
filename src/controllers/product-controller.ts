@@ -11,6 +11,8 @@ class ProductController {
             product_type,
             payload
         );
+
+        console.log(newProduct);
         return new Created("Product created successfully!", newProduct).send(
             res
         );
@@ -93,7 +95,9 @@ class ProductController {
             productId,
             req.body
         );
-        return new OK("Product updated successfully!", updatedProduct).send(res);
+        return new OK("Product updated successfully!", updatedProduct).send(
+            res
+        );
     }
 }
 

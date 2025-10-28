@@ -1,7 +1,7 @@
-import { unset } from "lodash";
 import { getSelectData, getUnSelectData } from "../../utils";
 import { productModel, clothingModel, electronicModel } from "../product-model";
 import { removeUndefinedNull, updateNestedObjectParser } from "../../utils";
+import type { Types } from "mongoose";
 
 class ProductRepository {
     static async updateProductById({ productId, payload, model }) {

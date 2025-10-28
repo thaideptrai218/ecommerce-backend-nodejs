@@ -9,11 +9,11 @@ Content-Type: application/json
 
 {
     "product_type": "Clothing",
-    "product_name": "Stylish T-Shirt",
+    "product_name": "Stylish T-Shirt v999",
     "product_thumb": "http://example.com/tshirt_stylish.jpg",
     "product_description": "A comfortable and stylish cotton t-shirt.",
     "product_price": 29.99,
-    "product_quantity": 200,
+    "product_quantity": 69,
     "product_shop": "{{clientId}}",
     "product_attributes": {
         "brand": "UrbanWear",
