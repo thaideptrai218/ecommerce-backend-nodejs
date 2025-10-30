@@ -197,7 +197,7 @@ class ProductService {
         skip?: number;
     }) {
         const query = { product_shop, isPublished: true };
-        return await ProductRepository.findAllDraftForShop({
+        return await ProductRepository.findAllPublishForShop({
             query,
             limit,
             skip,
