@@ -1,0 +1,115 @@
+@url_dev=http://localhost:3055
+
+### Create Discount Code
+POST {{url_dev}}/v1/api/discount/
+Content-Type: application/json
+x-api-key: 5df2c72d81480cecc1d81577bbbef37b7e9bdb0c8dfcc4c3dd81a1048d909300c24525333e177671ca6e0f69c1acda8a4ffb1237bd43022ca40b6de3257f78af
+x-client-id: 68faf8be0aed27e75e01a594
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZhZjhiZTBhZWQyN2U3NWUwMWE1OTQiLCJlbWFpbCI6IndlbHRlcmlhbDIxOEBnbWFpbC5jb20iLCJpYXQiOjE3NjEyNzg4NjYsImV4cCI6MTc2MTQ1MTY2Nn0.v3ypgyhkLNMgfr0TyWiYywA-jWqI9oT7IO6TnpH1oX0
+
+{
+    "code": "SAVE20",
+    "name": "20% Off Everything",
+    "description": "Get 20% off on all products",
+    "type": "PERCENTAGE",
+    "value": 20,
+    "start_date": "2025-10-30T00:00:00.000Z",
+    "end_date": "2025-11-30T23:59:59.999Z",
+    "is_active": true,
+    "min_order_value": 100,
+    "max_uses": 100,
+    "max_uses_per_user": 1,
+    "applies_to": "ALL",
+    "max_value": 50
+}
+
+### Create Fixed Amount Discount Code
+POST {{url_dev}}/v1/api/discount/
+Content-Type: application/json
+x-api-key: 5df2c72d81480cecc1d81577bbbef37b7e9bdb0c8dfcc4c3dd81a1048d909300c24525333e177671ca6e0f69c1acda8a4ffb1237bd43022ca40b6de3257f78af
+x-client-id: 68faf8be0aed27e75e01a594
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZhZjhiZTBhZWQyN2U3NWUwMWE1OTQiLCJlbWFpbCI6IndlbHRlcmlhbDIxOEBnbWFpbC5jb20iLCJpYXQiOjE3NjEyNzg4NjYsImV4cCI6MTc2MTQ1MTY2Nn0.v3ypgyhkLNMgfr0TyWiYywA-jWqI9oT7IO6TnpH1oX0
+
+{
+    "code": "SAVE10",
+    "name": "$10 Off",
+    "description": "Get $10 off on orders over $50",
+    "type": "FIXED_AMOUNT",
+    "value": 10,
+    "start_date": "2025-10-30T00:00:00.000Z",
+    "end_date": "2025-11-30T23:59:59.999Z",
+    "is_active": true,
+    "min_order_value": 50,
+    "max_uses": 200,
+    "max_uses_per_user": 2,
+    "applies_to": "ALL"
+}
+
+### Get All Discount Codes for Shop
+GET {{url_dev}}/v1/api/discount/shop/all?limit=10&page=1&sort=createdAt&is_active=true
+Content-Type: application/json
+x-api-key: 5df2c72d81480cecc1d81577bbbef37b7e9bdb0c8dfcc4c3dd81a1048d909300c24525333e177671ca6e0f69c1acda8a4ffb1237bd43022ca40b6de3257f78af
+x-client-id: 68faf8be0aed27e75e01a594
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZhZjhiZTBhZWQyN2U3NWUwMWE1OTQiLCJlbWFpbCI6IndlbHRlcmlhbDIxOEBnbWFpbC5jb20iLCJpYXQiOjE3NjEyNzg4NjYsImV4cCI6MTc2MTQ1MTY2Nn0.v3ypgyhkLNMgfr0TyWiYywA-jWqI9oT7IO6TnpH1oX0
+
+### Get Discount Code with Products
+GET {{url_dev}}/v1/api/discount/code/SAVE20?limit=10&page=1
+Content-Type: application/json
+x-api-key: 5df2c72d81480cecc1d81577bbbef37b7e9bdb0c8dfcc4c3dd81a1048d909300c24525333e177671ca6e0f69c1acda8a4ffb1237bd43022ca40b6de3257f78af
+x-client-id: 68faf8be0aed27e75e01a594
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZhZjhiZTBhZWQyN2U3NWUwMWE1OTQiLCJlbWFpbCI6IndlbHRlcmlhbDIxOEBnbWFpbC5jb20iLCJpYXQiOjE3NjEyNzg4NjYsImV4cCI6MTc2MTQ1MTY2Nn0.v3ypgyhkLNMgfr0TyWiYywA-jWqI9oT7IO6TnpH1oX0
+
+### Calculate Discount Amount
+POST {{url_dev}}/v1/api/discount/amount/[DISCOUNT_ID_HERE]
+Content-Type: application/json
+x-api-key: 5df2c72d81480cecc1d81577bbbef37b7e9bdb0c8dfcc4c3dd81a1048d909300c24525333e177671ca6e0f69c1acda8a4ffb1237bd43022ca40b6de3257f78af
+x-client-id: 68faf8be0aed27e75e01a594
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZhZjhiZTBhZWQyN2U3NWUwMWE1OTQiLCJlbWFpbCI6IndlbHRlcmlhbDIxOEBnbWFpbC5jb20iLCJpYXQiOjE3NjEyNzg4NjYsImV4cCI6MTc2MTQ1MTY2Nn0.v3ypgyhkLNMgfr0TyWiYywA-jWqI9oT7IO6TnpH1oX0
+
+{
+    "shopId": "68faf8be0aed27e75e01a594",
+    "products": [
+        {
+            "productId": "PRODUCT_ID_HERE",
+            "price": 100,
+            "quantity": 2
+        },
+        {
+            "productId": "ANOTHER_PRODUCT_ID_HERE",
+            "price": 50,
+            "quantity": 1
+        }
+    ]
+}
+
+### Update Discount Code
+PATCH {{url_dev}}/v1/api/discount/[DISCOUNT_ID_HERE]
+Content-Type: application/json
+x-api-key: 5df2c72d81480cecc1d81577bbbef37b7e9bdb0c8dfcc4c3dd81a1048d909300c24525333e177671ca6e0f69c1acda8a4ffb1237bd43022ca40b6de3257f78af
+x-client-id: 68faf8be0aed27e75e01a594
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZhZjhiZTBhZWQyN2U3NWUwMWE1OTQiLCJlbWFpbCI6IndlbHRlcmlhbDIxOEBnbWFpbC5jb20iLCJpYXQiOjE3NjEyNzg4NjYsImV4cCI6MTc2MTQ1MTY2Nn0.v3ypgyhkLNMgfr0TyWiYywA-jWqI9oT7IO6TnpH1oX0
+
+{
+    "name": "Updated 25% Off Everything",
+    "description": "Get 25% off on all products - extended promotion",
+    "value": 25,
+    "max_value": 75
+}
+
+### Delete Discount Code
+DELETE {{url_dev}}/v1/api/discount/[DISCOUNT_ID_HERE]
+Content-Type: application/json
+x-api-key: 5df2c72d81480cecc1d81577bbbef37b7e9bdb0c8dfcc4c3dd81a1048d909300c24525333e177671ca6e0f69c1acda8a4ffb1237bd43022ca40b6de3257f78af
+x-client-id: 68faf8be0aed27e75e01a594
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZhZjhiZTBhZWQyN2U3NWUwMWE1OTQiLCJlbWFpbCI6IndlbHRlcmlhbDIxOEBnbWFpbC5jb20iLCJpYXQiOjE3NjEyNzg4NjYsImV4cCI6MTc2MTQ1MTY2Nn0.v3ypgyhkLNMgfr0TyWiYywA-jWqI9oT7IO6TnpH1oX0
+
+### Cancel Discount Code Usage
+POST {{url_dev}}/v1/api/discount/cancel/[DISCOUNT_ID_HERE]
+Content-Type: application/json
+x-api-key: 5df2c72d81480cecc1d81577bbbef37b7e9bdb0c8dfcc4c3dd81a1048d909300c24525333e177671ca6e0f69c1acda8a4ffb1237bd43022ca40b6de3257f78af
+x-client-id: 68faf8be0aed27e75e01a594
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZhZjhiZTBhZWQyN2U3NWUwMWE1OTQiLCJlbWFpbCI6IndlbHRlcmlhbDIxOEBnbWFpbC5jb20iLCJpYXQiOjE3NjEyNzg4NjYsImV4cCI6MTc2MTQ1MTY2Nn0.v3ypgyhkLNMgfr0TyWiYywA-jWqI9oT7IO6TnpH1oX0
+
+{
+    "shopId": "68faf8be0aed27e75e01a594"
+}

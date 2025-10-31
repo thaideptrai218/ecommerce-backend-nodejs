@@ -1,3 +1,5 @@
+import { Types } from "mongoose";
+
 export const getSelectData = (select = []) => {
     return Object.fromEntries(select.map((el) => [el, 1]));
 };
@@ -41,3 +43,5 @@ export const updateNestedObjectParser = (obj) => {
     });
     return final;
 };
+
+export const convertToObjectIdMongodb = (id: string) => new Types.ObjectId(id);
