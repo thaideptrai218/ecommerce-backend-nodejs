@@ -1,34 +1,38 @@
 @url_dev=http://localhost:3055
+@api_key=niggar-api-key
+@client_id=6900378dbddfc4d935b6856b
+@authorization=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTAwMzc4ZGJkZGZjNGQ5MzViNjg1NmIiLCJlbWFpbCI6IndlbHRlcmlhbEBnbWFpbC5jb20iLCJuYW1lIjoiVGhhaSBEaW5oIiwiaWF0IjoxNzYxODkyMDk4LCJleHAiOjE3NjMxODgwOTh9.tIvq_t_NT91_N87a1srpYo1FwYLj3jhsGbXWk50u6x0
 
 ### Create Discount Code
 POST {{url_dev}}/v1/api/discount/
 Content-Type: application/json
-x-api-key: 5df2c72d81480cecc1d81577bbbef37b7e9bdb0c8dfcc4c3dd81a1048d909300c24525333e177671ca6e0f69c1acda8a4ffb1237bd43022ca40b6de3257f78af
-x-client-id: 68faf8be0aed27e75e01a594
-authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZhZjhiZTBhZWQyN2U3NWUwMWE1OTQiLCJlbWFpbCI6IndlbHRlcmlhbDIxOEBnbWFpbC5jb20iLCJpYXQiOjE3NjEyNzg4NjYsImV4cCI6MTc2MTQ1MTY2Nn0.v3ypgyhkLNMgfr0TyWiYywA-jWqI9oT7IO6TnpH1oX0
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
 
 {
-    "code": "SAVE20",
+    "code": "SAVESpecific",
     "name": "20% Off Everything",
     "description": "Get 20% off on all products",
-    "type": "PERCENTAGE",
+    "type": "percentage",
     "value": 20,
-    "start_date": "2025-10-30T00:00:00.000Z",
-    "end_date": "2025-11-30T23:59:59.999Z",
+    "start_date": "2025-11-30T00:00:00.000Z",
+    "end_date": "2025-12-30T23:59:59.999Z",
     "is_active": true,
     "min_order_value": 100,
     "max_uses": 100,
     "max_uses_per_user": 1,
-    "applies_to": "ALL",
-    "max_value": 50
+    "applies_to": "specific",
+    "max_value": 50,
+    "product_ids": ["69003a15b67a52859b72fef0", "69003a28b67a52859b72fef6"]
 }
 
 ### Create Fixed Amount Discount Code
 POST {{url_dev}}/v1/api/discount/
 Content-Type: application/json
-x-api-key: 5df2c72d81480cecc1d81577bbbef37b7e9bdb0c8dfcc4c3dd81a1048d909300c24525333e177671ca6e0f69c1acda8a4ffb1237bd43022ca40b6de3257f78af
-x-client-id: 68faf8be0aed27e75e01a594
-authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZhZjhiZTBhZWQyN2U3NWUwMWE1OTQiLCJlbWFpbCI6IndlbHRlcmlhbDIxOEBnbWFpbC5jb20iLCJpYXQiOjE3NjEyNzg4NjYsImV4cCI6MTc2MTQ1MTY2Nn0.v3ypgyhkLNMgfr0TyWiYywA-jWqI9oT7IO6TnpH1oX0
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
 
 {
     "code": "SAVE10",
@@ -48,34 +52,34 @@ authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZhZjhiZTBh
 ### Get All Discount Codes for Shop
 GET {{url_dev}}/v1/api/discount/shop/all?limit=10&page=1&sort=createdAt&is_active=true
 Content-Type: application/json
-x-api-key: 5df2c72d81480cecc1d81577bbbef37b7e9bdb0c8dfcc4c3dd81a1048d909300c24525333e177671ca6e0f69c1acda8a4ffb1237bd43022ca40b6de3257f78af
-x-client-id: 68faf8be0aed27e75e01a594
-authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZhZjhiZTBhZWQyN2U3NWUwMWE1OTQiLCJlbWFpbCI6IndlbHRlcmlhbDIxOEBnbWFpbC5jb20iLCJpYXQiOjE3NjEyNzg4NjYsImV4cCI6MTc2MTQ1MTY2Nn0.v3ypgyhkLNMgfr0TyWiYywA-jWqI9oT7IO6TnpH1oX0
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
 
 ### Get Discount Code with Products
 GET {{url_dev}}/v1/api/discount/code/SAVE20?limit=10&page=1
 Content-Type: application/json
-x-api-key: 5df2c72d81480cecc1d81577bbbef37b7e9bdb0c8dfcc4c3dd81a1048d909300c24525333e177671ca6e0f69c1acda8a4ffb1237bd43022ca40b6de3257f78af
-x-client-id: 68faf8be0aed27e75e01a594
-authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZhZjhiZTBhZWQyN2U3NWUwMWE1OTQiLCJlbWFpbCI6IndlbHRlcmlhbDIxOEBnbWFpbC5jb20iLCJpYXQiOjE3NjEyNzg4NjYsImV4cCI6MTc2MTQ1MTY2Nn0.v3ypgyhkLNMgfr0TyWiYywA-jWqI9oT7IO6TnpH1oX0
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
 
 ### Calculate Discount Amount
-POST {{url_dev}}/v1/api/discount/amount/[DISCOUNT_ID_HERE]
+POST {{url_dev}}/v1/api/discount/amount/69045f53318d2ca07659fd69
 Content-Type: application/json
-x-api-key: 5df2c72d81480cecc1d81577bbbef37b7e9bdb0c8dfcc4c3dd81a1048d909300c24525333e177671ca6e0f69c1acda8a4ffb1237bd43022ca40b6de3257f78af
-x-client-id: 68faf8be0aed27e75e01a594
-authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZhZjhiZTBhZWQyN2U3NWUwMWE1OTQiLCJlbWFpbCI6IndlbHRlcmlhbDIxOEBnbWFpbC5jb20iLCJpYXQiOjE3NjEyNzg4NjYsImV4cCI6MTc2MTQ1MTY2Nn0.v3ypgyhkLNMgfr0TyWiYywA-jWqI9oT7IO6TnpH1oX0
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
 
 {
-    "shopId": "68faf8be0aed27e75e01a594",
+    "shopId": "6900378dbddfc4d935b6856b",
     "products": [
         {
-            "productId": "PRODUCT_ID_HERE",
+            "productId": "69003a15b67a52859b72fef0",
             "price": 100,
             "quantity": 2
         },
         {
-            "productId": "ANOTHER_PRODUCT_ID_HERE",
+            "productId": "69003a28b67a52859b72fef6",
             "price": 50,
             "quantity": 1
         }
@@ -83,11 +87,11 @@ authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZhZjhiZTBh
 }
 
 ### Update Discount Code
-PATCH {{url_dev}}/v1/api/discount/[DISCOUNT_ID_HERE]
+PATCH {{url_dev}}/v1/api/discount/69045f53318d2ca07659fd69
 Content-Type: application/json
-x-api-key: 5df2c72d81480cecc1d81577bbbef37b7e9bdb0c8dfcc4c3dd81a1048d909300c24525333e177671ca6e0f69c1acda8a4ffb1237bd43022ca40b6de3257f78af
-x-client-id: 68faf8be0aed27e75e01a594
-authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZhZjhiZTBhZWQyN2U3NWUwMWE1OTQiLCJlbWFpbCI6IndlbHRlcmlhbDIxOEBnbWFpbC5jb20iLCJpYXQiOjE3NjEyNzg4NjYsImV4cCI6MTc2MTQ1MTY2Nn0.v3ypgyhkLNMgfr0TyWiYywA-jWqI9oT7IO6TnpH1oX0
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
 
 {
     "name": "Updated 25% Off Everything",
@@ -99,16 +103,16 @@ authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZhZjhiZTBh
 ### Delete Discount Code
 DELETE {{url_dev}}/v1/api/discount/[DISCOUNT_ID_HERE]
 Content-Type: application/json
-x-api-key: 5df2c72d81480cecc1d81577bbbef37b7e9bdb0c8dfcc4c3dd81a1048d909300c24525333e177671ca6e0f69c1acda8a4ffb1237bd43022ca40b6de3257f78af
-x-client-id: 68faf8be0aed27e75e01a594
-authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZhZjhiZTBhZWQyN2U3NWUwMWE1OTQiLCJlbWFpbCI6IndlbHRlcmlhbDIxOEBnbWFpbC5jb20iLCJpYXQiOjE3NjEyNzg4NjYsImV4cCI6MTc2MTQ1MTY2Nn0.v3ypgyhkLNMgfr0TyWiYywA-jWqI9oT7IO6TnpH1oX0
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
 
 ### Cancel Discount Code Usage
 POST {{url_dev}}/v1/api/discount/cancel/[DISCOUNT_ID_HERE]
 Content-Type: application/json
-x-api-key: 5df2c72d81480cecc1d81577bbbef37b7e9bdb0c8dfcc4c3dd81a1048d909300c24525333e177671ca6e0f69c1acda8a4ffb1237bd43022ca40b6de3257f78af
-x-client-id: 68faf8be0aed27e75e01a594
-authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZhZjhiZTBhZWQyN2U3NWUwMWE1OTQiLCJlbWFpbCI6IndlbHRlcmlhbDIxOEBnbWFpbC5jb20iLCJpYXQiOjE3NjEyNzg4NjYsImV4cCI6MTc2MTQ1MTY2Nn0.v3ypgyhkLNMgfr0TyWiYywA-jWqI9oT7IO6TnpH1oX0
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
 
 {
     "shopId": "68faf8be0aed27e75e01a594"

@@ -1,9 +1,14 @@
 @url_dev=http://localhost:3055
+@api_key=niggar-api-key
+@client_id=68faf8be0aed27e75e01a594
+@authorization=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZhZjhiZTBhZWQyN2U3NWUwMWE1OTQiLCJlbWFpbCI6IndlbHRlcmlhbDIxOEBnbWFpbC5jb20iLCJpYXQiOjE3NjEyNzg4NjYsImV4cCI6MTc2MTQ1MTY2Nn0.v3ypgyhkLNMgfr0TyWiYywA-jWqI9oT7IO6TnpH1oX0
+@placeholder_api_key=niggar-api-key
+@refresh_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZmMDQyYmY1Mzg4NDJiNmRlZjUyMzciLCJlbWFpbCI6ImNvbmNhY0BnbWFpbC5jb20iLCJuYW1lIjoiY29uY2FjIiwiaWF0IjoxNzYxNTQ4OTM1LCJleHAiOjE3NjIxNTM3MzV9.l_f6PkY_IeSIBuJvtgpiBI-J9qSmf3b68Wul1XTusz8
 
 ### sign up
 POST {{url_dev}}/v1/api/shop/signup
 Content-Type: application/json
-x-api-key: niggar-api-key
+x-api-key: {{placeholder_api_key}}
 
 {
     "name": "Thai Dinh",
@@ -14,7 +19,7 @@ x-api-key: niggar-api-key
 ### login
 POST {{url_dev}}/v1/api/shop/login
 Content-Type: application/json
-x-api-key: niggar-api-key
+x-api-key: {{placeholder_api_key}}
 
 {
     "email": "welterial@gmail.com",
@@ -25,13 +30,13 @@ x-api-key: niggar-api-key
 
 POST {{url_dev}}/v1/api/shop/logout
 Content-Type: application/json
-x-api-key: 5df2c72d81480cecc1d81577bbbef37b7e9bdb0c8dfcc4c3dd81a1048d909300c24525333e177671ca6e0f69c1acda8a4ffb1237bd43022ca40b6de3257f78af
-x-client-id: 68faf8be0aed27e75e01a594
-authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZhZjhiZTBhZWQyN2U3NWUwMWE1OTQiLCJlbWFpbCI6IndlbHRlcmlhbDIxOEBnbWFpbC5jb20iLCJpYXQiOjE3NjEyNzg4NjYsImV4cCI6MTc2MTQ1MTY2Nn0.v3ypgyhkLNMgfr0TyWiYywA-jWqI9oT7IO6TnpH1oX0
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
 
 ### refresh token
 POST {{url_dev}}/v1/api/shop/refresh-token
 Content-Type: application/json
-x-api-key: 5df2c72d81480cecc1d81577bbbef37b7e9bdb0c8dfcc4c3dd81a1048d909300c24525333e177671ca6e0f69c1acda8a4ffb1237bd43022ca40b6de3257f78af
+x-api-key: {{api_key}}
 x-client-id: 68ff042bf538842b6def5237
-refreshtoken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZmMDQyYmY1Mzg4NDJiNmRlZjUyMzciLCJlbWFpbCI6ImNvbmNhY0BnbWFpbC5jb20iLCJuYW1lIjoiY29uY2FjIiwiaWF0IjoxNzYxNTQ4OTM1LCJleHAiOjE3NjIxNTM3MzV9.l_f6PkY_IeSIBuJvtgpiBI-J9qSmf3b68Wul1XTusz8
+refreshtoken: {{refresh_token}}

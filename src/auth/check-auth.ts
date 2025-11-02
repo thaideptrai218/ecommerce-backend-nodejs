@@ -60,7 +60,7 @@ export const authentication = asyncHandler(
         const keyStore = await KeyTokenService.findByUserId(userId);
         if (!keyStore) throw new NotFoundError("Not found keyStore");
 
-       c
+        const accessToken = req.headers[HEADER.AUTHORIZATION];
 
         const decodeUser = JWT.verify(accessToken, keyStore.secretKey);
         if (userId !== decodeUser.userId) {
