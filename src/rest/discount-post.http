@@ -1,7 +1,7 @@
 @url_dev=http://localhost:3055
 @api_key=niggar-api-key
-@client_id=6900378dbddfc4d935b6856b
-@authorization=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTAwMzc4ZGJkZGZjNGQ5MzViNjg1NmIiLCJlbWFpbCI6IndlbHRlcmlhbEBnbWFpbC5jb20iLCJuYW1lIjoiVGhhaSBEaW5oIiwiaWF0IjoxNzYxODkyMDk4LCJleHAiOjE3NjMxODgwOTh9.tIvq_t_NT91_N87a1srpYo1FwYLj3jhsGbXWk50u6x0
+@client_id=69074f5479cbc75d6571e355
+@authorization=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTA3NGY1NDc5Y2JjNzVkNjU3MWUzNTUiLCJlbWFpbCI6IndlbHRlcmlhbEBnbWFpbC5jb20iLCJuYW1lIjoiVGhhaSBEaW5oIiwiaWF0IjoxNzYyMDg3MzM1LCJleHAiOjE3NjMzODMzMzV9.pZk63-gb0HXC5DOqyhmJTTFP2PN4in8zuVg83Jn16CA
 
 ### Create Discount Code
 POST {{url_dev}}/v1/api/discount/
@@ -24,7 +24,7 @@ authorization: {{authorization}}
     "max_uses_per_user": 1,
     "applies_to": "specific",
     "max_value": 50,
-    "product_ids": ["69003a15b67a52859b72fef0", "69003a28b67a52859b72fef6"]
+    "product_ids": ["690751d279cbc75d6571e36d", "690751d579cbc75d6571e375"]
 }
 
 ### Create Fixed Amount Discount Code
@@ -64,22 +64,22 @@ x-client-id: {{client_id}}
 authorization: {{authorization}}
 
 ### Calculate Discount Amount
-POST {{url_dev}}/v1/api/discount/amount/69045f53318d2ca07659fd69
+POST {{url_dev}}/v1/api/discount/amount/690771febf6dbfe0ac40b634
 Content-Type: application/json
 x-api-key: {{api_key}}
 x-client-id: {{client_id}}
 authorization: {{authorization}}
 
 {
-    "shopId": "6900378dbddfc4d935b6856b",
+    "shopId": "69074f5479cbc75d6571e355",
     "products": [
         {
-            "productId": "69003a15b67a52859b72fef0",
+            "productId": "690751d279cbc75d6571e36d",
             "price": 100,
             "quantity": 2
         },
         {
-            "productId": "69003a28b67a52859b72fef6",
+            "productId": "690751d579cbc75d6571e375",
             "price": 50,
             "quantity": 1
         }

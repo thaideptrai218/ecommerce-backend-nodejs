@@ -8,6 +8,27 @@ import { removeUndefinedNull, updateNestedObjectParser } from "../../utils";
 import type { Types } from "mongoose";
 
 class ProductRepository {
+    static async checkProductByServer(products: []) {
+        return await Promise.all(
+            products.map(async (product) => {
+                if (!product.productId) {
+                    throw new Error("Product ID is required");
+                }
+
+                const foundProduct = await this.findProduct(product.productId);
+                if (!foundProduct) {
+                    throw new Error(`Product ${product.productId} not found`);
+                }
+
+                return {
+                    price: foundProduct.product_price,
+                    quantity: product.quantity || 1,
+                    productId: product.productId,
+                    shopId: product.shopId,
+                };
+            })
+        );
+    }
     static async updateProductById({ productId, payload, model }) {
         const cleanedPayload = removeUndefinedNull(payload);
         const updatePayload = updateNestedObjectParser(cleanedPayload);
@@ -140,6 +161,14 @@ class ProductRepository {
     static findProduct = async (product_id: string) => {
         return await productModel.findById(product_id).lean();
     };
+
+    static async updateProductQuantity(productId: string, quantity: number) {
+        return await productModel.findByIdAndUpdate(
+            productId,
+            { $inc: { product_quantity: quantity } },
+            { new: true }
+        ).lean();
+    }
 }
 
 export default ProductRepository;

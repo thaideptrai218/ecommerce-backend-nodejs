@@ -433,8 +433,8 @@ export class DiscountService {
             quantity: number;
         }>;
     }) {
-        const discount = await DiscountRepository.validateDiscount({
-            discountId: convertToObjectIdMongodb(codeId),
+        const discount = await DiscountRepository.validateDiscountByCode({
+            code: codeId, // Use codeId as discount code
             shopId: convertToObjectIdMongodb(shopId),
             userId: convertToObjectIdMongodb(userId),
         });

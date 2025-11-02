@@ -1,0 +1,204 @@
+@url_dev=http://localhost:3055
+@api_key=niggar-api-key
+@client_id=69074f5479cbc75d6571e355
+@authorization=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTA3NGY1NDc5Y2JjNzVkNjU3MWUzNTUiLCJlbWFpbCI6IndlbHRlcmlhbEBnbWFpbC5jb20iLCJuYW1lIjoiVGhhaSBEaW5oIiwiaWF0IjoxNzYyMDg3MzM1LCJleHAiOjE3NjMzODMzMzV9.pZk63-gb0HXC5DOqyhmJTTFP2PN4in8zuVg83Jn16CA
+
+### Add products to cart first for checkout testing
+POST {{url_dev}}/v1/api/cart
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "productId": "690751d279cbc75d6571e36d",
+    "quantity": 2,
+    "shopId": "69074f5479cbc75d6571e355",
+    "name": "Sample Product",
+    "price": 29.99
+}
+
+### Get cart to see cart ID
+GET {{url_dev}}/v1/api/cart
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+### Review checkout with single shop and no discount
+POST {{url_dev}}/v1/api/checkout/review
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "cartId": "690752a9e6e96615de89904b",
+    "shop_order_ids": [
+        {
+            "shopId": "69074f5479cbc75d6571e355",
+            "shop_discounts": [],
+            "item_products": [
+                {
+                    "productId": "690751d279cbc75d6571e36d",
+                    "quantity": 2,
+                    "price": 29.99
+                }
+            ]
+        }
+    ]
+}
+
+### Review checkout with multiple shops
+POST {{url_dev}}/v1/api/checkout/review
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "cartId": "690752a9e6e96615de89904b",
+    "shop_order_ids": [
+        {
+            "shopId": "69074f5479cbc75d6571e355",
+            "shop_discounts": [
+                {
+                    "shopId": "69074f5479cbc75d6571e355",
+                    "discountId": "690771febf6dbfe0ac40b634",
+                    "codeId": "SAVESPECIFIC"
+                }
+            ],
+            "item_products": [
+                {
+                    "productId": "690751d279cbc75d6571e36d",
+                    "quantity": 2,
+                    "price": 29.99
+                },
+                {
+                    "productId": "690751d579cbc75d6571e375",
+                    "quantity": 1,
+                    "price": 49.99
+                }
+            ]
+        },
+        {
+            "shopId": "69074f5479cbc75d6571e355",
+            "shop_discounts": [],
+            "item_products": [
+               {
+                    "productId": "690751d279cbc75d6571e36d",
+                    "quantity": 2,
+                    "price": 29.99
+                },
+                {
+                    "productId": "690751d579cbc75d6571e375",
+                    "quantity": 1,
+                    "price": 49.99
+                }
+            ]
+        }
+    ]
+}
+
+### Execute checkout order (create actual orders)
+POST {{url_dev}}/v1/api/checkout/order
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "cartId": "YOUR_CART_ID_HERE",
+    "shop_order_ids": [
+        {
+            "shopId": "69074f5479cbc75d6571e355",
+            "shop_discounts": [],
+            "item_products": [
+                {
+                    "productId": "690751d279cbc75d6571e36d",
+                    "quantity": 2,
+                    "price": 29.99
+                }
+            ]
+        }
+    ]
+}
+
+### Get order history
+GET {{url_dev}}/v1/api/checkout/history?page=1&limit=10
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+### Get order history with status filter
+GET {{url_dev}}/v1/api/checkout/history?page=1&limit=5&status=pending
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+### Get specific order details
+GET {{url_dev}}/v1/api/checkout/ORDER_ID_HERE
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+### Test checkout with invalid cart ID (should fail)
+POST {{url_dev}}/v1/api/checkout/review
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "cartId": "INVALID_CART_ID",
+    "shop_order_ids": [
+        {
+            "shopId": "69074f5479cbc75d6571e355",
+            "shop_discounts": [],
+            "item_products": [
+                {
+                    "productId": "690751d279cbc75d6571e36d",
+                    "quantity": 2,
+                    "price": 29.99
+                }
+            ]
+        }
+    ]
+}
+
+### Test checkout with empty shop orders (should fail)
+POST {{url_dev}}/v1/api/checkout/review
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "cartId": "YOUR_CART_ID_HERE",
+    "shop_order_ids": []
+}
+
+### Test checkout without authentication (should fail)
+POST {{url_dev}}/v1/api/checkout/review
+Content-Type: application/json
+x-api-key: {{api_key}}
+
+{
+    "cartId": "YOUR_CART_ID_HERE",
+    "shop_order_ids": [
+        {
+            "shopId": "69074f5479cbc75d6571e355",
+            "shop_discounts": [],
+            "item_products": [
+                {
+                    "productId": "690751d279cbc75d6571e36d",
+                    "quantity": 2,
+                    "price": 29.99
+                }
+            ]
+        }
+    ]
+}
