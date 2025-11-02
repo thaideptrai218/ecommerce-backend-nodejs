@@ -1,4 +1,8 @@
-import { getSelectData, getUnSelectData } from "../../utils";
+import {
+    convertToObjectIdMongodb,
+    getSelectData,
+    getUnSelectData,
+} from "../../utils";
 import { productModel, clothingModel, electronicModel } from "../product-model";
 import { removeUndefinedNull, updateNestedObjectParser } from "../../utils";
 import type { Types } from "mongoose";
@@ -7,7 +11,13 @@ class ProductRepository {
     static async updateProductById({ productId, payload, model }) {
         const cleanedPayload = removeUndefinedNull(payload);
         const updatePayload = updateNestedObjectParser(cleanedPayload);
-        return await model.findByIdAndUpdate(productId, { $set: updatePayload }, { new: true }).lean();
+        return await model
+            .findByIdAndUpdate(
+                productId,
+                { $set: updatePayload },
+                { new: true }
+            )
+            .lean();
     }
     static async findAllDraftForShop({
         query,
@@ -127,16 +137,8 @@ class ProductRepository {
         return products;
     };
 
-    static findProduct = async ({
-        product_id,
-        unSelect,
-    }: {
-        product_id: string;
-        unSelect: string[];
-    }) => {
-        return await productModel
-            .findById(product_id)
-            .select(getUnSelectData(unSelect));
+    static findProduct = async (product_id: string) => {
+        return await productModel.findById(product_id).lean();
     };
 }
 

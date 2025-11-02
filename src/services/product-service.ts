@@ -252,7 +252,6 @@ class ProductService {
     static async findProduct({ product_id }) {
         return await ProductRepository.findProduct({
             product_id,
-            unSelect: ["__v", "product_ratingsAverage"],
         });
     }
 }

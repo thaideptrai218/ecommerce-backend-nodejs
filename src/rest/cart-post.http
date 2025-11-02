@@ -1,0 +1,165 @@
+@url_dev=http://localhost:3055
+@api_key=niggar-api-key
+@client_id=69074f5479cbc75d6571e355
+@authorization=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTA3NGY1NDc5Y2JjNzVkNjU3MWUzNTUiLCJlbWFpbCI6IndlbHRlcmlhbEBnbWFpbC5jb20iLCJuYW1lIjoiVGhhaSBEaW5oIiwiaWF0IjoxNzYyMDg3MzM1LCJleHAiOjE3NjMzODMzMzV9.pZk63-gb0HXC5DOqyhmJTTFP2PN4in8zuVg83Jn16CA
+@placeholder_api_key=niggar-api-key
+
+### Add product to cart (basic version)
+POST {{url_dev}}/v1/api/cart
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "productId": "690751d279cbc75d6571e36d",
+    "quantity": 2,
+    "shopId": "69074f5479cbc75d6571e355",
+    "name": "Sample Product",
+    "price": 29.99
+}
+
+### Add another product to cart
+POST {{url_dev}}/v1/api/cart
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "productId": "690751d579cbc75d6571e375",
+    "quantity": 1,
+    "shopId": "69074f5479cbc75d6571e355",
+    "name": "Another Product",
+    "price": 49.99
+}
+
+### Add products to cart with shop validation (advanced version)
+POST {{url_dev}}/v1/api/cart/v2
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "shopOrderIds": [
+        {
+            "shopId": "69074f5479cbc75d6571e355",
+            "item_product": [
+                {
+                    "productId": "690751d279cbc75d6571e36d",
+                    "quantity": 10,
+                    "old_quantity": 2
+                }
+            ]
+        }
+    ]
+}
+
+### Get user cart
+GET {{url_dev}}/v1/api/cart
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+### Remove product from cart
+DELETE {{url_dev}}/v1/api/cart/690751d579cbc75d6571e375
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+### Clear entire cart
+DELETE {{url_dev}}/v1/api/cart
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+### Set product quantity to 5 items (SET behavior)
+PATCH {{url_dev}}/v1/api/cart/quantity
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "productId": "690751d279cbc75d6571e36d",
+    "quantity": 5
+}
+
+### Set product quantity to 1 item (SET behavior)
+PATCH {{url_dev}}/v1/api/cart/quantity
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "productId": "690751d279cbc75d6571e36d",
+    "quantity": 1
+}
+
+### Remove product by setting quantity to 0 (auto-removes)
+PATCH {{url_dev}}/v1/api/cart/quantity
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "productId": "690751d579cbc75d6571e375",
+    "quantity": 0
+}
+
+### Update cart state (mark as completed)
+PATCH {{url_dev}}/v1/api/cart/state
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "newState": "completed"
+}
+
+### Update cart state (mark as pending)
+PATCH {{url_dev}}/v1/api/cart/state
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "newState": "pending"
+}
+
+### Test removing product with quantity 0 using V2 endpoint
+POST {{url_dev}}/v1/api/cart/v2
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "shopOrderIds": [
+        {
+            "shopId": "69074f5479cbc75d6571e355",
+            "item_product": [
+                {
+                    "productId": "65fb8b8c5f9d1a2a8c8b4567",
+                    "quantity": 0,
+                    "old_quantity": 3
+                }
+            ]
+        }
+    ]
+}
+
+### Get cart after operations
+GET {{url_dev}}/v1/api/cart
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}

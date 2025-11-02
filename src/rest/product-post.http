@@ -1,7 +1,9 @@
 @url_dev=http://localhost:3055
 @api_key=niggar-api-key
-@clientId=6900378dbddfc4d935b6856b
-@authorization=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTAwMzc4ZGJkZGZjNGQ5MzViNjg1NmIiLCJlbWFpbCI6IndlbHRlcmlhbEBnbWFpbC5jb20iLCJuYW1lIjoiVGhhaSBEaW5oIiwiaWF0IjoxNzYxODkyMDk4LCJleHAiOjE3NjMxODgwOTh9.tIvq_t_NT91_N87a1srpYo1FwYLj3jhsGbXWk50u6x0
+@clientId=69074f5479cbc75d6571e355
+@authorization=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTA3NGY1NDc5Y2JjNzVkNjU3MWUzNTUiLCJlbWFpbCI6IndlbHRlcmlhbEBnbWFpbC5jb20iLCJuYW1lIjoiVGhhaSBEaW5oIiwiaWF0IjoxNzYyMDg3MzM1LCJleHAiOjE3NjMzODMzMzV9.pZk63-gb0HXC5DOqyhmJTTFP2PN4in8zuVg83Jn16CA
+@placeholder_api_key=niggar-api-key
+
 
 ### Create a new Clothing Product
 POST {{url_dev}}/v1/api/product
@@ -64,7 +66,7 @@ x-client-id: {{clientId}}
 Content-Type: application/json
 
 ### Publish a Product
-PATCH {{url_dev}}/v1/api/product/publish/6900b9d05982e6434d9ac272
+PATCH {{url_dev}}/v1/api/product/publish/690751d579cbc75d6571e375
 x-api-key: {{api_key}}
 authorization: {{authorization}}
 x-client-id: {{clientId}}
@@ -91,14 +93,8 @@ authorization: {{authorization}}
 x-client-id: {{clientId}}
 Content-Type: application/json
 
-GET {{url_dev}}/v1/api/product/
-x-api-key: {{api_key}}
-authorization: {{authorization}}
-x-client-id: {{clientId}}
-Content-Type: application/json
-
 ### Find a product
-GET {{url_dev}}/v1/api/product/69003a15b67a52859b72fef0
+GET {{url_dev}}/v1/api/product/690751d579cbc75d6571e375
 x-api-key: {{api_key}}
 authorization: {{authorization}}
 x-client-id: {{clientId}}
