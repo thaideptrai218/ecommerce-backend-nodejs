@@ -1,7 +1,9 @@
 import { BadRequestError } from "../core/error-respone";
+import orderSchema from "../models/order-schema";
 import { CartRepository } from "../models/repositories/cart-rep";
 import ProductRepository from "../models/repositories/product.repo";
 import { DiscountService } from "./discount-service";
+import { acquireLock, releaseLock } from "./redis";
 
 export class CheckoutService {
     /**
@@ -172,4 +174,62 @@ export class CheckoutService {
             checkoutOrder,
         };
     }
+
+    static async orderByUser({
+        shop_order_ids,
+        cartId,
+        userId,
+        user_address = {},
+        user_paymenet = {},
+    }) {
+        const { shop_order_ids_new, checkout_order } =
+            await CheckoutService.checkOutReview({
+                cartId,
+                userId,
+                shop_order_ids,
+            });
+
+        // check lai mot lan nua xem vuot ton kho hay ko
+        // get new array products
+        const products = shop_order_ids_new.flatMap(
+            (order) => order.item_products
+        );
+
+        console.log(`[1]:`, products);
+        const aquireProduct = [];
+        for (let i = 0; i < products.length; i++) {
+            const { productId, quantity } = products[i];
+            const keyLock = await acquireLock(productId, quantity, cartId);
+            aquireProduct.push(keyLock ? true : false);
+
+            if (keyLock) {
+                await releaseLock(keyLock);
+            }
+        }
+
+        if (aquireProduct.includes(false)) {
+            throw new BadRequestError("Mot so san phan da dc update");
+        }
+
+        const newOrder = await orderSchema.create({
+            order_userId: userId,
+            order_checkout: checkout_order,
+            order_shipping: user_address,
+            order_payment: user_paymenet,
+            order_products: shop_order_ids_new
+        });
+
+        // if (newOrder) {
+
+        // }
+
+        return newOrder
+    }
+
+    static async getOrderByUser() {
+
+    }
+
+    
+    
 }
