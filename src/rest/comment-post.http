@@ -1,0 +1,90 @@
+@url_dev=http://localhost:3055
+@api_key=niggar-api-key
+@clientId=6900378dbddfc4d935b6856b
+@authorization=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTAwMzc4ZGJkZGZjNGQ5MzViNjg1NmIiLCJlbWFpbCI6IndlbHRlcmlhbEBnbWFpbC5jb20iLCJuYW1lIjoiVGhhaSBEaW5oIiwiaWF0IjoxNzYzNTM3MDE2LCJleHAiOjE3NjQ4MzMwMTZ9.DaBsU9weSEazPbcvUAI_o5K6KZX9eb_Y8Tyzfky5qqM
+
+@product_id= 69003a15b67a52859b72fef0
+### Create a new Root Comment
+POST {{url_dev}}/v1/api/comment
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "productId": "{{product_id}}",
+    "content": "Comment 1.2.1.2 (Sun Dresses)",
+    "parentCommentId": "691d7c7ae4a3142ca59faca3"
+}
+
+### Create another Root Comment
+POST {{url_dev}}/v1/api/comment
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "productId": "{{product_id}}",
+    "content": "Yes! v2",
+    "parentCommentId": "691d7298413a896b1ae3985f"
+}
+
+### Get all comments for a product
+GET {{url_dev}}/v1/api/comment/product/{{product_id}}?page=1&limit=10
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### Get a specific comment by ID
+GET {{url_dev}}/v1/api/comment/69074f5479cbc75d6571e355
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### Get replies for a comment
+GET {{url_dev}}/v1/api/comment/691d7c7ae4a3142ca59faca3/replies?page=1&limit=5
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### Update a comment
+PATCH {{url_dev}}/v1/api/comment/69074f5479cbc75d6571e355
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "content": "Updated comment: This product exceeded my expectations!"
+}
+
+### Delete a comment
+DELETE {{url_dev}}/v1/api/comment/691d7be2e4a3142ca59fac7b
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### Create a Reply Comment (will fail until MPTT logic is fixed)
+POST {{url_dev}}/v1/api/comment
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "productId": "{{product_id}}",
+    "content": "I agree! The quality is outstanding.",
+    "parentCommentId": "69074f5479cbc75d6571e355"
+}
+
+### Get comments with pagination
+GET {{url_dev}}/v1/api/comment/product/{{product_id}}?page=2&limit=5
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
