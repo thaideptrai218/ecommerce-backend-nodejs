@@ -6,6 +6,7 @@ import cartRouter from "./cart"; // Import cart router
 import checkoutRouter from "./checkout"; // Import checkout router
 import inventoryRouter from "./inventory"
 import commentRouter from "./comment"; // Import comment router
+import notificationRouter from "./notification"; // Import notification router
 import { apiKey, permission } from "../auth/check-auth";
 
 const router = express.Router();
@@ -21,5 +22,6 @@ router.use("/v1/api/inventory", inventoryRouter)
 router.use("/v1/api/cart", cartRouter); // Mount cart router
 router.use("/v1/api/checkout", checkoutRouter); // Mount checkout router
 router.use("/v1/api/comment", commentRouter); // Mount comment router
+router.use("/v1/api/notification", notificationRouter); // Mount notification router
 
 export default router;

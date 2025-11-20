@@ -8,6 +8,7 @@ import { Created } from "../core/success-respone";
 import { Types } from "mongoose"; // Import Types for ObjectId
 import ProductRepository from "../models/repositories/product.repo";
 import { InventoryRepository } from "../models/repositories/inventory-repo";
+import { NotificationService } from "./notification-service";
 
 // --- Base Product Class (Abstract) ---
 abstract class Product {
@@ -141,6 +142,19 @@ class ProductService {
                 stock: newProduct.product_quantity,
             });
         }
+
+        // Send notification asynchronously (fire and forget)
+        NotificationService.pushNotiToSystemAsync({
+            type: 'SHOP-001',
+            receivedId: 1,
+            senderId: newProduct.product_shop,
+            options: {
+                productName: newProduct.product_name,
+                shopName: `Shop ${newProduct.product_shop}`
+            }
+        })
+
+        
         return newProduct;
     }
 

@@ -1,0 +1,147 @@
+@url_dev=http://localhost:3055
+@api_key=niggar-api-key
+@clientId=6900378dbddfc4d935b6856b
+@authorization= eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTAwMzc4ZGJkZGZjNGQ5MzViNjg1NmIiLCJlbWFpbCI6IndlbHRlcmlhbEBnbWFpbC5jb20iLCJuYW1lIjoiVGhhaSBEaW5oIiwiaWF0IjoxNzYzNTM3MDE2LCJleHAiOjE3NjQ4MzMwMTZ9.DaBsU9weSEazPbcvUAI_o5K6KZX9eb_Y8Tyzfky5qqM
+
+### Create Shop Notification
+POST {{url_dev}}/v1/api/notification
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "type": "SHOP-001",
+    "receivedId": "6900378dbddfc4d935b6856b",
+    "senderId": "6900378dbddfc4d935b6856b",
+    "options": {
+        "productName": "Premium Laptop",
+        "shopName": "TechStore"
+    }
+}
+
+### Create Promotion Notification
+POST {{url_dev}}/v1/api/notification
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "type": "PROMOTION-001",
+    "receivedId": "6900378dbddfc4d935b6856b",
+    "senderId": "6900378dbddfc4d935b6856b",
+    "options": {
+        "voucherName": "SUMMER2024",
+        "shopName": "TechStore"
+    }
+}
+
+### Create Order Notification
+POST {{url_dev}}/v1/api/notification
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "type": "ORDER-001",
+    "receivedId": "6900378dbddfc4d935b6856b",
+    "senderId": "shop123",
+    "options": {
+        "orderId": "ORD-2024-001"
+    }
+}
+
+### Create Order Status Update Notification
+POST {{url_dev}}/v1/api/notification
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "type": "ORDER-002",
+    "receivedId": "6900378dbddfc4d935b6856b",
+    "senderId": "shop123",
+    "options": {
+        "orderId": "ORD-2024-001"
+    }
+}
+
+### Create Promotion Available Notification
+POST {{url_dev}}/v1/api/notification
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "type": "PROMOTION-002",
+    "receivedId": "6900378dbddfc4d935b6856b",
+    "senderId": "6900378dbddfc4d935b6856b",
+    "options": {
+        "promotionName": "Flash Sale 50% Off"
+    }
+}
+
+### Get All Notifications
+GET {{url_dev}}/v1/api/notification
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "userId": "1"
+}
+
+### Get Shop Notifications Only
+GET {{url_dev}}/v1/api/notification?type=SHOP-001
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### Get Promotion Notifications Only
+GET {{url_dev}}/v1/api/notification?type=PROMOTION-001
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### Get Order Notifications Only
+GET {{url_dev}}/v1/api/notification?type=ORDER-001
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### Mark Notification as Read
+PATCH {{url_dev}}/v1/api/notification/507f1f77bcf86cd799439011/read
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### Test Asynchronous Notification (via Product Creation)
+POST {{url_dev}}/v1/api/product
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "product_type": "Electronics",
+    "product_name": "Test Notification Product",
+    "product_thumb": "http://example.com/test.jpg",
+    "product_description": "Product to test async notification creation",
+    "product_price": 99.99,
+    "product_quantity": 50,
+    "product_shop": "{{clientId}}",
+    "product_attributes": {
+        "manufacturer": "TestBrand",
+        "model": "TEST-001",
+        "warranty": "1 year"
+    }
+}
