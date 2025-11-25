@@ -27,7 +27,7 @@ const runProducer = async () => {
 
         setInterval(() => {
             channel.sendToQueue(queueResult.queue, Buffer.from(msg), {
-                expiration: 10000,
+                expiration: 5000, // Set to 5 seconds to ensure expiration before consumer starts
             });
             console.log(`product msg:: `, msg);
         }, 1000);
