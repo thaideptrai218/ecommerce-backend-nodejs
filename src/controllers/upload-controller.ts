@@ -3,6 +3,7 @@ import { SuccessResponse } from "../core/success-respone";
 import {
     uploadImageFromLocal,
     uploadImageFromUrl,
+    uploadImagesFromLocalFiles,
 } from "../services/upload-service";
 
 class UploadController {
@@ -23,7 +24,22 @@ class UploadController {
         new SuccessResponse(
             "Upload sucessfully",
             200,
-            await uploadImageFromLocal({path: file.path})
+            await uploadImageFromLocal({ path: file.path })
+        ).send(res);
+    };
+    uploadImageFromLocalFiles = async (req, res, next) => {
+        const { files } = req;
+
+        if (!files) {
+            throw new BadRequestError("FIle missing");
+        }
+
+        new SuccessResponse(
+            "Upload sucessfully",
+            200,
+            await uploadImagesFromLocalFiles({
+                files,
+            })
         ).send(res);
     };
 }

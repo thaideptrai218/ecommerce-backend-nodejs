@@ -1,4 +1,5 @@
 import cloudinary from "../configs/cloudinary-config";
+import fs from "fs";
 
 const uploadImageFromUrl = async () => {
     try {
@@ -30,6 +31,12 @@ const uploadImageFromLocal = async ({ path, folderName = "product/8409" }) => {
         };
     } catch (error) {
         console.error(error);
+    } finally {
+        try {
+            fs.unlinkSync(path);
+        } catch (error) {
+            console.error("Error deleting file", error);
+        }
     }
 };
 
@@ -39,27 +46,38 @@ const uploadImagesFromLocalFiles = async ({
 }) => {
     try {
         console.log(`files`, files, folderName);
-        if (!files.length) return;
+        if (!files.length) return [];
 
-        const uploadedUrls = [];
-        for (const file of files) {
-            const result = await cloudinary.uploader.upload(file.path, {
-                folder: folderName,
-            });
+        const uploadPromises = files.map(async (file) => {
+            try {
+                const result = await cloudinary.uploader.upload(file.path, {
+                    folder: folderName,
+                });
 
-            uploadedUrls.push({
-                image_url: result.secure_url,
-                shopId: 8049,
-                thumb_url: await cloudinary.url(result.public_id, {
-                    height: 100,
-                    width: 100,
-                    format: "jpg",
-                }),
-            });
-        }
+                return {
+                    image_url: result.secure_url,
+                    shopId: 8049,
+                    thumb_url: cloudinary.url(result.public_id, {
+                        height: 100,
+                        width: 100,
+                        fetch_format: "auto",
+                        quality: "auto",
+                    }),
+                };
+            } finally {
+                try {
+                    fs.unlinkSync(file.path);
+                } catch (error) {
+                    console.error("Error deleting file", error);
+                }
+            }
+        });
+
+        const uploadedUrls = await Promise.all(uploadPromises);
+        return uploadedUrls;
     } catch (error) {
         console.error(error);
     }
 };
 
-export { uploadImageFromUrl, uploadImageFromLocal };
+export { uploadImageFromUrl, uploadImageFromLocal, uploadImagesFromLocalFiles };

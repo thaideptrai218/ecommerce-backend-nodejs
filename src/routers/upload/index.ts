@@ -6,7 +6,12 @@ import { uploadDisk } from "../../configs/multer-config";
 const router = express.Router();
 
 router.post("/product", asyncHandler(uploadController.uploadFile));
-router.post("/product/thumb", uploadDisk.single("file"), asyncHandler(uploadController.uploadFileThumb));
+router.post("/product/thumb", uploadDisk.single("file"), asyncHandler(uploadController.vsuploadFileThumb));
+router.post(
+    "/product/multiple",
+    uploadDisk.array("files", 3),
+    asyncHandler(uploadController.uploadImageFromLocalFiles)
+);
 
 
 export default router;

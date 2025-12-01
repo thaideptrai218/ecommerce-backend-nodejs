@@ -28,4 +28,45 @@ Content-Disposition: form-data; name="file"; filename="image.png"
 Content-Type: image/png
 
 < ./../../image.png
+
+--MyBoundary--
+
+
+
+###
+
+
+
+POST {{url_dev}}/v1/api/upload/product/multiple
+
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+x-api-key: {{placeholder_api_key}}
+
+x-client-id: {{client_id}}
+
+authorization: {{authorization}}
+
+
+
+--MyBoundary
+
+Content-Disposition: form-data; name="files"; filename="image.png"
+
+Content-Type: image/png
+
+
+
+< ./../../image.png
+
+--MyBoundary
+
+Content-Disposition: form-data; name="files"; filename="image.png"
+
+Content-Type: image/png
+
+
+
+< ./../../image.png
+
 --MyBoundary--
