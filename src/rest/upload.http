@@ -1,0 +1,31 @@
+@url_dev=http://localhost:3055
+@api_key=niggar-api-key
+@client_id=692d02e7de80c4533cd160d8
+@authorization=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTJkMDJlN2RlODBjNDUzM2NkMTYwZDgiLCJlbWFpbCI6IndlbHRlcmlhbEBnbWFpbC5jb20iLCJuYW1lIjoiVGhhaSBEaW5oIiwiaWF0IjoxNzY0NTU3ODIzLCJleHAiOjE3NjU4NTM4MjN9.Zxg7UwKfAu2cKHHchxC83S3RcLDQcpY7hnOcZ7rOvYo
+@placeholder_api_key=niggar-api-key
+@refresh_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZmMDQyYmY1Mzg4NDJiNmRlZjUyMzciLCJlbWFpbCI6ImNvbmNhY0BnbWFpbC5jb20iLCJuYW1lIjoiY29uY2FjIiwiaWF0IjoxNzYxNTQ4OTM1LCJleHAiOjE3NjIxNTM3MzV9.l_f6PkY_IeSIBuJvtgpiBI-J9qSmf3b68Wul1XTusz8
+
+POST {{url_dev}}/v1/api/upload/product
+Content-Type: application/json
+x-api-key: {{placeholder_api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    
+}
+
+###
+
+POST {{url_dev}}/v1/api/upload/product/thumb
+Content-Type: multipart/form-data; boundary=MyBoundary
+x-api-key: {{placeholder_api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+--MyBoundary
+Content-Disposition: form-data; name="file"; filename="image.png"
+Content-Type: image/png
+
+< ./../../image.png
+--MyBoundary--

@@ -1,0 +1,65 @@
+import cloudinary from "../configs/cloudinary-config";
+
+const uploadImageFromUrl = async () => {
+    try {
+        const urlImage =
+            "https://scontent-hkg4-1.cdninstagram.com/v/t51.29350-15/470099763_893139816272550_3555965708903184822_n.jpg?stp=dst-jpg_e15_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6InRocmVhZHMuRkVFRC5pbWFnZV91cmxnZW4uNzIweDUyNC5zZHIuZjI5MzUwLmRlZmF1bHRfaW1hZ2UuYzIifQ&_nc_ht=scontent-hkg4-1.cdninstagram.com&_nc_cat=106&_nc_oc=Q6cZ2QGMzEPyVdVrFwkbWdmIXgcmvCUeb7O-g3U3yHzolfJ-HX23KfadN278gFKm_fUXTSfXXPOjn9e6ACxtusb_PrAH&_nc_ohc=-2ezvuDdpEkQ7kNvwHR-aIJ&_nc_gid=SXf6MZE2o8o_dUA0nAYFwg&edm=APs17CUBAAAA&ccb=7-5&ig_cache_key=MzUyMTg3NTMxMTU4NTY2MTcyNA%3D%3D.3-ccb7-5&oh=00_Afj9BSXJ7R5xrvp0lxu6QK-LJXiuXyeLtWXiQKd7XQgZ1g&oe=6932B86A&_nc_sid=10d13b";
+        const folderName = "product/8409";
+        const newFileName = "testdemo";
+
+        const result = await cloudinary.uploader.upload(urlImage, {
+            public_id: newFileName,
+            folder: folderName,
+        });
+        return result;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+const uploadImageFromLocal = async ({ path, folderName = "product/8409" }) => {
+    try {
+        const result = await cloudinary.uploader.upload(path, {
+            public_id: "thumb",
+            folder: folderName,
+        });
+
+        return {
+            image_url: result.secure_url,
+            shopId: 8409,
+        };
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+const uploadImagesFromLocalFiles = async ({
+    files,
+    folderName = "product/8049",
+}) => {
+    try {
+        console.log(`files`, files, folderName);
+        if (!files.length) return;
+
+        const uploadedUrls = [];
+        for (const file of files) {
+            const result = await cloudinary.uploader.upload(file.path, {
+                folder: folderName,
+            });
+
+            uploadedUrls.push({
+                image_url: result.secure_url,
+                shopId: 8049,
+                thumb_url: await cloudinary.url(result.public_id, {
+                    height: 100,
+                    width: 100,
+                    format: "jpg",
+                }),
+            });
+        }
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export { uploadImageFromUrl, uploadImageFromLocal };
