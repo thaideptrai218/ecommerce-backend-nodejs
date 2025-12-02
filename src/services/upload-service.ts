@@ -1,12 +1,12 @@
 import cloudinary from "../configs/cloudinary-config";
 import fs from "fs";
 import { s3, PutObjectCommand } from "../configs/s3-config";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { GetObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "aws-cloudfront-sign";
 
 const uploadImageFromLocalS3 = async ({ file }) => {
     try {
         const imageName = `${Date.now()}-${file.originalname}`;
+        const cloud_front_url = `https://d375ag36hjk2ti.cloudfront.net/${imageName}`;
         const Bucket = process.env.AWS_BUCKET_NAME;
 
         const putCommand = new PutObjectCommand({
@@ -18,13 +18,10 @@ const uploadImageFromLocalS3 = async ({ file }) => {
 
         await s3.send(putCommand);
 
-        const getCommand = new GetObjectCommand({
-            Bucket,
-            Key: imageName,
-        });
-
-        const signedUrl = await getSignedUrl(s3, getCommand, {
-            expiresIn: 3600, // URL expires in 1 hour (3600 seconds)
+        const signedUrl = getSignedUrl(cloud_front_url, {
+            keypairId: "K3PWDMWUR3P3T0",
+            expireTime: Date.now() + 3600 * 1000,
+            privateKeyString: process.env.AWS_BUCKET_PUBLIC_KEY_ID,
         });
 
         return {
