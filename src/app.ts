@@ -2,14 +2,11 @@ import express from "express";
 import morgan from "morgan";
 import helmet from "helmet";
 import compression from "compression";
-import dotenv from "dotenv";
 import cors from "cors";
 
 import router from "./routers";
 import { NotFoundError } from "./core/error-respone";
-dotenv.config({
-    quiet: true,
-});
+
 const app = express();
 
 // init middlewares

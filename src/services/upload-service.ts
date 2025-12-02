@@ -1,5 +1,44 @@
 import cloudinary from "../configs/cloudinary-config";
 import fs from "fs";
+import { s3, PutObjectCommand } from "../configs/s3-config";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { GetObjectCommand } from "@aws-sdk/client-s3";
+
+const uploadImageFromLocalS3 = async ({ file }) => {
+    try {
+        const imageName = `${Date.now()}-${file.originalname}`;
+        const Bucket = process.env.AWS_BUCKET_NAME;
+
+        const putCommand = new PutObjectCommand({
+            Bucket,
+            Key: imageName,
+            Body: file.buffer,
+            ContentType: file.mimetype || "image/jpeg",
+        });
+
+        await s3.send(putCommand);
+
+        const getCommand = new GetObjectCommand({
+            Bucket,
+            Key: imageName,
+        });
+
+        const signedUrl = await getSignedUrl(s3, getCommand, {
+            expiresIn: 3600, // URL expires in 1 hour (3600 seconds)
+        });
+
+        return {
+            image_url: signedUrl,
+            result: {
+                // Return some relevant details from the put operation if needed, or just the signed URL
+                Bucket,
+                Key: imageName,
+            },
+        };
+    } catch (error) {
+        console.error(error);
+    }
+};
 
 const uploadImageFromUrl = async () => {
     try {
@@ -80,4 +119,9 @@ const uploadImagesFromLocalFiles = async ({
     }
 };
 
-export { uploadImageFromUrl, uploadImageFromLocal, uploadImagesFromLocalFiles };
+export {
+    uploadImageFromUrl,
+    uploadImageFromLocal,
+    uploadImagesFromLocalFiles,
+    uploadImageFromLocalS3,
+};

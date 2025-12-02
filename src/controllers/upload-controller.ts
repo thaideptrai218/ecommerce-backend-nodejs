@@ -4,6 +4,7 @@ import {
     uploadImageFromLocal,
     uploadImageFromUrl,
     uploadImagesFromLocalFiles,
+    uploadImageFromLocalS3,
 } from "../services/upload-service";
 
 class UploadController {
@@ -40,6 +41,19 @@ class UploadController {
             await uploadImagesFromLocalFiles({
                 files,
             })
+        ).send(res);
+    };
+    uploadImageFromLocalS3 = async (req, res, next) => {
+        const { file } = req;
+
+        if (!file) {
+            throw new BadRequestError("File missing");
+        }
+
+        new SuccessResponse(
+            "Upload successfully",
+            200,
+            await uploadImageFromLocalS3({ file })
         ).send(res);
     };
 }
