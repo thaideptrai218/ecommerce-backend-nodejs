@@ -1,5 +1,6 @@
 
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
+import logger from "../loggers/winston_log";
 
 class ErrorResponse extends Error {
     public status: number;
@@ -7,6 +8,7 @@ class ErrorResponse extends Error {
     constructor(message: string, status: number) {
         super(message);
         this.status = status;
+        logger.error(`Error name: ${this.name}, Message: ${this.message}, Status: ${this.status}, Stack: ${this.stack}`);
     }
 }
 

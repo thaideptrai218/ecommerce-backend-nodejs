@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 import AccessService from "../services/access-service";
 import { asyncHandler } from "../helpers/asyncHandler";
 import { sendSuccessResponse } from "../helpers/responseHandler";
-import { Created } from "../core/success-respone";
+import { BadRequestError } from "../core/error-respone";
 
 class AccessController {
     handleRefreshToken = asyncHandler(
@@ -33,6 +33,11 @@ class AccessController {
 
     login = asyncHandler(
         async (req: Request, res: Response, next: NextFunction) => {
+            const { email } = req.body;
+
+            if (!email) {
+                throw new BadRequestError("email missing", 666);
+            }
             const response = await AccessService.login(req.body);
             return sendSuccessResponse(res, response);
         }

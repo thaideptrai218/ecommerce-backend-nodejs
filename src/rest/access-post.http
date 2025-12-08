@@ -22,7 +22,7 @@ Content-Type: application/json
 x-api-key: {{placeholder_api_key}}
 
 {
-    "email": "welterial@gmail.com",
+    # "email": "welterial@gmail.com",
     "password": "Thaihbvn218"
 }
 

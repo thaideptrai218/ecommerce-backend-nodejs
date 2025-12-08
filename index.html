@@ -3,190 +3,59 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>JWT Refresh Token Client</title>
-        <style>
-            body {
-                font-family: sans-serif;
-                padding: 2em;
-            }
-            button {
-                padding: 0.5em 1em;
-                margin: 0.5em 0;
-            }
-            #log {
-                background-color: #f4f4f4;
-                border: 1px solid #ccc;
-                padding: 1em;
-                white-space: pre-wrap;
-                max-height: 400px;
-                overflow-y: auto;
-            }
-        </style>
-        <!-- 1. Include axios library -->
-        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <title>Document</title>
     </head>
     <body>
-        <h1>JWT Refresh Token Client Demo</h1>
-        <button id="loginBtn">Login</button>
-        <button id="profileBtn">Get User Profile (Protected)</button>
-        <button id="logoutBtn">Logout</button>
-
-        <h3>Log:</h3>
-        <pre id="log"></pre>
+        <h1>Promise All</h1>
 
         <script>
-            const logElement = document.getElementById("log");
-            const log = (message) => {
-                console.log(message);
-                logElement.textContent += `> ${message}
-`;
-            };
+            const cocurrencyRequest = async (urls, maxNum) => {
+                if (urls.length === 0) {
+                    return Promise.resolve([]);
+                }
 
-            // --- CONFIGURATION ---
-            // Make sure your server is running on this port
-            const API_BASE_URL = "http://localhost:3055/v1/api";
+                return new Promise((resolve) => {
+                    const results = [];
+                    let index = 0;
+                    let count = 0;
 
-            // --- TOKEN STORAGE ---
-            // In a real app, you might use localStorage, but for this demo,
-            // we'll just keep them in memory.
-            let tokenData = {
-                accessToken: null,
-                refreshToken: null,
-                userId: null,
-                apiKey: "niggar-api-key", // IMPORTANT: Set your API key
-            };
+                    async function request() {
+                        if (index === urls.length) return;
 
-            // --- API INSTANCE with AXIOS ---
-            const api = axios.create({
-                baseURL: API_BASE_URL,
-            });
-
-            // Use an interceptor to add the auth headers to every request
-            api.interceptors.request.use(
-                (config) => {
-                    if (tokenData.accessToken) {
-                        config.headers["authorization"] = tokenData.accessToken;
-                        config.headers["x-client-id"] = tokenData.userId;
-                        config.headers["x-api-key"] = tokenData.apiKey;
-                    }
-                    return config;
-                },
-                (error) => Promise.reject(error)
-            );
-
-            // --- THE CORE LOGIC: RESPONSE INTERCEPTOR ---
-            // This interceptor will run for every response that gets an error.
-            api.interceptors.response.use(
-                (response) => response, // Simply return successful responses
-                async (error) => {
-                    const originalRequest = error.config;
-
-                    // Check if the error is 403 (Forbidden) and if we haven't already tried to refresh
-                    if (
-                        error.response.status === 403 &&
-                        !originalRequest._retry
-                    ) {
-                        originalRequest._retry = true; // Mark that we've tried to refresh
-                        log(
-                            "Access token expired or invalid. Attempting to refresh..."
-                        );
+                        const i = index;
+                        const url = urls[index++];
 
                         try {
-                            // Call the refresh token endpoint
-                            const { data } = await api.post(
-                                "/shop/refresh-token",
-                                {
-                                    refreshToken: tokenData.refreshToken,
-                                }
-                            );
-
-                            log("Successfully refreshed tokens.");
-                            // Update the stored tokens
-                            tokenData.accessToken =
-                                data.metadata.tokens.accessToken;
-                            tokenData.refreshToken =
-                                data.metadata.tokens.refreshToken;
-
-                            // Update the header of the original request and retry it
-                            originalRequest.headers["authorization"] =
-                                tokenData.accessToken;
-                            return api(originalRequest);
-                        } catch (refreshError) {
-                            log(
-                                "Failed to refresh token. User must log in again."
-                            );
-                            // If refresh fails, clear tokens and effectively log the user out
-                            logout();
-                            return Promise.reject(refreshError);
+                            results[i] = await fetch(url);
+                        } finally {
+                            if (++count === urls.length) {
+                                console.log("FINISHED all request");
+                                resolve(results);
+                            }
                         }
+
+                        setTimeout(request, 1000);
                     }
-                    // For any other errors, just reject the promise
-                    return Promise.reject(error);
-                }
+
+                    const times = Math.min(maxNum, urls.length);
+
+                    Array.from({ length: times }, () =>
+                        setTimeout(request, 1000)
+                    );
+                });
+            };
+
+            const urls = [];
+
+            for (let i = 1; i <= 21; i++) {
+                urls.push(`https://jsonplaceholder.typicode.com/todos/${i}`);
+            }
+
+            const result = cocurrencyRequest(urls, 3).then((res) =>
+                console.log(res)
             );
 
-            // --- API FUNCTIONS ---
-            const login = async () => {
-                log("Attempting to log in...");
-                try {
-                    // IMPORTANT: Replace with a real user from your database
-                    const response = await api.post("/shop/login", {
-                        email: "concac@gmail.com",
-                        password: "Thaihbvn218",
-                    });
-                    const { metadata } = response.data;
-                    tokenData.accessToken = metadata.tokens.accessToken;
-                    tokenData.refreshToken = metadata.tokens.refreshToken;
-                    tokenData.userId = metadata.shop._id;
-                    log("Login successful!");
-                    log(`User ID: ${tokenData.userId}`);
-                } catch (err) {
-                    log(
-                        `Login failed: ${
-                            err.response?.data?.message || err.message
-                        }`
-                    );
-                }
-            };
-
-            const getProfile = async () => {
-                if (!tokenData.accessToken) {
-                    log("You must log in first.");
-                    return;
-                }
-                log("Fetching user profile (protected route)...");
-                try {
-                    // This is just an example endpoint, replace with a real one
-                    const response = await api.get("/shop/profile"); // Assuming you have a /profile route
-                    log("Successfully fetched profile:");
-                    log(JSON.stringify(response.data, null, 2));
-                } catch (err) {
-                    log(
-                        `Failed to fetch profile: ${
-                            err.response?.data?.message || err.message
-                        }`
-                    );
-                }
-            };
-
-            const logout = () => {
-                log("Logging out.");
-                tokenData.accessToken = null;
-                tokenData.refreshToken = null;
-                tokenData.userId = null;
-                // In a real app, you would also call the /logout endpoint on the server
-            };
-
-            // --- EVENT LISTENERS ---
-            document
-                .getElementById("loginBtn")
-                .addEventListener("click", login);
-            document
-                .getElementById("profileBtn")
-                .addEventListener("click", getProfile);
-            document
-                .getElementById("logoutBtn")
-                .addEventListener("click", logout);
+            URL.parse(`https://jsonplaceholder.typicode.com/todos/1`);
         </script>
     </body>
 </html>
