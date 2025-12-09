@@ -7,6 +7,14 @@ const redisClient = new Redis({
     maxRetriesPerRequest: 3,
 });
 
+redisClient.on("error", (err) => {
+    console.error("Redis error:", err);
+});
+
+redisClient.on("connect", () => {
+    console.log("redis sucessfully!");
+});
+
 const acquireLock = async (
     productId: string,
     quantity: number,

@@ -8,10 +8,12 @@ import inventoryRouter from "./inventory";
 import commentRouter from "./comment"; // Import comment router
 import notificationRouter from "./notification"; // Import notification router
 import uploadRouter from "./upload";
+import profileRouter from "./profile";
 import { apiKey, permission } from "../auth/check-auth";
 
 const router = express.Router();
 router.use("/v1/api/upload", uploadRouter);
+router.use("/v1/api/profile", profileRouter);
 // check ApiKey
 router.use(apiKey);
 router.use(permission("0000"));
@@ -24,4 +26,5 @@ router.use("/v1/api/cart", cartRouter); // Mount cart router
 router.use("/v1/api/checkout", checkoutRouter); // Mount checkout router
 router.use("/v1/api/comment", commentRouter); // Mount comment router
 router.use("/v1/api/notification", notificationRouter); // Mount notification router
+
 export default router;
