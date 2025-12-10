@@ -1,0 +1,18 @@
+@url_dev=http://localhost:3055
+
+### Create a new Template (Optional - will auto-create default if missing)
+POST {{url_dev}}/v1/api/email/new_template
+Content-Type: application/json
+
+{
+    "tem_name": "HTML EMAIL OTP",
+    "tem_html": "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>OTP Verification</title></head><body><h2>Welcome to {{shop_name}}!</h2><p>Hello {{user_name}},</p><p>Please verify: <a href=\"{{verify_link}}\">Verify Email</a></p></body></html>"
+}
+
+### Send Email Token
+POST {{url_dev}}/v1/api/email/send_email_token
+Content-Type: application/json
+
+{
+    "email": "welterial@gmail.com"
+}

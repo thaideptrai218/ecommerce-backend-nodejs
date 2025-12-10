@@ -1,0 +1,9 @@
+@url_dev=http://localhost:3055
+
+### Create a new User (Register)
+POST {{url_dev}}/v1/api/user/new_user
+Content-Type: application/json
+
+{
+    "email": "welterial@gmail.com"
+}
