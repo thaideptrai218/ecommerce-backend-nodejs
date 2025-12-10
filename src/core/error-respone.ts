@@ -63,6 +63,15 @@ class DatabaseError extends ErrorResponse {
     }
 }
 
+export class RedisErrorRespone extends ErrorResponse {
+    constructor(
+        message: string = ReasonPhrases.INTERNAL_SERVER_ERROR,
+        statusCode: number = StatusCodes.INTERNAL_SERVER_ERROR
+    ) {
+        super(message, statusCode);
+    }
+}
+
 export {
     ErrorResponse,
     ConflictRequestError,

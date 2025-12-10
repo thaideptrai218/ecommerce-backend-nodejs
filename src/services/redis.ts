@@ -1,19 +1,7 @@
-import Redis from "ioredis";
 import { InventoryRepository } from "../models/repositories/inventory-repo";
+import { getRedis } from "../configs/redis-config";
 
-const redisClient = new Redis({
-    host: process.env.REDIS_HOST || "localhost",
-    port: parseInt(process.env.REDIS_PORT || "6379"),
-    maxRetriesPerRequest: 3,
-});
-
-redisClient.on("error", (err) => {
-    console.error("Redis error:", err);
-});
-
-redisClient.on("connect", () => {
-    console.log("redis sucessfully!");
-});
+const redisClient = getRedis();
 
 const acquireLock = async (
     productId: string,
