@@ -1,0 +1,49 @@
+@url_dev=http://localhost:3055
+@api_key=your_api_key_here
+@client_id=your_client_id_here
+@authorization=your_jwt_token_here
+
+### Create a new Resource
+POST {{url_dev}}/v1/api/rbac/resource
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "name": "balance",
+    "slug": "p0002",
+    "description": "balance test"
+}
+
+### Get all Resources
+GET {{url_dev}}/v1/api/rbac/resources
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+### Create a new Role (e.g., Manager)
+POST {{url_dev}}/v1/api/rbac/role
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "name": "user",
+    "slug": "s00003",
+    "description": "user",
+    "grants": [
+        {
+            "resource": "6939102ad5ab2f78b497f84d",
+            "actions": ["read:own", "update:own"],
+            "attributes": "*"
+        }
+    ]
+}
+
+### Get all Roles
+GET {{url_dev}}/v1/api/rbac/roles
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}

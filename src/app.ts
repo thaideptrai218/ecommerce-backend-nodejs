@@ -3,12 +3,14 @@ import morgan from "morgan";
 import helmet from "helmet";
 import compression from "compression";
 import cors from "cors";
-
 import router from "./routers";
 import { NotFoundError } from "./core/error-respone";
+import crypto from "node:crypto";
+import mylogger from "./loggers/mylogger";
 
 const app = express();
 
+app.use(cors());
 // init middlewares
 app.use(morgan("dev"));
 app.use(helmet());
@@ -20,10 +22,22 @@ app.use(
     })
 );
 
-app.use(cors());
+app.use((req, res, next) => {
+    const requestId = req.headers["x-request-id"];
+    req.requestId = requestId ? requestId : crypto.randomUUID();
+    mylogger.log("input params", {
+        context: req.path,
+        requestId: req.requestId,
+        metadata: {
+            method: req.method,
+            query: req.query,
+            body: req.body
+        },
+    });
 
-// init db
-require("./databases/init_mongoose");
+    next();
+});
+
 // init routes
 app.use("/", router);
 
@@ -34,7 +48,15 @@ app.use((req, res, next) => {
 
 app.use((error, req, res, next) => {
     const statusCode = error.status || 500;
-    console.log(error);
+    // REPLACE console.log with mylogger.error
+    mylogger.error(error.message, {
+        context: req.path,
+        requestId: req.requestId,
+        metadata: {
+            stack: error.stack,
+            error: error
+        }
+    });
     return res.status(statusCode).json({
         status: "error",
         code: statusCode,

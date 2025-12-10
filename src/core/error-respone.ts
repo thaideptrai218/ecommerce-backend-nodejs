@@ -1,18 +1,11 @@
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
 
-import mylogger from "../loggers/mylogger";
-
 class ErrorResponse extends Error {
     public status: number;
 
     constructor(message: string, status: number) {
         super(message);
         this.status = status;
-        mylogger.error(this.message, {
-            context: "/api/v1/login",
-            requestId: "vv33344",
-            metadata: { error: "bad request error" },
-        });
     }
 }
 

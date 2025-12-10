@@ -9,11 +9,13 @@ import commentRouter from "./comment"; // Import comment router
 import notificationRouter from "./notification"; // Import notification router
 import uploadRouter from "./upload";
 import profileRouter from "./profile";
+import rbacRouter from "./rbac";
 import { apiKey, permission } from "../auth/check-auth";
 
 const router = express.Router();
 router.use("/v1/api/upload", uploadRouter);
 router.use("/v1/api/profile", profileRouter);
+router.use("/v1/api/rbac", rbacRouter);
 // check ApiKey
 router.use(apiKey);
 router.use(permission("0000"));
