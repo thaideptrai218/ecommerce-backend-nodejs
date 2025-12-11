@@ -50,7 +50,7 @@ export const sendEmailToken = async ({
         //3. Replace placeholder
         // Construct the verification link
         // Ideally, the base URL should come from an environment variable (e.g., process.env.FRONTEND_URL)
-        const verifyLink = `http://localhost:3000/verify?token=${token.otp_token}&email=${email}`;
+        const verifyLink = `http://localhost:3055/v1/api/user/verify?token=${token.otp_token}&email=${email}`;
 
         const content = template.tem_html
             .replace("{{verify_link}}", verifyLink) // Replace in Button

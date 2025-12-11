@@ -1,5 +1,5 @@
 import { SuccessResponse } from "../core/success-respone";
-import { newUser } from "../services/user-service";
+import { checkLoginEmailTokenService, newUser } from "../services/user-service";
 
 class UserController {
     newUser = async (req, res, next) => {
@@ -11,7 +11,14 @@ class UserController {
         ).send(res);
     };
 
-    checkRegisterEmailToken = async () => {};
+    checkRegisterEmailToken = async (req, res, next) => {
+        const { token } = req.query;
+        console.log("===============", token, "===================");
+        const response = await checkLoginEmailTokenService({ token });
+        new SuccessResponse("User registered successfully", 201, response).send(
+            res
+        );
+    };
 }
 
 export default new UserController();
