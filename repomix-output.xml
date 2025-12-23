@@ -40,8 +40,6 @@ The content is organized as follows:
 </file_summary>
 
 <directory_structure>
-runtime-state/
-  gate-system-state.json
 src/
   auth/
     auth-util.ts
@@ -88,6 +86,8 @@ src/
       discount.repo.ts
       inventory-repo.ts
       product.repo.ts
+      sku.repo.ts
+      spu.repo.ts
     apikey-model.ts
     cart-model.ts
     comment-model.ts
@@ -102,6 +102,8 @@ src/
     resource-model.ts
     role-model.ts
     shop-model.ts
+    sku.model.ts
+    spu.model.ts
     template-model.ts
     user-model.ts
   rest/
@@ -195,6 +197,7 @@ eslint.config.mts
 GEMINI.md
 index.html
 package.json
+README.md
 server.ts
 tsconfig.json
 </directory_structure>
@@ -202,44 +205,270 @@ tsconfig.json
 <files>
 This section contains the contents of the repository's files.
 
-<file path=".repomixignore">
-docs/*
-plans/*
-assets/*
-dist/*
-coverage/*
-build/*
-ios/*
-android/*
-tests/*
-__tests__/*
-__pycache__/*
-node_modules/*
+<file path="src/models/repositories/sku.repo.ts">
+import { SkuModel } from "../sku.model";
 
-.opencode/*
-.claude/*
-.serena/*
-.pnpm-store/*
-.github/*
-.dart_tool/*
-.idea/*
-.husky/*
-.venv/*
+class SkuRepository {
+  static async createSku(sku: any) {
+    return await SkuModel.create(sku);
+  }
+
+  static async createManySkus(skus: any[]) {
+    return await SkuModel.insertMany(skus);
+  }
+
+  static async findSkuById(sku_id: string) {
+    return await SkuModel.findById(sku_id).lean();
+  }
+
+  static async findSkuByUniqueId(sku_unique_id: string) {
+    return await SkuModel.findOne({ sku_id: sku_unique_id }).lean();
+  }
+
+  static async findAllSkusBySpuId(product_id: string) {
+    // product_id in SkuModel is the string ID of the SPU, not ObjectId
+    return await SkuModel.find({ product_id }).lean();
+  }
+
+  static async updateSku(sku_id: string, payload: any) {
+    return await SkuModel.findByIdAndUpdate(sku_id, payload, { new: true }).lean();
+  }
+
+  static async updateSkuStock(sku_id: string, quantity: number) {
+    return await SkuModel.findOneAndUpdate(
+      { sku_id: sku_id }, // Using unique string ID or _id? Model has sku_id unique string. Let's support both or clarify.
+      // Usually stock updates happen by unique SKU ID (business ID) or DB ID.
+      // Given findAllSkusBySpuId uses product_id (string), likely sku_id (string) is primary key for logic.
+      // But updateProductQuantity in product.repo uses findByIdAndUpdate.
+      // Let's assume passed sku_id is _id for consistency with updateSku,
+      // BUT SkuModel has sku_stock.
+      { $inc: { sku_stock: quantity } },
+      { new: true }
+    ).lean();
+  }
+
+  // Overload/Variant for updating by database ID
+  static async updateSkuStockByDbId(id: string, quantity: number) {
+      return await SkuModel.findByIdAndUpdate(
+          id,
+          { $inc: { sku_stock: quantity } },
+          { new: true }
+      ).lean();
+  }
+}
+
+export default SkuRepository;
 </file>
 
-<file path="runtime-state/gate-system-state.json">
-{
-  "enabled": true,
-  "enabledAt": "2025-10-29T12:59:18.565Z",
-  "enableReason": "System initialization (default enabled)",
-  "validationMetrics": {
-    "totalValidations": 0,
-    "successfulValidations": 0,
-    "averageValidationTime": 0,
-    "lastValidationTime": null
-  },
-  "savedAt": "2025-10-29T12:59:18.566Z"
+<file path="src/models/repositories/spu.repo.ts">
+import { SpuModel } from "../spu.model";
+import { getSelectData, convertToObjectIdMongodb } from "../../utils";
+import { Types } from "mongoose";
+
+class SpuRepository {
+  static async createSpu(spu: any) {
+    return await SpuModel.create(spu);
+  }
+
+  static async findSpuById(spu_id: string) {
+    if (!Types.ObjectId.isValid(spu_id)) return null;
+    return await SpuModel.findById(spu_id).lean();
+  }
+
+  static async findSpuByUniqueId(product_id: string) {
+    return await SpuModel.findOne({ product_id }).lean();
+  }
+
+  static async findAllSpus({
+    limit,
+    sort,
+    page,
+    filter,
+    select,
+  }: {
+    limit: number;
+    sort: string;
+    page: number;
+    filter: any;
+    select: string[];
+  }) {
+    const skip = (page - 1) * limit;
+    const sortBy: any = sort === "ctime" ? { _id: -1 } : { _id: 1 };
+
+    return await SpuModel.find(filter)
+      .sort(sortBy)
+      .skip(skip)
+      .limit(limit)
+      .select(getSelectData(select as any))
+      .lean();
+  }
+
+  static async updateSpu(spu_id: string, payload: any) {
+    if (!Types.ObjectId.isValid(spu_id)) return null;
+    return await SpuModel.findByIdAndUpdate(spu_id, payload, { new: true }).lean();
+  }
+
+  static async publishSpuByShop({
+    product_shop,
+    spu_id,
+  }: {
+    product_shop: string;
+    spu_id: string;
+  }) {
+    if (!Types.ObjectId.isValid(product_shop) || !Types.ObjectId.isValid(spu_id)) {
+      return null;
+    }
+
+    const foundSpu = await SpuModel.findOne({
+      _id: convertToObjectIdMongodb(spu_id),
+      product_shop: convertToObjectIdMongodb(product_shop),
+    });
+
+    if (!foundSpu) return null;
+
+    foundSpu.isDraft = false;
+    foundSpu.isPublished = true;
+
+    return await foundSpu.save();
+  }
+
+  static async unpublishSpuByShop({
+    product_shop,
+    spu_id,
+  }: {
+    product_shop: string;
+    spu_id: string;
+  }) {
+    if (!Types.ObjectId.isValid(product_shop) || !Types.ObjectId.isValid(spu_id)) {
+      return null;
+    }
+
+    const foundSpu = await SpuModel.findOne({
+      _id: convertToObjectIdMongodb(spu_id),
+      product_shop: convertToObjectIdMongodb(product_shop),
+    });
+
+    if (!foundSpu) return null;
+
+    foundSpu.isDraft = true;
+    foundSpu.isPublished = false;
+
+    return await foundSpu.save();
+  }
 }
+
+export default SpuRepository;
+</file>
+
+<file path="src/models/sku.model.ts">
+import { Schema, model, Document } from 'mongoose';
+
+const DOCUMENT_NAME = 'Sku';
+const COLLECTION_NAME = 'skus';
+
+interface ISku extends Document {
+  sku_id: string; // Unique stock keeping unit ID (e.g., 'sku_red_m_123')
+  sku_tier_idx: number[]; // Index array mapping to SPU variations (e.g., [0, 1] -> Red, Medium)
+  sku_default: boolean; // Is this the default variant to show?
+  sku_slug: string;
+  sku_sort: number; // Sorting order
+  sku_price: number;
+  sku_stock: number; // Inventory count
+  product_id: string; // Reference to SPU ID (string ID, not ObjectId for flexibility)
+
+  isDraft: boolean;
+  isPublished: boolean;
+  isDeleted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const skuSchema = new Schema<ISku>({
+  sku_id: { type: String, required: true, unique: true },
+  sku_tier_idx: { type: [Number], default: [0] }, // Maps to SPU product_variations
+  sku_default: { type: Boolean, default: false },
+  sku_slug: { type: String, index: true }, // e.g., 'iphone-15-midnight-256gb'
+  sku_sort: { type: Number, default: 0 },
+  sku_price: { type: Number, required: true }, // Using Number for consistency with SPU
+  sku_stock: { type: Number, default: 0, min: 0 }, // Simple inventory tracking
+
+  product_id: { type: String, required: true, index: true }, // Link to SPU
+
+  isDraft: { type: Boolean, default: true, index: true, select: false },
+  isPublished: { type: Boolean, default: false, index: true, select: false },
+  isDeleted: { type: Boolean, default: false },
+}, {
+  timestamps: true,
+  collection: COLLECTION_NAME
+});
+
+export const SkuModel = model<ISku>(DOCUMENT_NAME, skuSchema);
+</file>
+
+<file path="src/models/spu.model.ts">
+import { Schema, model, Document, Types } from 'mongoose';
+import slugify from 'slugify';
+
+const DOCUMENT_NAME = 'Spu';
+const COLLECTION_NAME = 'spus';
+
+interface IProductVariation {
+  name: string;
+  options: string[];
+}
+
+interface ISpu extends Document {
+  product_id: string; // Internal random unique ID
+  product_name: string;
+  product_thumb: string;
+  product_description: string;
+  product_slug: string;
+  product_price: number; // Base price or range (min price)
+  product_category: string[]; // Hierarchy: ["Electronics", "Phones", "Apple"]
+  product_shop: Types.ObjectId;
+  product_attributes: Record<string, unknown>; // Flexible common attributes
+  product_variations: IProductVariation[]; // Denormalized list of available options (e.g. colors: [red, blue], sizes: [M, L])
+  isDraft: boolean;
+  isPublished: boolean;
+  isDeleted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const spuSchema = new Schema<ISpu>({
+  product_id: { type: String, required: true, unique: true }, // e.g., 'spu_12345'
+  product_name: { type: String, required: true },
+  product_thumb: { type: String, required: true },
+  product_description: { type: String },
+  product_slug: { type: String, index: true },
+  product_price: { type: Number, required: true },
+  product_category: { type: [String], default: [] },
+  product_shop: { type: Schema.Types.ObjectId, ref: 'Shop', required: true },
+
+  // Attributes common to all variants (e.g., Brand, Material for clothes)
+  product_attributes: { type: Schema.Types.Mixed, required: true },
+
+  // Summary of available variations for easy filtering (Denormalization)
+  // Example: { colors: ["Red", "Blue"], sizes: ["S", "M"] }
+  product_variations: { type: Schema.Types.Mixed, default: [] },
+
+  isDraft: { type: Boolean, default: true, index: true, select: false },
+  isPublished: { type: Boolean, default: false, index: true, select: false },
+  isDeleted: { type: Boolean, default: false },
+}, {
+  timestamps: true,
+  collection: COLLECTION_NAME
+});
+
+// Middleware for slug
+spuSchema.pre('save', function(next) {
+  if (this.isModified('product_name')) {
+    this.product_slug = slugify(this.product_name, { lower: true });
+  }
+  next();
+});
+
+export const SpuModel = model<ISpu>(DOCUMENT_NAME, spuSchema);
 </file>
 
 <file path="src/configs/cloudinary-config.ts">
@@ -3331,149 +3560,29 @@ const getInfoData = ({ fields = [], object = {} }) => {
 export { getInfoData };
 </file>
 
-<file path=".gitignore">
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
+<file path=".repomixignore">
+docs/*
+plans/*
+assets/*
+dist/*
+coverage/*
+build/*
+ios/*
+android/*
+tests/*
+__tests__/*
+__pycache__/*
+node_modules/*
 
-# Diagnostic reports (https://nodejs.org/api/report.html)
-report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
-
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Directory for instrumented libs generated by jscoverage/JSCover
-lib-cov
-
-# Coverage directory used by tools like istanbul
-coverage
-*.lcov
-
-# nyc test coverage
-.nyc_output
-
-# Grunt intermediate storage (https://gruntjs.com/creating-plugins#storing-task-files)
-.grunt
-
-# Bower dependency directory (https://bower.io/)
-bower_components
-
-# node-waf configuration
-.lock-wscript
-
-# Compiled binary addons (https://nodejs.org/api/addons.html)
-build/Release
-
-# Dependency directories
-node_modules/
-jspm_packages/
-
-# Snowpack dependency directory (https://snowpack.dev/)
-web_modules/
-
-# TypeScript cache
-*.tsbuildinfo
-
-# Optional npm cache directory
-.npm
-
-# Optional eslint cache
-.eslintcache
-
-# Optional stylelint cache
-.stylelintcache
-
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn Integrity file
-.yarn-integrity
-
-# dotenv environment variable files
-.env
-.env.*
-!.env.example
-
-# parcel-bundler cache (https://parceljs.org/)
-.cache
-.parcel-cache
-
-# Next.js build output
-.next
-out
-
-# Nuxt.js build / generate output
-.nuxt
-dist
-.output
-
-# Gatsby files
-.cache/
-# Comment in the public line in if your project uses Gatsby and not Next.js
-# https://nextjs.org/blog/next-9-1#public-directory-support
-# public
-
-# vuepress build output
-.vuepress/dist
-
-# vuepress v2.x temp and cache directory
-.temp
-.cache
-
-# Sveltekit cache directory
-.svelte-kit/
-
-# vitepress build output
-**/.vitepress/dist
-
-# vitepress cache directory
-**/.vitepress/cache
-
-# Docusaurus cache and generated files
-.docusaurus
-
-# Serverless directories
-.serverless/
-
-# FuseBox cache
-.fusebox/
-
-# DynamoDB Local files
-.dynamodb/
-
-# Firebase cache directory
-.firebase/
-
-# TernJS port file
-.tern-port
-
-# Stores VSCode versions used for testing VSCode extensions
-.vscode-test
-
-# yarn v3
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
-
-# Vite files
-vite.config.js.timestamp-*
-vite.config.ts.timestamp-*
-.vite/
-.claude
+.opencode/*
+.claude/*
+.serena/*
+.pnpm-store/*
+.github/*
+.dart_tool/*
+.idea/*
+.husky/*
+.venv/*
 </file>
 
 <file path="claude_code_zai_env.sh">
@@ -3684,258 +3793,6 @@ main() {
 main "$@"
 </file>
 
-<file path="CLAUDE.md">
-# CLAUDE.md - Enhanced System Instructions
-
-**Project**: E-commerce Backend (Node.js/TypeScript)
-**Architecture**: Enterprise-level with Factory/Repository/Service patterns
-**Validation**: Enhanced CAGEERF methodology with 4-phase checkpoints
-
-## Core Communication Principles
-
-- **Extreme Concision**: Sacrifice grammar for brevity in all interactions and commits
-- **Action-First**: Start with the most direct approach, iterate based on feedback
-- **Context-Aware**: Use existing project patterns and architectural decisions
-
-## Enhanced Development Workflow
-
-### Development Commands
-```bash
-# Primary development workflow
-npx tsx watch server.ts      # Development with hot reload (recommended)
-npm start                    # Production build (port 3055)
-
-# Code quality
-npx eslint .                 # Lint all files
-npm test                     # Tests (when implemented)
-
-# Database
-docker-compose up           # MongoDB development environment
-```
-
-### CAGEERF Validation Checkpoints
-
-**CHECKPOINT 1: Context Validation**
-- Verify architectural patterns align with enterprise design
-- Confirm TypeScript strict mode compliance
-- Validate security requirements for auth systems
-
-**CHECKPOINT 2: Progressive Edit Validation**
-- Run ESLint after each file change
-- Verify TypeScript compilation (noEmit: true)
-- Check MongoDB model consistency
-
-**CHECKPOINT 3: Integration Validation**
-- Test service layer integration
-- Verify API endpoint functionality
-- Validate authentication/authorization flows
-
-**CHECKPOINT 4: Completion Validation**
-- Full system integration test
-- Performance benchmark verification
-- Security audit completion
-
-## Technology Stack & Constraints
-
-### Approved Technologies
-- **Runtime**: Node.js with TypeScript strict mode
-- **Framework**: Express.js 5.x with helmet middleware
-- **Database**: MongoDB with Mongoose ODM
-- **Auth**: JWT with bcrypt password hashing
-- **Security**: CORS, compression, helmet security headers
-
-### Prohibited Patterns
-- No hardcoded secrets or API keys
-- No disabled TypeScript strict rules
-- No direct database access from controllers
-- No synchronous I/O operations
-- No console.log for production debugging
-
-### Performance Requirements
-- **Memory**: < 512MB for typical operations
-- **Response Time**: < 200ms for API calls
-- **Bundle Size**: Optimized for server deployment
-- **Database Connections**: Connection pooling required
-
-## Architectural Standards
-
-### Layer Architecture (Strict Enforcement)
-```
-Controllers (src/controllers/) → Services (src/services/) → Repositories (src/models/repositories/) → Models (src/models/)
-```
-
-### Design Patterns (Required Usage)
-- **Factory Pattern**: Product types (ProductFactory in product-service.ts:94-116)
-- **Repository Pattern**: Data access abstraction
-- **Service Layer**: Static business logic methods
-- **Middleware Pattern**: Authentication and validation
-
-### Naming Conventions
-- **Files**: kebab-case (e.g., product-service.ts)
-- **Classes**: PascalCase (e.g., ProductService)
-- **Functions**: camelCase with descriptive names
-- **Constants**: UPPER_SNAKE_CASE
-- **Models**: Schema suffix (e.g., ShopModel)
-
-## Code Quality Standards
-
-### Required Metrics
-- **Cyclomatic Complexity**: < 10 per function
-- **Function Length**: < 50 lines
-- **File Length**: < 300 lines (prefer < 200)
-- **Test Coverage**: > 80% (when tests implemented)
-
-### TypeScript Requirements
-- Strict mode enabled (no exceptions)
-- All functions must have return types
-- Use `Types.ObjectId` for MongoDB IDs
-- Prefer `interface` over `type` for object shapes
-- Use `readonly` for immutable data
-
-### Error Handling Standards
-- Custom error classes extending `ErrorResponse`
-- Global error middleware with consistent format
-- HTTP status codes from `http-status-codes`
-- Never expose internal error details to clients
-
-## Security Requirements
-
-### Authentication (Multi-Layer System)
-1. **API Key Validation**: All endpoints require `x-api-key` header
-2. **Permission System**: Role-based access control
-3. **JWT Authentication**: Access tokens with refresh rotation
-4. **Token Security**: Per-user secret keys
-
-### Required Headers
-- `x-api-key`: API key validation
-- `x-client-id`: User identifier
-- `authorization`: Bearer access token
-- `refreshtoken`: Token rotation
-
-### Security Best Practices
-- Input validation and sanitization
-- Parameterized queries (Mongoose handles this)
-- Rate limiting for API endpoints
-- Never log sensitive data
-- Regular dependency updates
-
-## Testing Strategy
-
-### Current Status
-- **Tests**: Not implemented (placeholder in package.json)
-- **Front-end**: Playwright MCP for UI testing
-- **Backend**: Manual testing via API calls
-
-### When Tests Are Added
-- Unit tests for service layer business logic
-- Integration tests for API endpoints
-- Security tests for authentication flows
-- Performance tests for database operations
-
-## Documentation Requirements
-
-### Code Documentation
-- Inline comments for complex business logic
-- JSDoc for public methods and interfaces
-- README with setup and deployment instructions
-- API documentation for all endpoints
-
-### Project Documentation
-- Architecture decision records (ADRs)
-- Database schema documentation
-- Security flow diagrams
-- Deployment runbooks
-
-## Git Workflow
-
-### Branch Strategy
-- `main`: Production-ready code
-- `develop`: Integration branch for features
-- `feature/*`: Individual feature development
-- `hotfix/*`: Emergency production fixes
-
-### Commit Standards
-- Extreme concision: "fix auth" not "fix authentication bug in access service"
-- Conventional commits: `type(scope): description`
-- Sign commits for sensitive changes
-- Include PR references when applicable
-
-### Code Review Process
-- All changes require review before merge
-- Automated checks must pass (lint, build)
-- Security review for auth-related changes
-- Performance review for database operations
-
-## Tool Integration Standards
-
-### Required MCP Usage
-- **Context7**: Always pull latest documentation for new dependencies
-- **Playwright**: Use for front-end testing and screenshots
-- **Code Reviewer**: Agent review after feature completion (Critical/High priority first)
-
-### Development Tools
-- **ESLint**: Code quality enforcement
-- **TypeScript**: Static type checking (strict mode)
-- **Docker**: Local MongoDB environment
-- **Environment Variables**: All configuration via .env
-
-## Emergency Protocols
-
-### Severity Levels
-- **Critical**: Production downtime, security breach
-- **High**: Broken core functionality, data corruption risk
-- **Medium**: Feature broken, performance degradation
-- **Low**: UI issues, documentation gaps
-
-### Response Procedures
-- **Critical**: Immediate fix, hotfix branch, direct deploy
-- **High**: Next available release with thorough testing
-- **Medium**: Normal release cycle with proper testing
-- **Low**: Backlog priority, address in future iteration
-
-## Innovation Guidelines
-
-### Experimental Features
-- Use feature flags for new functionality
-- A/B test major changes before full rollout
-- Document experiments and results
-- Roll back quickly if metrics degrade
-
-### Technology Evolution
-- Evaluate new dependencies quarterly
-- Prefer established libraries over cutting-edge
-- Consider migration paths for major upgrades
-- Maintain backward compatibility when possible
-
-## Project-Specific Rules
-
-### E-commerce Domain Specifics
-- **Products**: Factory pattern for extensible product types
-- **Inventory**: Real-time stock management
-- **Authentication**: Multi-layer security required
-- **API Design**: RESTful with consistent response format
-
-### Database Patterns
-- **Shop-based Data Isolation**: All data scoped to shop
-- **Text Indexing**: Product search functionality
-- **Draft/Published Workflow**: Product lifecycle management
-- **Automatic Slug Generation**: SEO-friendly URLs
-
-## Context Memory Integration
-
-### Session Management
-- Track conversation context across multiple interactions
-- Reference previous decisions and architectural choices
-- Maintain awareness of current development phase
-- Remember user preferences and constraints
-
-### Project State Awareness
-- Current branch and recent commits context
-- Understanding of implemented features
-- Knowledge of known issues or limitations
-- Awareness of upcoming changes or priorities
-</file>
-
 <file path="eslint.config.mts">
 import js from "@eslint/js";
 import globals from "globals";
@@ -3946,6 +3803,114 @@ export default defineConfig([
   { files: ["**/*.{js,mjs,cjs,ts,mts,cts}"], plugins: { js }, extends: ["js/recommended"], languageOptions: { globals: {...globals.browser, ...globals.node} } },
   tseslint.configs.recommended,
 ]);
+</file>
+
+<file path="README.md">
+# E-commerce Backend Project
+
+This repository contains the backend for an e-commerce application, built with Node.js and TypeScript. It follows an enterprise-level architecture with clear separation of concerns, utilizing Factory, Repository, and Service patterns to ensure scalability, maintainability, and extensibility.
+
+## Features
+
+- User Authentication & Authorization (JWT, RBAC, API Key)
+- Product Management (CRUD, Factory Pattern for product types)
+- Shopping Cart Functionality
+- Discount Management
+- Comment System
+- Robust Error Handling
+- Comprehensive Security Measures
+- Redis Caching
+
+## Technology Stack
+
+- **Runtime**: Node.js
+- **Language**: TypeScript (strict mode enabled)
+- **Web Framework**: Express.js 5.x
+- **Database**: MongoDB with Mongoose ODM
+- **Authentication**: JWT with bcrypt
+- **Caching**: Redis
+- **Security**: Helmet, CORS, compression
+- **Containerization**: Docker
+
+## Setup Instructions
+
+### Prerequisites
+
+- Node.js (LTS version recommended)
+- Docker & Docker Compose
+- MongoDB (running via Docker or locally)
+- Redis (running via Docker or locally)
+
+### 1. Clone the Repository
+
+```bash
+git clone <repository-url>
+cd ecommerce-backend-nodejs
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+### 3. Environment Configuration
+
+Create a `.env` file in the root directory based on `.env.example`.
+Ensure you configure your MongoDB connection string, JWT secrets, and other necessary environment variables.
+
+### 4. Database Setup
+
+The project uses MongoDB and Redis. You can set them up using Docker Compose:
+
+```bash
+docker-compose up -d
+```
+
+This will start MongoDB and Redis instances in the background.
+
+### 5. Running the Application
+
+#### Development with Hot Reload (Recommended)
+
+```bash
+npx tsx watch server.ts
+```
+
+This command will start the server with automatic restarts on code changes. The application will be accessible on `http://localhost:3055`.
+
+#### Production Build
+
+```bash
+npm start
+```
+
+This compiles the TypeScript code and starts the application. The application will be accessible on `http://localhost:3055`.
+
+### 6. Linting
+
+To check code quality and adherence to styling rules:
+
+```bash
+npx eslint .
+```
+
+### 7. Testing (Planned)
+
+Currently, tests are not implemented, but the framework is in place. When implemented, you can run tests using:
+
+```bash
+npm test
+```
+
+## Documentation
+
+For detailed information about the project, refer to the following documentation:
+
+- [Project Overview and PDR](./docs/project-overview-pdr.md)
+- [Codebase Summary](./docs/codebase-summary.md)
+- [Code Standards](./docs/code-standards.md)
+- [System Architecture](./docs/system-architecture.md)
 </file>
 
 <file path="src/controllers/user-controller.ts">
@@ -6210,27 +6175,286 @@ const runProducer = async () => {
 runProducer().catch(console.error);
 </file>
 
-<file path="docker-compose.yml">
-version: "3.8"
-services:
-  mongodb:
-    image: mongo:latest
-    container_name: mongodb
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongodb_data:/data/db
-  redis:
-    image: redis:8.4
-    container_name: redis
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
+<file path=".gitignore">
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
 
-volumes:
-  mongodb_data:
-  redis_data:
+# Diagnostic reports (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Directory for instrumented libs generated by jscoverage/JSCover
+lib-cov
+
+# Coverage directory used by tools like istanbul
+coverage
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# Grunt intermediate storage (https://gruntjs.com/creating-plugins#storing-task-files)
+.grunt
+
+# Bower dependency directory (https://bower.io/)
+bower_components
+
+# node-waf configuration
+.lock-wscript
+
+# Compiled binary addons (https://nodejs.org/api/addons.html)
+build/Release
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Snowpack dependency directory (https://snowpack.dev/)
+web_modules/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variable files
+.env
+.env.*
+!.env.example
+
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
+
+# Next.js build output
+.next
+out
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+.output
+
+# Gatsby files
+.cache/
+# Comment in the public line in if your project uses Gatsby and not Next.js
+# https://nextjs.org/blog/next-9-1#public-directory-support
+# public
+
+# vuepress build output
+.vuepress/dist
+
+# vuepress v2.x temp and cache directory
+.temp
+.cache
+
+# Sveltekit cache directory
+.svelte-kit/
+
+# vitepress build output
+**/.vitepress/dist
+
+# vitepress cache directory
+**/.vitepress/cache
+
+# Docusaurus cache and generated files
+.docusaurus
+
+# Serverless directories
+.serverless/
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# Firebase cache directory
+.firebase/
+
+# TernJS port file
+.tern-port
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# yarn v3
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Vite files
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+.vite/
+.claude
+</file>
+
+<file path="CLAUDE.md">
+# CLAUDE.md - Enhanced System Instructions
+
+**Project**: E-commerce Backend (Node.js/TypeScript)
+**Architecture**: Enterprise-level with Factory/Repository/Service patterns
+**Validation**: Enhanced CAGEERF methodology with 4-phase checkpoints
+
+## Core Principles & Rules
+
+- **Principles**: **YAGNI** (You Aren't Gonna Need It) - **KISS** (Keep It Simple, Stupid) - **DRY** (Don't Repeat Yourself)
+- **Primary Reference**: Follow strict workflows in `.claude/workflows/`:
+    - `development-rules.md`: Coding standards, file naming, and constraints.
+    - `primary-workflow.md`: The 5-step process (Implementation -> Testing -> Quality -> Integration -> Debugging).
+    - `documentation-management.md`: Rules for plans, roadmaps, and changelogs.
+    - `orchestration-protocol.md`: Agent coordination guidelines.
+
+## Development Workflow
+
+### 1. Preparation & Planning
+- **Skills/Commands**: Run `python .claude/scripts/generate_catalogs.py --skills` and `--commands` to activate relevant tools.
+- **Planning**: Use `planner` agent to create detailed plans in `plans/` directory (see `documentation-management.md`).
+    - Use `researcher` agents for exploring technical topics.
+    - Format plans with timestamp: `plans/YYMMDD-HHMM-slug/`.
+
+### 2. Implementation Loop (Primary Workflow)
+1.  **Code**: Implement features using clean, maintainable code.
+    - **No Simulation**: Always implement real code, no mocks unless strictly necessary for tests.
+    - **File Naming**: Descriptive `kebab-case` (self-documenting for LLMs).
+    - **File Size**: Keep under 200 lines; modularize using composition and service classes.
+    - **Compile Check**: Always check for compile errors after changes.
+2.  **Test**: Delegate to `tester` agent.
+    - **Strictness**: DO NOT ignore failing tests. Fix them before proceeding.
+    - **Coverage**: Maintain high coverage (> 80%).
+3.  **Review**: Delegate to `code-reviewer` agent after implementation.
+4.  **Integration**: Delegate to `docs-manager` to update `docs/` (Roadmap, Changelog, Standards).
+
+### 3. Debugging & Maintenance
+- **Bug Reports**: Delegate to `debugger` agent to analyze, then fix, then `tester` to verify.
+- **Tools**:
+    - `npx tsx watch server.ts` (Dev)
+    - `npx eslint .` (Lint)
+    - `docker-compose up` (DB)
+
+## CAGEERF Validation Checkpoints
+
+**CHECKPOINT 1: Context & Plan**
+- Verify architectural alignment (Factory/Repository/Service).
+- Confirm plan exists in `plans/` with clear steps.
+
+**CHECKPOINT 2: Implementation & Quality**
+- **Strict Mode**: No disabled TypeScript rules.
+- **Security**: Validate auth flows, no hardcoded secrets.
+- **Agent Review**: Pass `code-reviewer` checks.
+
+**CHECKPOINT 3: Integration & Testing**
+- **Tests**: Service logic unit tests, API integration tests.
+- **Performance**: < 200ms API response, connection pooling.
+
+**CHECKPOINT 4: Completion & Docs**
+- **Docs**: `docs-manager` updated Roadmap, Changelog, and Architecture.
+- **Final Polish**: `tester` confirms all green.
+
+## Technology Stack & Constraints
+
+### Approved Technologies
+- **Runtime**: Node.js with TypeScript strict mode
+- **Framework**: Express.js 5.x with helmet middleware
+- **Database**: MongoDB with Mongoose ODM
+- **Auth**: JWT with bcrypt password hashing
+- **Security**: CORS, compression, helmet security headers
+
+### Architectural Standards (Strict Enforcement)
+```
+Controllers (src/controllers/) → Services (src/services/) → Repositories (src/models/repositories/) → Models (src/models/)
+```
+- **Factory Pattern**: Required for Product types.
+- **Repository Pattern**: Required for data access.
+- **Service Layer**: Static business logic methods.
+- **Middleware Pattern**: Authentication and validation.
+
+### Code Quality Standards
+- **Cyclomatic Complexity**: < 10 per function
+- **Function Length**: < 50 lines
+- **File Length**: < 200 lines (preferred) / < 300 (max)
+- **Naming**: `kebab-case` files, `PascalCase` classes, `camelCase` functions.
+
+## Security Requirements
+
+### Authentication (Multi-Layer System)
+1. **API Key Validation**: `x-api-key` header
+2. **Permission System**: Role-based access control
+3. **JWT Authentication**: Access tokens with refresh rotation
+4. **Token Security**: Per-user secret keys
+
+### Best Practices
+- **Headers**: `x-api-key`, `x-client-id`, `authorization`, `refreshtoken`
+- **Sanitization**: Input validation, parameterized queries.
+- **No Logs**: Never log sensitive data.
+
+## Documentation Requirements
+
+### Source of Truth: `docs/`
+- **Roadmap**: `docs/development-roadmap.md`
+- **Changelog**: `docs/project-changelog.md`
+- **Architecture**: `docs/system-architecture.md`
+- **Standards**: `docs/code-standards.md`
+
+### Updates
+- **Automatic**: `project-manager` / `docs-manager` MUST update these on status changes.
+- **Plan Location**: `plans/` with detailed phase files (see `documentation-management.md`).
+
+## Git Workflow
+
+### Branch Strategy
+- `main`: Production
+- `develop`: Integration
+- `feature/*`: Features
+- `hotfix/*`: Emergency fixes
+
+### Commit Standards
+- **Pre-commit**: Linting must pass.
+- **Pre-push**: Tests must pass.
+- **Message**: Conventional commits (`type(scope): description`). No AI references.
+- **Privacy**: NO secrets in commits.
+
+## Project-Specific Rules
+
+### E-commerce Domain
+- **Products**: Factory pattern for extensible types.
+- **Inventory**: Real-time management.
+- **Shops**: Data isolation per shop.
+
+### Emergency Protocols
+- **Critical**: Immediate fix, hotfix branch.
+- **High/Medium**: Prioritized release.
 </file>
 
 <file path="GEMINI.md">
@@ -6745,6 +6969,29 @@ export const updateNestedObjectParser = (obj) => {
 };
 
 export const convertToObjectIdMongodb = (id: string) => new Types.ObjectId(id);
+</file>
+
+<file path="docker-compose.yml">
+version: "3.8"
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+  redis:
+    image: redis:8.4
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  mongodb_data:
+  redis_data:
 </file>
 
 <file path="src/models/key-token-model.ts">

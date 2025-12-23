@@ -1,0 +1,135 @@
+### SPU API Tests
+@baseUrl = http://localhost:3055
+@apiKey = niggar-api-key
+@clientId = 694a601ce9a4d3ca725f5ed9
+@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTRhNjAxY2U5YTRkM2NhNzI1ZjVlZDkiLCJlbWFpbCI6IndlbHRlcmlhbEBnbWFpbC5jb20iLCJpYXQiOjE3NjY0ODE5NDgsImV4cCI6MTc2Nzc3Nzk0OH0.TCtacFDLTqRMMFJtZwDO-VvldBkeqZ1-P0fRcyQRkXI
+
+### 1. Create SPU without SKUs (draft)
+POST {{baseUrl}}/v1/api/spu
+x-api-key: {{apiKey}}
+x-client-id: {{clientId}}
+authorization: {{accessToken}}
+Content-Type: application/json
+
+{
+  "product_name": "iPhone 15 Pro",
+  "product_thumb": "https://example.com/iphone15.jpg",
+  "product_description": "Latest iPhone with A17 Pro chip",
+  "product_price": 999,
+  "product_category": ["Electronics", "Phones", "Apple"],
+  "product_attributes": {
+    "brand": "Apple",
+    "year": 2023
+  },
+  "product_variations": [
+    { "name": "color", "options": ["Natural Titanium", "Blue Titanium", "White Titanium", "Black Titanium"] },
+    { "name": "storage", "options": ["128GB", "256GB", "512GB", "1TB"] }
+  ]
+}
+
+### 2. Create SPU with SKUs
+POST {{baseUrl}}/v1/api/spu
+x-api-key: {{apiKey}}
+x-client-id: {{clientId}}
+authorization: {{accessToken}}
+Content-Type: application/json
+
+{
+  "product_name": "iPhone 15 Pro",
+  "product_thumb": "https://example.com/iphone15.jpg",
+  "product_description": "Latest iPhone with A17 Pro chip",
+  "product_price": 999,
+  "product_category": ["Electronics", "Phones", "Apple"],
+  "product_attributes": {
+    "brand": "Apple",
+    "year": 2023
+  },
+  "product_variations": [
+    { "name": "color", "options": ["Natural Titanium", "Blue Titanium", "White Titanium", "Black Titanium"] },
+    { "name": "storage", "options": ["128GB", "256GB", "512GB", "1TB"] }
+  ],
+  "sku_list": [
+    { "sku_tier_idx": [0, 0], "sku_price": 999, "sku_stock": 50 },
+    { "sku_tier_idx": [0, 1], "sku_price": 1099, "sku_stock": 30 },
+    { "sku_tier_idx": [1, 0], "sku_price": 999, "sku_stock": 45 },
+    { "sku_tier_idx": [1, 1], "sku_price": 1099, "sku_stock": 25 }
+  ]
+}
+
+### 3. Create SPU - Missing required fields (should return 400)
+POST {{baseUrl}}/v1/api/spu
+x-api-key: {{apiKey}}
+x-client-id: {{clientId}}
+authorization: {{accessToken}}
+Content-Type: application/json
+
+{
+  "product_name": "Invalid Product"
+}
+
+### 4. Get all SPUs (public, published only)
+GET {{baseUrl}}/v1/api/spu?limit=10&page=1
+x-api-key: {{apiKey}}
+
+### 5. Get SPU by ID (with SKUs)
+@spuId = your-spu-id-here
+GET {{baseUrl}}/v1/api/spu/{{spuId}}
+x-api-key: {{apiKey}}
+
+### 6. Get SPU by ID - Not found (should return 404)
+GET {{baseUrl}}/v1/api/spu/507f1f77bcf86cd799439011
+x-api-key: {{apiKey}}
+
+### 7. Get shop's draft SPUs
+GET {{baseUrl}}/v1/api/spu/shop/drafts?limit=10
+x-api-key: {{apiKey}}
+x-client-id: {{clientId}}
+authorization: {{accessToken}}
+
+### 8. Get shop's published SPUs
+GET {{baseUrl}}/v1/api/spu/shop/published?limit=10
+x-api-key: {{apiKey}}
+x-client-id: {{clientId}}
+authorization: {{accessToken}}
+
+### 9. Update SPU
+PATCH {{baseUrl}}/v1/api/spu/{{spuId}}
+x-api-key: {{apiKey}}
+x-client-id: {{clientId}}
+authorization: {{accessToken}}
+Content-Type: application/json
+
+{
+  "product_name": "iPhone 15 Pro Max",
+  "product_description": "Updated description"
+}
+
+### 10. Publish SPU (draft -> published)
+PATCH {{baseUrl}}/v1/api/spu/{{spuId}}/publish
+x-api-key: {{apiKey}}
+x-client-id: {{clientId}}
+authorization: {{accessToken}}
+
+### 11. Unpublish SPU (published -> draft)
+PATCH {{baseUrl}}/v1/api/spu/{{spuId}}/unpublish
+x-api-key: {{apiKey}}
+x-client-id: {{clientId}}
+authorization: {{accessToken}}
+
+### 12. Delete SPU (soft delete)
+DELETE {{baseUrl}}/v1/api/spu/{{spuId}}
+x-api-key: {{apiKey}}
+x-client-id: {{clientId}}
+authorization: {{accessToken}}
+
+### 13. Update SPU - Unauthorized (wrong shop, should return 403)
+# Assumes spuId belongs to different shop
+PATCH {{baseUrl}}/v1/api/spu/{{spuId}}
+x-api-key: {{apiKey}}
+x-client-id: different-client-id
+authorization: {{accessToken}}
+Content-Type: application/json
+
+{
+  "product_name": "Hacked Product"
+}

@@ -1,0 +1,18042 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+# File Summary
+
+## Purpose
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+
+## File Format
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  a. A header with the file path (## File: path/to/file)
+  b. The full contents of the file in a code block
+
+## Usage Guidelines
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+
+## Notes
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+
+# Directory Structure
+```
+src/
+  auth/
+    auth-util.ts
+    check-auth.ts
+  configs/
+    cloudinary-config.ts
+    config-mongodb.ts
+    multer-config.ts
+    nodemailer-config.ts
+    redis-config.ts
+    s3-config.ts
+  controllers/
+    access-controller.ts
+    cart-controller.ts
+    checkout-controller.ts
+    comment-controller.ts
+    discount-controller.ts
+    email-controller.ts
+    inventory-controller.ts
+    notification-controller.ts
+    product-controller.ts
+    profile-controller.ts
+    rbac-controller.ts
+    upload-controller.ts
+    user-controller.ts
+  core/
+    error-respone.ts
+    success-respone.ts
+  databases/
+    init_mongoose.ts
+  helpers/
+    asyncHandler.ts
+    check-connect.ts
+    responseHandler.ts
+  loggers/
+    mylogger.ts
+    winston_log.ts
+  middleware/
+    access-control.ts
+    rbac.ts
+  models/
+    repositories/
+      cart-rep.ts
+      discount.repo.ts
+      inventory-repo.ts
+      product.repo.ts
+      sku.repo.ts
+      spu.repo.ts
+    apikey-model.ts
+    cart-model.ts
+    comment-model.ts
+    discount-model.ts
+    inventory-model.ts
+    key-token-model.ts
+    key-token.ts
+    notification-model.ts
+    order-schema.ts
+    otp-model.ts
+    product-model.ts
+    resource-model.ts
+    role-model.ts
+    shop-model.ts
+    sku.model.ts
+    spu.model.ts
+    template-model.ts
+    user-model.ts
+  rest/
+    access-post.http
+    cart-post.http
+    checkout-post.http
+    comment-post.http
+    discount-post.http
+    email.http
+    notification-post.http
+    product-post.http
+    rbac-post.http
+    upload.http
+    user.http
+  routers/
+    access/
+      index.ts
+    cart/
+      index.ts
+    checkout/
+      index.ts
+    comment/
+      index.ts
+    discount/
+      index.ts
+    email/
+      index.ts
+    inventory/
+      index.ts
+    notification/
+      index.ts
+    product/
+      index.ts
+    profile/
+      index.ts
+    rbac/
+      index.ts
+    shop/
+      index.ts
+    upload/
+      index.ts
+    user/
+      index.ts
+    index.ts
+  services/
+    access-service.ts
+    apikey-service.ts
+    cart-service.ts
+    checkout-service.ts
+    comment-service.ts
+    discount-service.ts
+    email-service.ts
+    inventory-service.ts
+    key-token-service.ts
+    notification-service.ts
+    otp-service.ts
+    product-service.ts
+    rbac-service.ts
+    redis.ts
+    shop-service.ts
+    template-service.ts
+    upload-service.ts
+    user-service.ts
+  test/
+    message_queue/
+      kafka/
+        consumer.ts
+        producer.ts
+      rabbitmq/
+        comsumer.ts
+        producer.ts
+        producerDLX.ts
+  uploads/
+    1764568823926-image.png
+    1764568893693-579275702_1358039752585825_1371037800666208771_n.jpg
+    1764569257320-conceptual_schema.png
+    1764598102388-'.jpg
+    1764598102389-454632390_122166440162130994_3562077091712649013_n.jpg
+    1764598102390-454718379_122166440036130994_7475295732919095036_n.jpg
+  utils/
+    express-utils.ts
+    index.ts
+    object-utils.ts
+  app.ts
+.gitignore
+.repomixignore
+claude_code_zai_env.sh
+CLAUDE.md
+docker-compose.yml
+eslint.config.mts
+GEMINI.md
+index.html
+package.json
+README.md
+repomix-output.xml
+server.ts
+tsconfig.json
+```
+
+# Files
+
+## File: src/models/repositories/sku.repo.ts
+````typescript
+import { SkuModel } from "../sku.model";
+
+class SkuRepository {
+  static async createSku(sku: any) {
+    return await SkuModel.create(sku);
+  }
+
+  static async createManySkus(skus: any[]) {
+    return await SkuModel.insertMany(skus);
+  }
+
+  static async findSkuById(sku_id: string) {
+    return await SkuModel.findById(sku_id).lean();
+  }
+
+  static async findSkuByUniqueId(sku_unique_id: string) {
+    return await SkuModel.findOne({ sku_id: sku_unique_id }).lean();
+  }
+
+  static async findAllSkusBySpuId(product_id: string) {
+    // product_id in SkuModel is the string ID of the SPU, not ObjectId
+    return await SkuModel.find({ product_id }).lean();
+  }
+
+  static async updateSku(sku_id: string, payload: any) {
+    return await SkuModel.findByIdAndUpdate(sku_id, payload, { new: true }).lean();
+  }
+
+  static async updateSkuStock(sku_id: string, quantity: number) {
+    return await SkuModel.findOneAndUpdate(
+      { sku_id: sku_id }, // Using unique string ID or _id? Model has sku_id unique string. Let's support both or clarify.
+      // Usually stock updates happen by unique SKU ID (business ID) or DB ID.
+      // Given findAllSkusBySpuId uses product_id (string), likely sku_id (string) is primary key for logic.
+      // But updateProductQuantity in product.repo uses findByIdAndUpdate.
+      // Let's assume passed sku_id is _id for consistency with updateSku,
+      // BUT SkuModel has sku_stock.
+      { $inc: { sku_stock: quantity } },
+      { new: true }
+    ).lean();
+  }
+
+  // Overload/Variant for updating by database ID
+  static async updateSkuStockByDbId(id: string, quantity: number) {
+      return await SkuModel.findByIdAndUpdate(
+          id,
+          { $inc: { sku_stock: quantity } },
+          { new: true }
+      ).lean();
+  }
+}
+
+export default SkuRepository;
+````
+
+## File: src/models/repositories/spu.repo.ts
+````typescript
+import { SpuModel } from "../spu.model";
+import { getSelectData, convertToObjectIdMongodb } from "../../utils";
+import { Types } from "mongoose";
+
+class SpuRepository {
+  static async createSpu(spu: any) {
+    return await SpuModel.create(spu);
+  }
+
+  static async findSpuById(spu_id: string) {
+    if (!Types.ObjectId.isValid(spu_id)) return null;
+    return await SpuModel.findById(spu_id).lean();
+  }
+
+  static async findSpuByUniqueId(product_id: string) {
+    return await SpuModel.findOne({ product_id }).lean();
+  }
+
+  static async findAllSpus({
+    limit,
+    sort,
+    page,
+    filter,
+    select,
+  }: {
+    limit: number;
+    sort: string;
+    page: number;
+    filter: any;
+    select: string[];
+  }) {
+    const skip = (page - 1) * limit;
+    const sortBy: any = sort === "ctime" ? { _id: -1 } : { _id: 1 };
+
+    return await SpuModel.find(filter)
+      .sort(sortBy)
+      .skip(skip)
+      .limit(limit)
+      .select(getSelectData(select as any))
+      .lean();
+  }
+
+  static async updateSpu(spu_id: string, payload: any) {
+    if (!Types.ObjectId.isValid(spu_id)) return null;
+    return await SpuModel.findByIdAndUpdate(spu_id, payload, { new: true }).lean();
+  }
+
+  static async publishSpuByShop({
+    product_shop,
+    spu_id,
+  }: {
+    product_shop: string;
+    spu_id: string;
+  }) {
+    if (!Types.ObjectId.isValid(product_shop) || !Types.ObjectId.isValid(spu_id)) {
+      return null;
+    }
+
+    const foundSpu = await SpuModel.findOne({
+      _id: convertToObjectIdMongodb(spu_id),
+      product_shop: convertToObjectIdMongodb(product_shop),
+    });
+
+    if (!foundSpu) return null;
+
+    foundSpu.isDraft = false;
+    foundSpu.isPublished = true;
+
+    return await foundSpu.save();
+  }
+
+  static async unpublishSpuByShop({
+    product_shop,
+    spu_id,
+  }: {
+    product_shop: string;
+    spu_id: string;
+  }) {
+    if (!Types.ObjectId.isValid(product_shop) || !Types.ObjectId.isValid(spu_id)) {
+      return null;
+    }
+
+    const foundSpu = await SpuModel.findOne({
+      _id: convertToObjectIdMongodb(spu_id),
+      product_shop: convertToObjectIdMongodb(product_shop),
+    });
+
+    if (!foundSpu) return null;
+
+    foundSpu.isDraft = true;
+    foundSpu.isPublished = false;
+
+    return await foundSpu.save();
+  }
+}
+
+export default SpuRepository;
+````
+
+## File: src/models/sku.model.ts
+````typescript
+import { Schema, model, Document } from 'mongoose';
+
+const DOCUMENT_NAME = 'Sku';
+const COLLECTION_NAME = 'skus';
+
+interface ISku extends Document {
+  sku_id: string; // Unique stock keeping unit ID (e.g., 'sku_red_m_123')
+  sku_tier_idx: number[]; // Index array mapping to SPU variations (e.g., [0, 1] -> Red, Medium)
+  sku_default: boolean; // Is this the default variant to show?
+  sku_slug: string;
+  sku_sort: number; // Sorting order
+  sku_price: number;
+  sku_stock: number; // Inventory count
+  product_id: string; // Reference to SPU ID (string ID, not ObjectId for flexibility)
+
+  isDraft: boolean;
+  isPublished: boolean;
+  isDeleted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const skuSchema = new Schema<ISku>({
+  sku_id: { type: String, required: true, unique: true },
+  sku_tier_idx: { type: [Number], default: [0] }, // Maps to SPU product_variations
+  sku_default: { type: Boolean, default: false },
+  sku_slug: { type: String, index: true }, // e.g., 'iphone-15-midnight-256gb'
+  sku_sort: { type: Number, default: 0 },
+  sku_price: { type: Number, required: true }, // Using Number for consistency with SPU
+  sku_stock: { type: Number, default: 0, min: 0 }, // Simple inventory tracking
+
+  product_id: { type: String, required: true, index: true }, // Link to SPU
+
+  isDraft: { type: Boolean, default: true, index: true, select: false },
+  isPublished: { type: Boolean, default: false, index: true, select: false },
+  isDeleted: { type: Boolean, default: false },
+}, {
+  timestamps: true,
+  collection: COLLECTION_NAME
+});
+
+export const SkuModel = model<ISku>(DOCUMENT_NAME, skuSchema);
+````
+
+## File: src/models/spu.model.ts
+````typescript
+import { Schema, model, Document, Types } from 'mongoose';
+import slugify from 'slugify';
+
+const DOCUMENT_NAME = 'Spu';
+const COLLECTION_NAME = 'spus';
+
+interface IProductVariation {
+  name: string;
+  options: string[];
+}
+
+interface ISpu extends Document {
+  product_id: string; // Internal random unique ID
+  product_name: string;
+  product_thumb: string;
+  product_description: string;
+  product_slug: string;
+  product_price: number; // Base price or range (min price)
+  product_category: string[]; // Hierarchy: ["Electronics", "Phones", "Apple"]
+  product_shop: Types.ObjectId;
+  product_attributes: Record<string, unknown>; // Flexible common attributes
+  product_variations: IProductVariation[]; // Denormalized list of available options (e.g. colors: [red, blue], sizes: [M, L])
+  isDraft: boolean;
+  isPublished: boolean;
+  isDeleted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const spuSchema = new Schema<ISpu>({
+  product_id: { type: String, required: true, unique: true }, // e.g., 'spu_12345'
+  product_name: { type: String, required: true },
+  product_thumb: { type: String, required: true },
+  product_description: { type: String },
+  product_slug: { type: String, index: true },
+  product_price: { type: Number, required: true },
+  product_category: { type: [String], default: [] },
+  product_shop: { type: Schema.Types.ObjectId, ref: 'Shop', required: true },
+
+  // Attributes common to all variants (e.g., Brand, Material for clothes)
+  product_attributes: { type: Schema.Types.Mixed, required: true },
+
+  // Summary of available variations for easy filtering (Denormalization)
+  // Example: { colors: ["Red", "Blue"], sizes: ["S", "M"] }
+  product_variations: { type: Schema.Types.Mixed, default: [] },
+
+  isDraft: { type: Boolean, default: true, index: true, select: false },
+  isPublished: { type: Boolean, default: false, index: true, select: false },
+  isDeleted: { type: Boolean, default: false },
+}, {
+  timestamps: true,
+  collection: COLLECTION_NAME
+});
+
+// Middleware for slug
+spuSchema.pre('save', function(next) {
+  if (this.isModified('product_name')) {
+    this.product_slug = slugify(this.product_name, { lower: true });
+  }
+  next();
+});
+
+export const SpuModel = model<ISpu>(DOCUMENT_NAME, spuSchema);
+````
+
+## File: src/configs/cloudinary-config.ts
+````typescript
+import cloudinary from "cloudinary";
+
+cloudinary.v2.config({
+    api_key: "774459327296593",
+    cloud_name: "ddzylihf0",
+    api_secret: "QMO-jDxQfX5rZYEjmdbURoYGSA0",
+});
+
+export default cloudinary.v2;
+````
+
+## File: src/configs/config-mongodb.ts
+````typescript
+// level 01
+
+const dev = {
+    app: {
+        port: process.env["PORT"] || 3000,
+    },
+    db: {
+        host: process.env["DB_HOST"] || "localhost",
+        port: process.env["DB_PORT"] || 27017,
+        name: process.env["DB_NAME"] || "dbDev",
+    },
+};
+
+const pro = {
+    app: {
+        port: process.env["PORT"] || 3000,
+    },
+    db: {
+        host: process.env["DB_HOST"] || "localhost",
+        port: process.env["DB_PORT"] || 27017,
+        name: process.env["DB_NAME"] || "dbProduct",
+    },
+};
+
+const config: object = { dev, pro };
+const env = process.env["NODE_ENV"] || "dev";
+export default config[env as keyof typeof config];
+````
+
+## File: src/configs/multer-config.ts
+````typescript
+import multer from "multer";
+
+const uploadMem = multer({
+    storage: multer.memoryStorage(),
+});
+
+const uploadDisk = multer({
+    storage: multer.diskStorage({
+        destination: function (req, file, cb) {
+            cb(null, "./src/uploads/");
+        },
+        filename: function (req, file, cb) {
+            cb(null, `${Date.now()}-${file.originalname}`);
+        },
+    }),
+});
+
+export { uploadMem, uploadDisk };
+````
+
+## File: src/configs/nodemailer-config.ts
+````typescript
+import nodemailer from "nodemailer";
+
+export const transport = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 587,
+    auth: {
+        user: process.env.EMAIL_NAME || "welterial218@gmail.com",
+        pass: process.env.EMAIL_APP_PASSWORD || "nfpy focz duce bahd",
+    },
+    pool: true,
+    maxConnections: 5,
+    maxMessages: 100,
+    rateLimit: 10,
+    debug: true,
+});
+````
+
+## File: src/configs/redis-config.ts
+````typescript
+import { Redis } from "ioredis";
+import { RedisErrorRespone } from "../core/error-respone";
+
+let client: Redis, connectionTimeout: NodeJS.Timeout;
+
+const statusConnectRedis = {
+    CONNECT: "connect",
+    END: "end",
+    RECONNECT: "reconnecting",
+    ERROR: "error",
+};
+
+const REDIS_CONNECT_TIMEOUT = 10000,
+    REDIS_CONNECT_MESSAGE = {
+        code: -99,
+        message: {
+            vn: "REDIS LOI ROI AE",
+            en: "SERVICE connect error",
+        },
+    };
+
+const handleTimeoutError = () => {
+    if (connectionTimeout) clearTimeout(connectionTimeout);
+    connectionTimeout = setTimeout(() => {
+        console.error(
+            `Redis Connection Error: ${REDIS_CONNECT_MESSAGE.message.en} - ${REDIS_CONNECT_MESSAGE.message.vn}`
+        );
+    }, REDIS_CONNECT_TIMEOUT);
+};
+
+const handleEventConnection = (connectionRedis: Redis) => {
+    // check if connection is null
+    if (!connectionRedis) {
+        throw new Error("Connection is null");
+    }
+
+    connectionRedis.on(statusConnectRedis.CONNECT, () => {
+        console.log(`ConnectionRedis - Connection status: connected`);
+        clearTimeout(connectionTimeout);
+    });
+
+    connectionRedis.on(statusConnectRedis.END, () => {
+        console.log(`ConnectionRedis - Connection status: disconnected`);
+        handleTimeoutError();
+    });
+
+    connectionRedis.on(statusConnectRedis.RECONNECT, () => {
+        console.log(`ConnectionRedis - Connection status: reconnecting`);
+        clearTimeout(connectionTimeout);
+    });
+
+    connectionRedis.on(statusConnectRedis.ERROR, () => {
+        console.log(`ConnectionRedis - Connection status: error`);
+        handleTimeoutError();
+    });
+};
+
+export const initReids = () => {
+    const instanceRedis = new Redis({
+        retryStrategy: (times) => 10000,
+        
+    });
+
+    client = instanceRedis;
+    handleEventConnection(instanceRedis);
+};
+
+export const getRedis = () => client;
+
+export const closeRedis = () => client.quit();
+````
+
+## File: src/configs/s3-config.ts
+````typescript
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+
+const s3Config = {
+    region: "ap-southeast-2",
+    credentials: {
+        accessKeyId: process.env.AWS_BUCKET_ACCESS_KEY,
+        secretAccessKey: process.env.AWS_BUCKET_SECRET_KEY,
+    },
+};
+
+if (!process.env.AWS_BUCKET_ACCESS_KEY || !process.env.AWS_BUCKET_SECRET_KEY) {
+    console.error("Missing AWS S3 credentials in environment variables.");
+}
+
+const s3 = new S3Client(s3Config);
+
+export { s3, PutObjectCommand };
+````
+
+## File: src/controllers/cart-controller.ts
+````typescript
+import type { Request, Response } from "express";
+import { CartService } from "../services/cart-service";
+import type { CartProduct } from "../services/cart-service";
+import { NotFoundError } from "../core/error-respone";
+import { Created, OK } from "../core/success-respone";
+import { Types } from "mongoose";
+import { asyncHandler } from "../helpers/asyncHandler";
+
+class CartController {
+    /**
+     * @description Add product to user cart (basic version)
+     * @param req - Express request object
+     * @param res - Express response object
+     * @returns JSON response with updated cart
+     */
+    addToCart = asyncHandler(async (req: Request, res: Response) => {
+        const { userId } = req.user;
+        const { productId, quantity, shopId, name, price } = req.body;
+
+        const product: CartProduct = {
+            productId: new Types.ObjectId(productId),
+            quantity: quantity || 1,
+            shopId: shopId ? new Types.ObjectId(shopId) : undefined,
+            name,
+            price,
+        };
+
+        const cart = await CartService.addToCart({
+            userId: parseInt(userId),
+            product,
+        });
+
+        return new OK("Product added to cart successfully!", cart).send(res);
+    });
+
+    /**
+     * @description Add products to cart with shop validation (advanced version)
+     * @param req - Express request object
+     * @param res - Express response object
+     * @returns JSON response with updated cart
+     */
+    addToCartV2 = asyncHandler(async (req: Request, res: Response) => {
+        const { userId } = req.user;
+        const { shopOrderIds } = req.body;
+
+        const cart = await CartService.addToCartV2({
+            userId: parseInt(userId),
+            shopOrderIds,
+        });
+
+        return new OK("Products added to cart successfully!", cart).send(res);
+    });
+
+    /**
+     * @description Remove product from user cart
+     * @param req - Express request object
+     * @param res - Express response object
+     * @returns JSON response with update result
+     */
+    removeFromCart = asyncHandler(async (req: Request, res: Response) => {
+        const { userId } = req.user;
+        const { productId } = req.params;
+
+        const result = await CartService.deleteUserCart({
+            userId: parseInt(userId),
+            productId: new Types.ObjectId(productId),
+        });
+
+        return new OK("Product removed from cart successfully!", result).send(
+            res
+        );
+    });
+
+    /**
+     * @description Get user's cart with all products
+     * @param req - Express request object
+     * @param res - Express response object
+     * @returns JSON response with user cart
+     */
+    getUserCart = asyncHandler(async (req: Request, res: Response) => {
+        const { userId } = req.user;
+
+        const cart = await CartService.getListUserCart({
+            userId: parseInt(userId),
+        });
+
+        return new OK("Cart retrieved successfully!", cart).send(res);
+    });
+
+    /**
+     * @description Clear entire cart for user
+     * @param req - Express request object
+     * @param res - Express response object
+     * @returns JSON response with update result
+     */
+    clearCart = asyncHandler(async (req: Request, res: Response) => {
+        const { userId } = req.user;
+
+        const result = await CartService.clearUserCart({
+            userId: parseInt(userId),
+        });
+
+        return new OK("Cart cleared successfully!", result).send(res);
+    });
+
+    /**
+     * @description Update product quantity in cart (direct increment/decrement)
+     * @param req - Express request object
+     * @param res - Express response object
+     * @returns JSON response with updated cart
+     */
+    updateProductQuantity = asyncHandler(async (req: Request, res: Response) => {
+        const { userId } = req.user;
+        const { productId, quantity } = req.body;
+
+        const cart = await CartService.updateUserCartQuantity({
+            userId: parseInt(userId),
+            product: {
+                productId: new Types.ObjectId(productId),
+                quantity: parseInt(quantity),
+            },
+        });
+
+        return new OK("Product quantity updated successfully!", cart).send(res);
+    });
+
+    /**
+     * @description Update cart state (e.g., mark as completed)
+     * @param req - Express request object
+     * @param res - Express response object
+     * @returns JSON response with update result
+     */
+    updateCartState = asyncHandler(async (req: Request, res: Response) => {
+        const { userId } = req.user;
+        const { newState } = req.body;
+
+        const result = await CartService.updateCartState({
+            userId: parseInt(userId),
+            newState,
+        });
+
+        return new OK("Cart state updated successfully!", result).send(res);
+    });
+}
+
+export default new CartController();
+````
+
+## File: src/controllers/checkout-controller.ts
+````typescript
+import type { Request, Response } from "express";
+import { CheckoutService } from "../services/checkout-service";
+import { NotFoundError, BadRequestError } from "../core/error-respone";
+import { OK, Created } from "../core/success-respone";
+import { Types } from "mongoose";
+import { asyncHandler } from "../helpers/asyncHandler";
+
+class CheckoutController {
+    /**
+     * @description Review checkout order with pricing and discounts
+     * @param req - Express request object
+     * @param res - Express response object
+     * @returns JSON response with checkout review
+     */
+    checkOutReview = asyncHandler(async (req: Request, res: Response) => {
+        const { userId } = req.user;
+        const { cartId, shop_order_ids = [] } = req.body;
+
+        if (!cartId || !shop_order_ids.length) {
+            throw new BadRequestError("Cart ID and shop orders are required!");
+        }
+
+        const checkoutReview = await CheckoutService.checkOutReview({
+            cartId: new Types.ObjectId(cartId),
+            userId: parseInt(userId),
+            shop_order_ids,
+        });
+
+        return new OK("Checkout review completed!", checkoutReview).send(res);
+    });
+
+    /**
+     * @description Execute checkout order and create orders
+     * @param req - Express request object
+     * @param res - Express response object
+     * @returns JSON response with created orders
+     */
+    checkOutOrder = asyncHandler(async (req: Request, res: Response) => {
+        const { userId } = req.user;
+        const { cartId, shop_order_ids = [] } = req.body;
+
+        if (!cartId || !shop_order_ids.length) {
+            throw new BadRequestError("Cart ID and shop orders are required!");
+        }
+
+        const orderResult = await CheckoutService.checkOutOrder({
+            cartId: new Types.ObjectId(cartId),
+            userId: parseInt(userId),
+            shop_order_ids,
+        });
+
+        return new Created("Orders created successfully!", orderResult).send(res);
+    });
+
+    /**
+     * @description Get order history for user
+     * @param req - Express request object
+     * @param res - Express response object
+     * @returns JSON response with order history
+     */
+    getOrderHistory = asyncHandler(async (req: Request, res: Response) => {
+        const { userId } = req.user;
+        const { page = 1, limit = 10, status } = req.query;
+
+        // This would typically call an OrderService.getOrdersByUser method
+        // For now, return a placeholder response
+        const orders = {
+            userId,
+            orders: [],
+            pagination: {
+                page: parseInt(page as string),
+                limit: parseInt(limit as string),
+                total: 0,
+                total_pages: 0,
+            },
+        };
+
+        return new OK("Order history retrieved!", orders).send(res);
+    });
+
+    /**
+     * @description Get order details by ID
+     * @param req - Express request object
+     * @param res - Express response object
+     * @returns JSON response with order details
+     */
+    getOrderById = asyncHandler(async (req: Request, res: Response) => {
+        const { userId } = req.user;
+        const { orderId } = req.params;
+
+        if (!orderId) {
+            throw new BadRequestError("Order ID is required!");
+        }
+
+        // This would typically call an OrderService.getOrderById method
+        // For now, return a placeholder response
+        const order = {
+            orderId: new Types.ObjectId(orderId),
+            userId,
+            status: "Not implemented",
+        };
+
+        return new OK("Order details retrieved!", order).send(res);
+    });
+}
+
+export default new CheckoutController();
+````
+
+## File: src/controllers/comment-controller.ts
+````typescript
+import type { Request, Response } from "express";
+import { CommentService } from "../services/comment-service";
+import { NotFoundError } from "../core/error-respone";
+import { Created, OK } from "../core/success-respone";
+import { Types } from "mongoose";
+
+class CommentController {
+    static async createComment(req: Request, res: Response) {
+        const { productId, content, parentCommentId } = req.body;
+        const { userId } = req.user;
+
+        const comment = await CommentService.createComment({
+            productId,
+            userId,
+            content,
+            parentCommentId
+        });
+
+        return new Created("Comment created successfully!", comment).send(res);
+    }
+
+    static async getCommentsByProduct(req: Request, res: Response) {
+        const { productId } = req.params;
+        const { page = 1, limit = 20 } = req.query;
+
+        const comments = await CommentService.getCommentsByProduct({
+            productId,
+            page: Number(page),
+            limit: Number(limit)
+        });
+
+        return new OK("Get comments successfully!", comments).send(res);
+    }
+
+    static async getCommentReplies(req: Request, res: Response) {
+        const { commentId } = req.params;
+        const { page = 1, limit = 10 } = req.query;
+
+        const replies = await CommentService.getCommentReplies({
+            parentCommentId: commentId,
+            page: Number(page),
+            limit: Number(limit)
+        });
+
+        return new OK("Get comment replies successfully!", replies).send(res);
+    }
+
+    static async updateComment(req: Request, res: Response) {
+        const { commentId } = req.params;
+        const { content } = req.body;
+        const { userId } = req.user;
+
+        const updatedComment = await CommentService.updateComment({
+            commentId,
+            userId,
+            content
+        });
+
+        if (!updatedComment) {
+            throw new NotFoundError("Comment not found or unauthorized");
+        }
+
+        return new OK("Comment updated successfully!", updatedComment).send(res);
+    }
+
+    static async deleteComment(req: Request, res: Response) {
+        const { commentId } = req.params;
+        const { userId } = req.user;
+
+        const deletedComment = await CommentService.deleteComment({
+            commentId,
+            userId
+        });
+
+        if (!deletedComment) {
+            throw new NotFoundError("Comment not found or unauthorized");
+        }
+
+        return new OK("Comment deleted successfully!", null).send(res);
+    }
+
+    static async getCommentById(req: Request, res: Response) {
+        const { commentId } = req.params;
+
+        const comment = await CommentService.getCommentById(commentId);
+
+        if (!comment) {
+            throw new NotFoundError("Comment not found");
+        }
+
+        return new OK("Get comment successfully!", comment).send(res);
+    }
+}
+
+export default CommentController;
+````
+
+## File: src/controllers/discount-controller.ts
+````typescript
+import type { Request, Response, NextFunction } from "express";
+import { DiscountService } from "../services/discount-service";
+import { asyncHandler } from "../helpers/asyncHandler";
+import { Created, OK } from "../core/success-respone";
+
+class DiscountController {
+    createDiscountCode = asyncHandler(
+        async (req: Request, res: Response, next: NextFunction) => {
+            const { userId } = req.user;
+            const discount = await DiscountService.createDiscountCode({
+                ...req.body,
+                shopId: userId,
+            });
+            return new Created("Discount code created successfully!", discount).send(res);
+        }
+    );
+
+    updateDiscountCode = asyncHandler(
+        async (req: Request, res: Response, next: NextFunction) => {
+            const { userId } = req.user;
+            const { discountId } = req.params;
+            const discount = await DiscountService.updateDiscountCode({
+                discountId,
+                shopId: userId,
+                updateData: req.body,
+            });
+            return new OK("Discount code updated successfully!", discount).send(res);
+        }
+    );
+
+    getAllDiscountCodesByShop = asyncHandler(
+        async (req: Request, res: Response, next: NextFunction) => {
+            const { userId } = req.user;
+            const { limit = 50, page = 1, sort = "createdAt", is_active = true } = req.query;
+
+            const result = await DiscountService.getDiscountCodesByShopId({
+                shopId: userId,
+                limit: Number(limit),
+                page: Number(page),
+                sort: sort as "createdAt" | "name" | "value" | "endDate",
+                is_active: is_active === "true",
+            });
+            return new OK("Get discount codes successfully!", result).send(res);
+        }
+    );
+
+    getDiscountCodeWithProducts = asyncHandler(
+        async (req: Request, res: Response, next: NextFunction) => {
+            const { code } = req.params;
+            const { userId } = req.user;
+            const { limit = 50, page = 1 } = req.query;
+
+            const result = await DiscountService.getAllDiscountCodeWithProduct({
+                code,
+                shopId: userId,
+                limit: Number(limit),
+                page: Number(page),
+            });
+            return new OK("Get discount code with products successfully!", result).send(res);
+        }
+    );
+
+    getDiscountAmount = asyncHandler(
+        async (req: Request, res: Response, next: NextFunction) => {
+            const { userId } = req.user;
+            const { codeId } = req.params;
+            const { shopId, products } = req.body;
+
+            const result = await DiscountService.getDiscountAmount({
+                codeId,
+                userId,
+                shopId,
+                products,
+            });
+            return new OK("Get discount amount successfully!", result).send(res);
+        }
+    );
+
+    deleteDiscountCode = asyncHandler(
+        async (req: Request, res: Response, next: NextFunction) => {
+            const { userId } = req.user;
+            const { discountId } = req.params;
+
+            const result = await DiscountService.deleteDiscountCode({
+                discountId,
+                shopId: userId,
+            });
+            return new OK("Discount code deleted successfully!", result).send(res);
+        }
+    );
+
+    cancelDiscountCode = asyncHandler(
+        async (req: Request, res: Response, next: NextFunction) => {
+            const { userId } = req.user;
+            const { codeId } = req.params;
+            const { shopId } = req.body;
+
+            const result = await DiscountService.cancelDiscountCode({
+                codeId,
+                userId,
+                shopId,
+            });
+            return new OK("Discount code cancelled successfully!", result).send(res);
+        }
+    );
+}
+
+export default new DiscountController();
+````
+
+## File: src/controllers/email-controller.ts
+````typescript
+import { SuccessResponse } from "../core/success-respone";
+import { newTemplate } from "../services/template-service";
+import { sendEmailToken } from "../services/email-service";
+
+class EmailController {
+    newTemplate = async (req, res, next) => {
+        new SuccessResponse("new template", await newTemplate(req.body)).send(
+            res
+        );
+    };
+
+    sendEmailToken = async (req, res, next) => {
+        new SuccessResponse(
+            "Send email token",
+            201,
+            await sendEmailToken(req.body)
+        ).send(res);
+    };
+}
+
+export default new EmailController();
+````
+
+## File: src/controllers/inventory-controller.ts
+````typescript
+import type { Request, Response } from "express";
+import { NotFoundError, BadRequestError } from "../core/error-respone";
+import { OK, Created } from "../core/success-respone";
+import { Types } from "mongoose";
+import { asyncHandler } from "../helpers/asyncHandler";
+import { InventoryService } from "../services/inventory-service";
+
+class InvetoryController {
+    /**
+     * @description Review checkout order with pricing and discounts
+     * @param req - Express request object
+     * @param res - Express response object
+     * @returns JSON response with checkout review
+     */
+    addStocckToInventory = asyncHandler(async (req: Request, res: Response) => {
+        return new OK(
+            "Checkout review completed!",
+            await InventoryService.addStockToInventory(req.body)
+        ).send(res);
+    });
+}
+
+export default new InvetoryController();
+````
+
+## File: src/controllers/notification-controller.ts
+````typescript
+import type { Request, Response } from "express";
+import { NotificationService } from "../services/notification-service";
+import { OK, Created } from "../core/success-respone";
+
+class NotificationController {
+    static async listNotifications(req: Request, res: Response) {
+        const { userId } = req.body;
+        const { type = "ALL", isRead = 0 } = req.query;
+
+        const notifications = await NotificationService.listNotiByUser({
+            userId,
+            type: type as string,
+            isRead: Number(isRead),
+        });
+
+        return new OK(
+            "Get notifications successfully!",
+            notifications
+        ).send(res);
+    }
+
+    static async createNotification(req: Request, res: Response) {
+        const { type, receivedId, senderId, options } = req.body;
+
+        const newNotification = await NotificationService.pushNotiToSystem({
+            type,
+            receivedId,
+            senderId,
+            options,
+        });
+
+        return new Created(
+            "Notification created successfully!",
+            newNotification
+        ).send(res);
+    }
+
+    static async markAsRead(req: Request, res: Response) {
+        const { userId } = req.user;
+        const { notificationId } = req.params;
+
+        // This would need to be implemented in the service
+        // For now, return success response
+        return new OK(
+            "Notification marked as read successfully!",
+            { notificationId, userId }
+        ).send(res);
+    }
+}
+
+export default NotificationController;
+````
+
+## File: src/controllers/profile-controller.ts
+````typescript
+import { SuccessResponse } from "../core/success-respone";
+
+const profiles = [
+    {
+        user_id: 1,
+        user_name: "CR7",
+        user_avt: "image.com/user/1",
+    },
+    {
+        user_id: 2,
+        user_name: "M10",
+        user_avt: "image.com/user/2",
+    },
+    {
+        user_id: 3,
+        user_name: "tipsjs",
+        user_avt: "image.com/user/3",
+    },
+];
+
+class ProfileController {
+    profiles = async (req, res, next) => {
+        new SuccessResponse("view all profile", 200, profiles).send(res);
+    };
+
+    profile = async (req, res, next) => {
+        new SuccessResponse("view One profile", 200, {
+            user_id: 2,
+            user_name: "M10",
+            user_avt: "image.com/user/2",
+        }).send(res);
+    };
+}
+
+export default new ProfileController();
+````
+
+## File: src/controllers/rbac-controller.ts
+````typescript
+import { NextFunction, Request, Response } from "express";
+import { SuccessResponse } from "../core/success-respone";
+import {
+    createResource,
+    createRole,
+    resourceList,
+    roleList,
+} from "../services/rbac-service";
+
+/**
+ * @description create a new role
+ * @param req
+ * @param res
+ * @param next
+ */
+export const newRole = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    new SuccessResponse({
+        message: "created role",
+        metadata: await createRole(req.body),
+    }).send(res);
+};
+
+export const newResource = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    new SuccessResponse(
+        "created resource",
+        await createResource(req.body)
+    ).send(res);
+};
+
+export const listRole = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    new SuccessResponse({
+        message: "get list role",
+        metadata: await roleList(req.query),
+    }).send(res);
+};
+
+export const listResource = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    new SuccessResponse({
+        message: "get list resource",
+        metadata: await resourceList(req.query),
+    }).send(res);
+};
+````
+
+## File: src/helpers/asyncHandler.ts
+````typescript
+import type { Request, Response, NextFunction, RequestHandler } from "express";
+
+const asyncHandler = (fn: RequestHandler) => {
+    return (req: Request, res: Response, next: NextFunction) => {
+        Promise.resolve(fn(req, res, next)).catch(next);
+    };
+};
+
+export { asyncHandler };
+````
+
+## File: src/helpers/check-connect.ts
+````typescript
+import mongooese from "mongoose";
+import os from "os";
+import process from "process";
+
+const _SECOND = 5000;
+const countConnect = (): number => {
+    const numConnection = mongooese.connections.length;
+    return numConnection;
+};
+
+const checkOverload = () => {
+    setInterval(() => {
+        const numberOfConnections = countConnect();
+        const numbCores = os.cpus().length;
+        const memoryUsage = process.memoryUsage().rss;
+        // example maximum number of connections based on number of cores
+        const maxConnections = numbCores * 5;
+
+        console.log(`Active connections:: ${numberOfConnections}`);
+        console.log(`Memory usage:: ${memoryUsage / 1024 / 1024} MB`);
+
+        if (numberOfConnections > maxConnections) {
+            console.log(`Connection overload detected!`);
+        }
+    }, _SECOND); //Monitor every 5 seconds
+};
+
+export { countConnect, checkOverload };
+````
+
+## File: src/loggers/mylogger.ts
+````typescript
+import winston, { format } from "winston";
+import {} from "winston-daily-rotate-file";
+const { combine, timestamp, json, align, printf } = winston.format;
+
+export interface LogParams {
+    context: string;
+    requestId: string;
+    metadata?: Record<string, any>;
+}
+
+class MyLogger {
+    logger: winston.Logger;
+
+    constructor() {
+        const formatPrint = printf(
+            ({ level, message, context, requestId, timestamp, metadata }) => {
+                return `${timestamp}:: ${level}::${context}::${requestId}::${message}::${JSON.stringify(
+                    metadata
+                )}`;
+            }
+        );
+
+        this.logger = winston.createLogger({
+            format: format.combine(
+                timestamp({
+                    format: "YYYY-MM-DD hh:mm:ss",
+                }),
+                formatPrint
+            ),
+            transports: [
+                new winston.transports.Console(),
+                new winston.transports.DailyRotateFile({
+                    dirname: "logs",
+                    filename: "application-%DATE%.info.log",
+                    datePattern: "YYYY-MM-DD-HH",
+                    zippedArchive: true,
+                    maxSize: "1m",
+                    maxFiles: "14d",
+                    level: "info",
+                    format: format.combine(
+                        timestamp({
+                            format: "YYYY-MM-DD hh:mm:ss",
+                        }),
+                        formatPrint
+                    ),
+                }),
+                new winston.transports.DailyRotateFile({
+                    dirname: "logs",
+                    filename: "application-%DATE%.error.log",
+                    datePattern: "YYYY-MM-DD-HH",
+                    zippedArchive: true,
+                    maxSize: "1m",
+                    maxFiles: "14d",
+                    level: "error",
+                    format: format.combine(
+                        timestamp({
+                            format: "YYYY-MM-DD hh:mm:ss",
+                        }),
+                        formatPrint
+                    ),
+                }),
+            ],
+        });
+    }
+
+    log(message: string, params: LogParams) {
+        const logObject = Object.assign(
+            {
+                message,
+            },
+            params
+        );
+
+        this.logger.info(logObject);
+    }
+
+    error(message: string, params: LogParams) {
+        const logObject = Object.assign(
+            {
+                message,
+            },
+            params
+        );
+
+        this.logger.error(logObject);
+    }
+}
+
+export default new MyLogger();
+````
+
+## File: src/middleware/rbac.ts
+````typescript
+import { NextFunction, Request, Response } from "express";
+import { AuthFailureError } from "../core/error-respone";
+import rbac from "./access-control";
+import { roleList } from "../services/rbac-service";
+
+type RoleAction =
+    | "createAny"
+    | "createOwn"
+    | "readAny"
+    | "readOwn"
+    | "updateAny"
+    | "updateOwn"
+    | "deleteAny"
+    | "deleteOwn";
+
+export const grantAccess = (action: string, resource: string) => {
+    return async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            rbac.setGrants(
+                await roleList({
+                    userId: 9999,
+                })
+            );
+            const roleName = req.query.role as string;
+            if (!roleName) {
+                throw new AuthFailureError("Invalid request");
+            }
+
+            const permission = rbac
+                .can(roleName)
+                [action as RoleAction](resource);
+            if (!permission.granted) {
+                throw new AuthFailureError("You do not have enough permission");
+            }
+
+            next();
+        } catch (error) {
+            next(error);
+        }
+    };
+};
+````
+
+## File: src/models/repositories/cart-rep.ts
+````typescript
+import { convertToObjectIdMongodb } from "../../utils";
+import cartModel from "../cart-model";
+
+export class CartRepository {
+    static async findCartById(cartId: string) {
+        return await cartModel
+            .findOne({
+                _id: convertToObjectIdMongodb(cartId),
+                cart_state: "active",
+            })
+            .lean();
+    }
+
+    static async deleteUserCart(userId: number) {
+        return await cartModel.deleteOne({
+            cart_userId: userId,
+        });
+    }
+}
+````
+
+## File: src/models/repositories/discount.repo.ts
+````typescript
+import { getSelectData, getUnSelectData } from "../../utils";
+import { discountModel } from "../discount-model";
+import type { Types } from "mongoose";
+
+class DiscountRepository {
+    static async findAllDiscountUnselect({
+        limit,
+        sort,
+        page,
+        filter,
+        unSelect,
+    }: {
+        limit: number;
+        sort: string;
+        page: number;
+        filter: any;
+        unSelect: string[];
+    }) {
+        const skip = (page - 1) * limit;
+        const sortBy = sort === "ctime" ? { _id: -1 } : { _id: 1 };
+
+        const discounts = await discountModel
+            .find(filter)
+            .sort(sortBy)
+            .skip(skip)
+            .limit(limit)
+            .select(getUnSelectData(unSelect))
+            .lean()
+            .exec();
+
+        return discounts;
+    }
+
+    static async countDiscounts(filter: any): Promise<number> {
+        return await discountModel.countDocuments(filter);
+    }
+
+    static async findDiscountById({
+        discount_id,
+        select,
+    }: {
+        discount_id: string;
+        select?: string[];
+    }) {
+        return await discountModel
+            .findById(discount_id)
+            .select(select ? getSelectData(select) : {});
+    }
+
+    static async findDiscountByCode({
+        code,
+        shopId,
+        select,
+    }: {
+        code: string;
+        shopId: Types.ObjectId;
+        select?: string[];
+    }) {
+        return await discountModel
+            .findOne({
+                discount_code: code.toUpperCase(),
+                discount_shopId: shopId,
+            })
+            .select(select ? getSelectData(select) : {});
+    }
+
+    static async findDiscountByCodeAndShop(code: string, shopId: Types.ObjectId) {
+        return await discountModel.findOne({
+            discount_code: code.toUpperCase(),
+            discount_shopId: shopId
+        }).lean();
+    }
+
+    static async validateDiscount({
+        discountId,
+        shopId,
+        userId,
+    }: {
+        discountId: Types.ObjectId;
+        shopId: Types.ObjectId;
+        userId?: Types.ObjectId;
+    }) {
+        const foundDiscount = await discountModel.findOne({
+            _id: discountId,
+            discount_shopId: shopId,
+        });
+
+        if (!foundDiscount) {
+            throw new Error("Discount not found");
+        }
+
+        if (!foundDiscount.discount_is_active) {
+            throw new Error("Discount is not active");
+        }
+
+        const now = new Date();
+        if (
+            now < foundDiscount.discount_start_date ||
+            now > foundDiscount.discount_end_date
+        ) {
+            throw new Error("Discount has expired or not yet active");
+        }
+
+        // Check usage limits
+        if (
+            foundDiscount.discount_max_uses !== null &&
+            foundDiscount.discount_uses_count >= foundDiscount.discount_max_uses
+        ) {
+            throw new Error("Discount has reached maximum usage limit");
+        }
+
+        // Check user-specific usage limit if userId provided
+        if (userId && !foundDiscount.canBeUsedBy(userId)) {
+            throw new Error(
+                "User has reached maximum usage limit for this discount"
+            );
+        }
+
+        return foundDiscount;
+    }
+
+    static async validateDiscountByCode({
+        code,
+        shopId,
+        userId,
+    }: {
+        code: string;
+        shopId: Types.ObjectId;
+        userId?: Types.ObjectId;
+    }) {
+        const foundDiscount = await discountModel.findOne({
+            discount_code: code.toUpperCase(),
+            discount_shopId: shopId,
+        });
+
+        if (!foundDiscount) {
+            throw new Error("Discount code not found");
+        }
+
+        // Use the same validation logic
+        return await this.validateDiscount({
+            discountId: foundDiscount._id,
+            shopId,
+            userId,
+        });
+    }
+}
+
+export default DiscountRepository;
+````
+
+## File: src/models/cart-model.ts
+````typescript
+import { Schema, model, Types } from "mongoose";
+
+const DOCUMENT_NAME = "Cart";
+const COLLECTION_NAME = "carts";
+
+// Discount type enum for better type safety
+export enum DiscountType {
+    PERCENTAGE = "percentage",
+    FIXED_AMOUNT = "fixed_amount",
+    BOGO = "bogo",
+    FREE_SHIPPING = "free_shipping",
+}
+
+// Discount applicability enum
+export enum DiscountAppliesTo {
+    ALL = "all",
+    SPECIFIC = "specific",
+    CATEGORY = "category",
+}
+
+const cartSchema = new Schema(
+    {
+        cart_state: {
+            type: String,
+            required: true,
+            enum: ["active", "completed", "failed", "pending"],
+            default: "active",
+        },
+
+        cart_products: {
+            type: Array,
+            required: true,
+            default: [],
+        },
+
+        cart_count_product: {
+            type: Number,
+            default: 0,
+        },
+
+        cart_userId: { type: Number, required: true },
+    },
+    {
+        collection: COLLECTION_NAME,
+        timestamps: true,
+    }
+);
+
+export default model(DOCUMENT_NAME, cartSchema);
+````
+
+## File: src/models/comment-model.ts
+````typescript
+import { model, Schema } from "mongoose";
+
+const DOCUMENT_NAME = "Comment";
+const COLLECTION_NAME = "comments";
+
+const commentSchema = new Schema(
+    {
+        comment_productId: { type: Schema.Types.ObjectId, ref: "Product" },
+        comment_userId: { type: Schema.Types.ObjectId, ref: "Shop" },
+        comment_content: { type: String, default: "text" },
+        comment_left: { type: Number, default: 0 },
+        comment_right: { type: Number, default: 0 },
+        comment_parentId: { type: Schema.Types.ObjectId, ref: DOCUMENT_NAME },
+        isDeleted: { type: Boolean, default: false },
+    },
+    {
+        timestamps: true,
+        collection: COLLECTION_NAME,
+    }
+);
+
+export default model(DOCUMENT_NAME, commentSchema);
+````
+
+## File: src/models/inventory-model.ts
+````typescript
+import { Schema, model, Types } from "mongoose"; // Erase if already required
+
+const DOCUMENT_NAME = "Inventory";
+const COLLECTION_NAME = "inventories";
+
+// Declare the Schema of the Mongo model
+const inventorySchema = new Schema(
+    {
+        inven_productId: { type: Types.ObjectId, ref: "Product" },
+        inven_location: { type: String, default: "unknown" },
+        inven_stock: { type: Number, required: true },
+        inven_shopId: { type: Types.ObjectId, ref: "Shop" },
+        inven_reservations: { type: Array, default: [] },
+    },
+    {
+        collection: COLLECTION_NAME,
+        timestamps: true,
+    }
+);
+
+//Export the model
+export default model(DOCUMENT_NAME, inventorySchema);
+````
+
+## File: src/models/notification-model.ts
+````typescript
+import { model, Schema } from "mongoose";
+
+const DOCUMENT_NAME = "Notification";
+const COLLECTION_NAME = "notifications";
+
+const notificationSchema = new Schema(
+    {
+        noti_type: {
+            type: String,
+            enum: [
+                "ORDER-001",
+                "ORDER-002",
+                "PROMOTION-001",
+                "PROMOTION-002",
+                "SHOP-001",
+            ],
+            required: true,
+        },
+        noti_senderId: { type: String, required: true },
+        noti_recivedId: { type: String, required: true },
+        noti_content: { type: String, required: true },
+        noti_options: { type: Object, default: {} },
+    },
+    {
+        timestamps: true,
+        collection: COLLECTION_NAME,
+    }
+);
+
+export default model(DOCUMENT_NAME, notificationSchema);
+````
+
+## File: src/models/order-schema.ts
+````typescript
+import { DEFAULT_REDIS_OPTIONS } from "ioredis/built/redis/RedisOptions";
+import { Schema, model } from "mongoose";
+
+const DOCUMENT_NAME = "Order";
+const COLLECTION_NAME = "orders";
+
+// Base Product Schema - stores common product information
+const orderSchema = new Schema(
+    {
+        order_userId: { type: Number, required: true },
+        order_checkout: { type: Object, default: {} },
+        /**
+         * order_checkout = {
+         *  totalPrice,
+         *  totalApplyDiscount,
+         *  feeShip
+         * }
+         */
+        order_shipping: { type: Object, default: {} },
+        /**
+         *
+         * street,
+         * city,
+         * state,
+         * country
+         */
+
+        order_payment: { type: Object, default: {} },
+        order_products: { type: Array, required: true },
+        order_trackingNumber: { type: String, default: "#00001" },
+        order_status: {
+            type: String,
+            enum: ["pending", "confirmed", "shipped", "cancelled", "delivered"],
+            default: "pending",
+        },
+    },
+    {
+        collection: COLLECTION_NAME,
+        timestamps: true,
+    }
+);
+
+export default model(DOCUMENT_NAME, orderSchema);
+````
+
+## File: src/models/otp-model.ts
+````typescript
+import { model, Schema } from "mongoose";
+
+const DOCUMENT_NAME = "otp-log";
+const COLLECTION_NAME = "otp-logs";
+
+const otpSchema = new Schema(
+    {
+        otp_token: { type: String, required: true },
+        otp_email: { type: String, required: true },
+        otp_status: {
+            type: String,
+            default: "pending",
+            enum: ["pending", "active", "block"],
+        },
+        expiredAt: { type: Date, default: Date.now, expires: 60 },
+    },
+    {
+        collection: COLLECTION_NAME,
+        timestamps: true,
+    }
+);
+
+export default model(DOCUMENT_NAME, otpSchema);
+````
+
+## File: src/models/resource-model.ts
+````typescript
+import { model, Schema } from "mongoose";
+
+const DOCUMENT_NAME = "Resource";
+const COLLECTION_NAME = "resources";
+
+const resourceSchema = new Schema(
+    {
+        src_name: {type: String, required: true},
+        src_slug: {type: String, required: true},
+        src_desc: {type: String, default: ''},
+    },
+    {
+        timestamps: true,
+        collection: COLLECTION_NAME,
+    }
+);
+
+export default model(DOCUMENT_NAME, resourceSchema);
+````
+
+## File: src/models/role-model.ts
+````typescript
+import { model, Schema } from "mongoose";
+
+const DOCUMENT_NAME = "Role";
+const COLLECTION_NAME = "roles";
+
+const roleSchema = new Schema(
+    {
+        role_name: {
+            type: String,
+            default: "user",
+            enum: ["user", "shop", "admin"],
+        },
+        role_slug: { type: String, required: true },
+        role_status: {
+            type: String,
+            default: "active",
+            enum: ["active", "block", "pending"],
+        },
+        role_desc: { type: String, default: "" },
+        role_grants: [
+            {
+                resource: {
+                    type: Schema.Types.ObjectId,
+                    ref: "Resource",
+                    required: true,
+                },
+                actions: [{ type: String, required: true }],
+                attributes: { type: String, default: "*" },
+            },
+        ],
+    },
+    {
+        timestamps: true,
+        collection: COLLECTION_NAME,
+    }
+);
+
+export default model(DOCUMENT_NAME, roleSchema);
+````
+
+## File: src/models/template-model.ts
+````typescript
+import { model, Schema } from "mongoose";
+
+const DOCUMENT_NAME = "Template";
+const COLLECTION_NAME = "templates";
+
+const templateSchema = new Schema(
+    {
+        tem_name: { type: String, required: true },
+        tem_status: { type: String, default: "active" },
+        tem_html: { type: String, required: true },
+    },
+    {
+        collection: COLLECTION_NAME,
+        timestamps: true,
+    }
+);
+
+export default model(DOCUMENT_NAME, templateSchema);
+````
+
+## File: src/models/user-model.ts
+````typescript
+import { model, Schema, SchemaType } from "mongoose";
+
+const DOCUMENT_NAME = "User";
+const COLLECTION_NAME = "users";
+
+const userSchema = new Schema(
+    {
+        usr_id: { type: Number, required: true },
+        usr_slug: { type: String, required: true },
+        usr_name: { type: String, default: "" },
+        usr_password: { type: String, default: "" },
+        usr_salt: { type: String, default: "" },
+        usr_email: { type: String, required: true },
+        usr_phone: { type: String, default: "" },
+        user_sex: { type: String, default: "" },
+        usr_avatar: { type: String, default: "" },
+        usr_dob: { type: Date, default: null },
+        usr_role: { type: Schema.Types.ObjectId, ref: "Role" },
+        usr_status: {
+            type: String,
+            default: "pending",
+            enum: ["pending", "active", "block"],
+        },
+    },
+    {
+        timestamps: true,
+        collection: COLLECTION_NAME,
+    }
+);
+
+export default model(DOCUMENT_NAME, userSchema);
+````
+
+## File: src/rest/cart-post.http
+````
+@url_dev=http://localhost:3055
+@api_key=niggar-api-key
+@client_id=69074f5479cbc75d6571e355
+@authorization=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTA3NGY1NDc5Y2JjNzVkNjU3MWUzNTUiLCJlbWFpbCI6IndlbHRlcmlhbEBnbWFpbC5jb20iLCJuYW1lIjoiVGhhaSBEaW5oIiwiaWF0IjoxNzYyMDg3MzM1LCJleHAiOjE3NjMzODMzMzV9.pZk63-gb0HXC5DOqyhmJTTFP2PN4in8zuVg83Jn16CA
+@placeholder_api_key=niggar-api-key
+
+### Add product to cart (basic version)
+POST {{url_dev}}/v1/api/cart
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "productId": "690751d279cbc75d6571e36d",
+    "quantity": 2,
+    "shopId": "69074f5479cbc75d6571e355",
+    "name": "Sample Product",
+    "price": 29.99
+}
+
+### Add another product to cart
+POST {{url_dev}}/v1/api/cart
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "productId": "690751d579cbc75d6571e375",
+    "quantity": 1,
+    "shopId": "69074f5479cbc75d6571e355",
+    "name": "Another Product",
+    "price": 49.99
+}
+
+### Add products to cart with shop validation (advanced version)
+POST {{url_dev}}/v1/api/cart/v2
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "shopOrderIds": [
+        {
+            "shopId": "69074f5479cbc75d6571e355",
+            "item_product": [
+                {
+                    "productId": "690751d279cbc75d6571e36d",
+                    "quantity": 10,
+                    "old_quantity": 2
+                }
+            ]
+        }
+    ]
+}
+
+### Get user cart
+GET {{url_dev}}/v1/api/cart
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+### Remove product from cart
+DELETE {{url_dev}}/v1/api/cart/690751d579cbc75d6571e375
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+### Clear entire cart
+DELETE {{url_dev}}/v1/api/cart
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+### Set product quantity to 5 items (SET behavior)
+PATCH {{url_dev}}/v1/api/cart/quantity
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "productId": "690751d279cbc75d6571e36d",
+    "quantity": 5
+}
+
+### Set product quantity to 1 item (SET behavior)
+PATCH {{url_dev}}/v1/api/cart/quantity
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "productId": "690751d279cbc75d6571e36d",
+    "quantity": 1
+}
+
+### Remove product by setting quantity to 0 (auto-removes)
+PATCH {{url_dev}}/v1/api/cart/quantity
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "productId": "690751d579cbc75d6571e375",
+    "quantity": 0
+}
+
+### Update cart state (mark as completed)
+PATCH {{url_dev}}/v1/api/cart/state
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "newState": "completed"
+}
+
+### Update cart state (mark as pending)
+PATCH {{url_dev}}/v1/api/cart/state
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "newState": "pending"
+}
+
+### Test removing product with quantity 0 using V2 endpoint
+POST {{url_dev}}/v1/api/cart/v2
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "shopOrderIds": [
+        {
+            "shopId": "69074f5479cbc75d6571e355",
+            "item_product": [
+                {
+                    "productId": "65fb8b8c5f9d1a2a8c8b4567",
+                    "quantity": 0,
+                    "old_quantity": 3
+                }
+            ]
+        }
+    ]
+}
+
+### Get cart after operations
+GET {{url_dev}}/v1/api/cart
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+````
+
+## File: src/rest/comment-post.http
+````
+@url_dev=http://localhost:3055
+@api_key=niggar-api-key
+@clientId=6900378dbddfc4d935b6856b
+@authorization=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTAwMzc4ZGJkZGZjNGQ5MzViNjg1NmIiLCJlbWFpbCI6IndlbHRlcmlhbEBnbWFpbC5jb20iLCJuYW1lIjoiVGhhaSBEaW5oIiwiaWF0IjoxNzYzNTM3MDE2LCJleHAiOjE3NjQ4MzMwMTZ9.DaBsU9weSEazPbcvUAI_o5K6KZX9eb_Y8Tyzfky5qqM
+
+@product_id= 69003a15b67a52859b72fef0
+### Create a new Root Comment
+POST {{url_dev}}/v1/api/comment
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "productId": "{{product_id}}",
+    "content": "Comment 1.2.1.2 (Sun Dresses)",
+    "parentCommentId": "691d7c7ae4a3142ca59faca3"
+}
+
+### Create another Root Comment
+POST {{url_dev}}/v1/api/comment
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "productId": "{{product_id}}",
+    "content": "Yes! v2",
+    "parentCommentId": "691d7298413a896b1ae3985f"
+}
+
+### Get all comments for a product
+GET {{url_dev}}/v1/api/comment/product/{{product_id}}?page=1&limit=10
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### Get a specific comment by ID
+GET {{url_dev}}/v1/api/comment/69074f5479cbc75d6571e355
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### Get replies for a comment
+GET {{url_dev}}/v1/api/comment/691d7c7ae4a3142ca59faca3/replies?page=1&limit=5
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### Update a comment
+PATCH {{url_dev}}/v1/api/comment/69074f5479cbc75d6571e355
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "content": "Updated comment: This product exceeded my expectations!"
+}
+
+### Delete a comment
+DELETE {{url_dev}}/v1/api/comment/691d7be2e4a3142ca59fac7b
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### Create a Reply Comment (will fail until MPTT logic is fixed)
+POST {{url_dev}}/v1/api/comment
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "productId": "{{product_id}}",
+    "content": "I agree! The quality is outstanding.",
+    "parentCommentId": "69074f5479cbc75d6571e355"
+}
+
+### Get comments with pagination
+GET {{url_dev}}/v1/api/comment/product/{{product_id}}?page=2&limit=5
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+````
+
+## File: src/rest/email.http
+````
+@url_dev=http://localhost:3055
+
+### Create a new Template (Optional - will auto-create default if missing)
+POST {{url_dev}}/v1/api/email/new_template
+Content-Type: application/json
+
+{
+    "tem_name": "HTML EMAIL OTP",
+    "tem_html": "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>OTP Verification</title></head><body><h2>Welcome to {{shop_name}}!</h2><p>Hello {{user_name}},</p><p>Please verify: <a href=\"{{verify_link}}\">Verify Email</a></p></body></html>"
+}
+
+### Send Email Token
+POST {{url_dev}}/v1/api/email/send_email_token
+Content-Type: application/json
+
+{
+    "email": "welterial@gmail.com"
+}
+````
+
+## File: src/rest/notification-post.http
+````
+@url_dev=http://localhost:3055
+@api_key=niggar-api-key
+@clientId=6900378dbddfc4d935b6856b
+@authorization= eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTAwMzc4ZGJkZGZjNGQ5MzViNjg1NmIiLCJlbWFpbCI6IndlbHRlcmlhbEBnbWFpbC5jb20iLCJuYW1lIjoiVGhhaSBEaW5oIiwiaWF0IjoxNzYzNTM3MDE2LCJleHAiOjE3NjQ4MzMwMTZ9.DaBsU9weSEazPbcvUAI_o5K6KZX9eb_Y8Tyzfky5qqM
+
+### Create Shop Notification
+POST {{url_dev}}/v1/api/notification
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "type": "SHOP-001",
+    "receivedId": "6900378dbddfc4d935b6856b",
+    "senderId": "6900378dbddfc4d935b6856b",
+    "options": {
+        "productName": "Premium Laptop",
+        "shopName": "TechStore"
+    }
+}
+
+### Create Promotion Notification
+POST {{url_dev}}/v1/api/notification
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "type": "PROMOTION-001",
+    "receivedId": "6900378dbddfc4d935b6856b",
+    "senderId": "6900378dbddfc4d935b6856b",
+    "options": {
+        "voucherName": "SUMMER2024",
+        "shopName": "TechStore"
+    }
+}
+
+### Create Order Notification
+POST {{url_dev}}/v1/api/notification
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "type": "ORDER-001",
+    "receivedId": "6900378dbddfc4d935b6856b",
+    "senderId": "shop123",
+    "options": {
+        "orderId": "ORD-2024-001"
+    }
+}
+
+### Create Order Status Update Notification
+POST {{url_dev}}/v1/api/notification
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "type": "ORDER-002",
+    "receivedId": "6900378dbddfc4d935b6856b",
+    "senderId": "shop123",
+    "options": {
+        "orderId": "ORD-2024-001"
+    }
+}
+
+### Create Promotion Available Notification
+POST {{url_dev}}/v1/api/notification
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "type": "PROMOTION-002",
+    "receivedId": "6900378dbddfc4d935b6856b",
+    "senderId": "6900378dbddfc4d935b6856b",
+    "options": {
+        "promotionName": "Flash Sale 50% Off"
+    }
+}
+
+### Get All Notifications
+GET {{url_dev}}/v1/api/notification
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "userId": "1"
+}
+
+### Get Shop Notifications Only
+GET {{url_dev}}/v1/api/notification?type=SHOP-001
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### Get Promotion Notifications Only
+GET {{url_dev}}/v1/api/notification?type=PROMOTION-001
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### Get Order Notifications Only
+GET {{url_dev}}/v1/api/notification?type=ORDER-001
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### Mark Notification as Read
+PATCH {{url_dev}}/v1/api/notification/507f1f77bcf86cd799439011/read
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### Test Asynchronous Notification (via Product Creation)
+POST {{url_dev}}/v1/api/product
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "product_type": "Electronics",
+    "product_name": "Test Notification Product",
+    "product_thumb": "http://example.com/test.jpg",
+    "product_description": "Product to test async notification creation",
+    "product_price": 99.99,
+    "product_quantity": 50,
+    "product_shop": "{{clientId}}",
+    "product_attributes": {
+        "manufacturer": "TestBrand",
+        "model": "TEST-001",
+        "warranty": "1 year"
+    }
+}
+````
+
+## File: src/rest/rbac-post.http
+````
+@url_dev=http://localhost:3055
+@api_key=your_api_key_here
+@client_id=your_client_id_here
+@authorization=your_jwt_token_here
+
+### Create a new Resource
+POST {{url_dev}}/v1/api/rbac/resource
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "name": "balance",
+    "slug": "p0002",
+    "description": "balance test"
+}
+
+### Get all Resources
+GET {{url_dev}}/v1/api/rbac/resources
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+### Create a new Role (e.g., Manager)
+POST {{url_dev}}/v1/api/rbac/role
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "name": "user",
+    "slug": "s00003",
+    "description": "user",
+    "grants": [
+        {
+            "resource": "6939102ad5ab2f78b497f84d",
+            "actions": ["read:own", "update:own"],
+            "attributes": "*"
+        }
+    ]
+}
+
+### Get all Roles
+GET {{url_dev}}/v1/api/rbac/roles
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+````
+
+## File: src/rest/user.http
+````
+@url_dev=http://localhost:3055
+
+### Create a new User (Register)
+POST {{url_dev}}/v1/api/user/new_user
+Content-Type: application/json
+
+{
+    "email": "welterial@gmail.com"
+}
+````
+
+## File: src/routers/cart/index.ts
+````typescript
+import express from "express";
+import cartController from "../../controllers/cart-controller";
+import { asyncHandler } from "../../helpers/asyncHandler";
+import { authentication } from "../../auth/check-auth";
+
+const router = express.Router();
+
+// Apply authentication middleware to all cart routes
+router.use(authentication);
+
+/**
+ * @route POST /cart
+ * @description Add product to user cart (basic version)
+ * @access Private
+ */
+router.post("/", asyncHandler(cartController.addToCart));
+
+/**
+ * @route POST /cart/v2
+ * @description Add products to cart with shop validation (advanced version)
+ * @access Private
+ */
+router.post("/v2", asyncHandler(cartController.addToCartV2));
+
+/**
+ * @route GET /cart
+ * @description Get user's cart with all products
+ * @access Private
+ */
+router.get("/", asyncHandler(cartController.getUserCart));
+
+/**
+ * @route DELETE /cart/:productId
+ * @description Remove product from user cart
+ * @access Private
+ */
+router.delete("/:productId", asyncHandler(cartController.removeFromCart));
+
+/**
+ * @route DELETE /cart
+ * @description Clear entire cart for user
+ * @access Private
+ */
+router.delete("/", asyncHandler(cartController.clearCart));
+
+/**
+ * @route PATCH /cart/quantity
+ * @description Update product quantity in cart (direct increment/decrement)
+ * @access Private
+ */
+router.patch("/quantity", asyncHandler(cartController.updateProductQuantity));
+
+/**
+ * @route PATCH /cart/state
+ * @description Update cart state (e.g., mark as completed)
+ * @access Private
+ */
+router.patch("/state", asyncHandler(cartController.updateCartState));
+
+export default router;
+````
+
+## File: src/routers/checkout/index.ts
+````typescript
+import express from "express";
+import checkoutController from "../../controllers/checkout-controller";
+import { asyncHandler } from "../../helpers/asyncHandler";
+import { authentication } from "../../auth/check-auth";
+
+const router = express.Router();
+
+// Apply authentication middleware to all checkout routes
+router.use(authentication);
+
+/**
+ * @route POST /checkout/review
+ * @description Review checkout order with pricing and discounts
+ * @access Private
+ */
+router.post("/review", asyncHandler(checkoutController.checkOutReview));
+
+/**
+ * @route POST /checkout/order
+ * @description Execute checkout order and create orders
+ * @access Private
+ */
+router.post("/order", asyncHandler(checkoutController.checkOutOrder));
+
+/**
+ * @route GET /checkout/history
+ * @description Get order history for user
+ * @access Private
+ */
+router.get("/history", asyncHandler(checkoutController.getOrderHistory));
+
+/**
+ * @route GET /checkout/:orderId
+ * @description Get order details by ID
+ * @access Private
+ */
+router.get("/:orderId", asyncHandler(checkoutController.getOrderById));
+
+export default router;
+````
+
+## File: src/routers/comment/index.ts
+````typescript
+import express from "express";
+import commentController from "../../controllers/comment-controller";
+import { asyncHandler } from "../../helpers/asyncHandler";
+import { authentication } from "../../auth/check-auth";
+
+const router = express.Router();
+
+// Public routes
+router.get(
+    "/product/:productId",
+    asyncHandler(commentController.getCommentsByProduct)
+);
+router.get("/:commentId", asyncHandler(commentController.getCommentById));
+router.get(
+    "/:commentId/replies",
+    asyncHandler(commentController.getCommentReplies)
+);
+
+// Apply authentication middleware to all remaining routes
+router.use(authentication);
+
+router.post("/", asyncHandler(commentController.createComment));
+router.patch("/:commentId", asyncHandler(commentController.updateComment));
+router.delete("/:commentId", asyncHandler(commentController.deleteComment));
+
+export default router;
+````
+
+## File: src/routers/discount/index.ts
+````typescript
+import express from "express";
+import discountController from "../../controllers/discount-controller";
+import { asyncHandler } from "../../helpers/asyncHandler";
+import { authentication } from "../../auth/check-auth";
+
+const router = express.Router();
+
+// Apply authentication middleware to all discount routes
+router.use(authentication);
+
+// Create discount code
+router.post("/", asyncHandler(discountController.createDiscountCode));
+
+// Update discount code
+router.patch("/:discountId", asyncHandler(discountController.updateDiscountCode));
+
+// Get all discount codes for shop
+router.get("/shop/all", asyncHandler(discountController.getAllDiscountCodesByShop));
+
+// Get discount code with products
+router.get("/code/:code", asyncHandler(discountController.getDiscountCodeWithProducts));
+
+// Calculate discount amount
+router.post("/amount/:codeId", asyncHandler(discountController.getDiscountAmount));
+
+// Delete discount code
+router.delete("/:discountId", asyncHandler(discountController.deleteDiscountCode));
+
+// Cancel discount code usage
+router.post("/cancel/:codeId", asyncHandler(discountController.cancelDiscountCode));
+
+export default router;
+````
+
+## File: src/routers/email/index.ts
+````typescript
+import express from "express";
+import { asyncHandler } from "../../helpers/asyncHandler";
+import emailController from "../../controllers/email-controller";
+
+const router = express.Router();
+
+router.post("/new_template", asyncHandler(emailController.newTemplate));
+router.post("/send_email_token", asyncHandler(emailController.sendEmailToken));
+
+export default router;
+````
+
+## File: src/routers/inventory/index.ts
+````typescript
+import express from "express";
+import { asyncHandler } from "../../helpers/asyncHandler";
+import { authentication } from "../../auth/check-auth";
+import inventoryController from "../../controllers/inventory-controller";
+
+const router = express.Router();
+
+// Apply authentication middleware to all checkout routes
+router.use(authentication);
+
+/**
+ * @route POST /checkout/review
+ * @description Review checkout order with pricing and discounts
+ * @access Private
+ */
+router.post("/review", asyncHandler(inventoryController.addStocckToInventory));
+
+// /**
+//  * @route POST /checkout/order
+//  * @description Execute checkout order and create orders
+//  * @access Private
+//  */
+// router.post("/order", asyncHandler(checkoutController.checkOutOrder));
+
+// /**
+//  * @route GET /checkout/history
+//  * @description Get order history for user
+//  * @access Private
+//  */
+// router.get("/history", asyncHandler(checkoutController.getOrderHistory));
+
+// /**
+//  * @route GET /checkout/:orderId
+//  * @description Get order details by ID
+//  * @access Private
+//  */
+// router.get("/:orderId", asyncHandler(checkoutController.getOrderById));
+
+export default router;
+````
+
+## File: src/routers/notification/index.ts
+````typescript
+import express from "express";
+import notificationController from "../../controllers/notification-controller";
+import { asyncHandler } from "../../helpers/asyncHandler";
+import { authentication } from "../../auth/check-auth";
+
+const router = express.Router();
+
+// Apply authentication middleware to all notification routes
+router.use(authentication);
+
+// Get user notifications
+router.get(
+    "/",
+    asyncHandler(notificationController.listNotifications)
+);
+
+// Create notification (admin/system use)
+router.post(
+    "/",
+    asyncHandler(notificationController.createNotification)
+);
+
+// Mark notification as read
+router.patch(
+    "/:notificationId/read",
+    asyncHandler(notificationController.markAsRead)
+);
+
+export default router;
+````
+
+## File: src/routers/rbac/index.ts
+````typescript
+import express from "express";
+import { asyncHandler } from "../../helpers/asyncHandler";
+import {
+    listResource,
+    listRole,
+    newResource,
+    newRole,
+} from "../../controllers/rbac-controller";
+
+const router = express.Router();
+
+router.post("/role", asyncHandler(newRole));
+router.get("/roles", asyncHandler(listRole));
+
+router.post("/resource", asyncHandler(newResource));
+router.get("/resources", asyncHandler(listResource));
+
+export default router;
+````
+
+## File: src/routers/shop/index.ts
+````typescript
+
+````
+
+## File: src/services/comment-service.ts
+````typescript
+import commentModel from "../models/comment-model";
+import { convertToObjectIdMongodb } from "../utils";
+
+export class CommentService {
+    static async createComment({
+        productId,
+        userId,
+        content,
+        parentCommentId = null,
+    }: {
+        productId: string;
+        userId: number;
+        content: string;
+        parentCommentId?: string | null;
+    }) {
+        const comment = new commentModel({
+            comment_productId: convertToObjectIdMongodb(productId),
+            comment_userId: userId,
+            comment_content: content,
+            comment_parentId: parentCommentId ? convertToObjectIdMongodb(parentCommentId) : null,
+        });
+
+        let rightValue;
+
+        if (!parentCommentId) {
+            // ROOT COMMENT: Find the highest right value for this product
+            const maxRightValue = await commentModel.findOne(
+                {
+                    comment_productId: convertToObjectIdMongodb(productId),
+                },
+                { comment_right: 1 },
+                { sort: { comment_right: -1 } }
+            );
+
+            if (maxRightValue) {
+                rightValue = maxRightValue.comment_right + 1;
+            } else {
+                rightValue = 1;
+            }
+        } else {
+            // REPLY COMMENT: Find parent comment
+            const parentComment = await commentModel.findById(parentCommentId);
+
+            if (!parentComment) {
+                throw new Error('Parent comment not found');
+            }
+
+            // Validate parent belongs to same product
+            if (parentComment.comment_productId?.toString() !== productId) {
+                throw new Error('Parent comment belongs to different product');
+            }
+
+            // Set insertion point at parent's right value
+            rightValue = parentComment.comment_right;
+
+            // CRITICAL: Shift existing ranges to make space
+            // Update all comments with left >= rightValue (shift right by 2)
+            await commentModel.updateMany(
+                {
+                    comment_productId: convertToObjectIdMongodb(productId),
+                    comment_left: { $gte: rightValue }
+                },
+                { $inc: { comment_left: 2 } }
+            );
+
+            // Update all comments with right >= rightValue (shift right by 2)
+            await commentModel.updateMany(
+                {
+                    comment_productId: convertToObjectIdMongodb(productId),
+                    comment_right: { $gte: rightValue }
+                },
+                { $inc: { comment_right: 2 } }
+            );
+        }
+
+        // Set the new comment's left and right values
+        comment.comment_left = rightValue;
+        comment.comment_right = rightValue + 1;
+
+        await comment.save();
+        return comment;
+    }
+
+    static async getCommentsByProduct({
+        productId,
+        page = 1,
+        limit = 20
+    }: {
+        productId: string;
+        page?: number;
+        limit?: number;
+    }) {
+        const skip = (page - 1) * limit;
+
+        const comments = await commentModel
+            .find({
+                comment_productId: convertToObjectIdMongodb(productId),
+                isDeleted: false
+            })
+            .sort({ comment_left: 1 })
+            .skip(skip)
+            .limit(limit)
+            .populate('comment_userId', 'name avatar')
+            .lean();
+
+        return this.buildTreeHierarchy(comments);
+    }
+
+    static async getCommentReplies({
+        parentCommentId,
+        page = 1,
+        limit = 10
+    }: {
+        parentCommentId: string;
+        page?: number;
+        limit?: number;
+    }) {
+        const skip = (page - 1) * limit;
+
+        // Find parent comment to get its range
+        const parentComment = await commentModel.findById(parentCommentId);
+        if (!parentComment) {
+            throw new Error('Parent comment not found');
+        }
+
+        // Find all comments within parent's range (excluding parent itself)
+        const replies = await commentModel
+            .find({
+                comment_productId: parentComment.comment_productId,
+                comment_left: { $gt: parentComment.comment_left },
+                comment_right: { $lt: parentComment.comment_right },
+                isDeleted: false
+            })
+            .sort({ comment_left: 1 })
+            .skip(skip)
+            .limit(limit)
+            .populate('comment_userId', 'name avatar')
+            .lean();
+
+        return this.buildTreeHierarchy(replies);
+    }
+
+    static async updateComment({
+        commentId,
+        userId,
+        content
+    }: {
+        commentId: string;
+        userId: number;
+        content: string;
+    }) {
+        return await commentModel.findOneAndUpdate(
+            {
+                _id: commentId,
+                comment_userId: userId,
+                isDeleted: false
+            },
+            {
+                comment_content: content
+            },
+            {
+                new: true,
+                runValidators: true
+            }
+        ).populate('comment_userId', 'name avatar');
+    }
+
+    static async deleteComment({
+        commentId,
+        userId
+    }: {
+        commentId: string;
+        userId: number;
+    }) {
+        // Find the comment to delete
+        const commentToDelete = await commentModel.findOne({
+            _id: commentId,
+            comment_userId: userId,
+            isDeleted: false
+        });
+
+        if (!commentToDelete) {
+            throw new Error('Comment not found or unauthorized');
+        }
+
+        const { comment_left, comment_right, comment_productId } = commentToDelete;
+        const range = comment_right - comment_left + 1;
+
+        // Delete the comment and all its descendants
+        await commentModel.deleteMany({
+            comment_productId,
+            comment_left: { $gte: comment_left },
+            comment_right: { $lte: comment_right }
+        });
+
+        // Shift left values to close the gap
+        await commentModel.updateMany(
+            {
+                comment_productId,
+                comment_left: { $gt: comment_right }
+            },
+            { $inc: { comment_left: -range } }
+        );
+
+        // Shift right values to close the gap
+        await commentModel.updateMany(
+            {
+                comment_productId,
+                comment_right: { $gt: comment_right }
+            },
+            { $inc: { comment_right: -range } }
+        );
+
+        return { success: true, message: 'Comment deleted successfully' };
+    }
+
+    static async getCommentById(commentId: string) {
+        return await commentModel
+            .findOne({
+                _id: commentId,
+                isDeleted: false
+            })
+            .populate('comment_userId', 'name avatar')
+            .populate('comment_parentId', 'comment_content')
+            .lean();
+    }
+
+    // Helper method to build nested tree structure from flat MPTT data
+    static buildTreeHierarchy(comments: any[]) {
+        const tree = [];
+        const stack = [];
+
+        for (const comment of comments) {
+            // Remove nodes from stack until we find the parent
+            while (stack.length > 0 && stack[stack.length - 1].comment_right < comment.comment_left) {
+                stack.pop();
+            }
+
+            if (stack.length === 0) {
+                // Root level comment
+                tree.push(comment);
+            } else {
+                // Child comment - add to parent's replies
+                if (!stack[stack.length - 1].replies) {
+                    stack[stack.length - 1].replies = [];
+                }
+                stack[stack.length - 1].replies.push(comment);
+            }
+
+            stack.push(comment);
+        }
+
+        return tree;
+    }
+}
+````
+
+## File: src/services/inventory-service.ts
+````typescript
+import { BadRequestError } from "../core/error-respone";
+import inventoryModel from "../models/inventory-model";
+import { productModel } from "../models/product-model";
+import ProductService from "./product-service";
+
+export class InventoryService {
+    static async addStockToInventory({
+        stock,
+        productId,
+        shopId,
+        localtion = "CoCKCKCKCKCK",
+    }) {
+        const product = await ProductService.getProductById(productId);
+
+        if (!product) throw new BadRequestError("The product doest not exists!")
+        return await inventoryModel.findOneAndUpdate({
+            inven_shopId: shopId,
+            inven_productId: productId
+        }, {
+            $inc: {
+                inven_stock: stock
+            },
+            $set: {
+                inven_location: localtion
+            }
+        }, {
+            upsert: true,
+            new: true
+        })
+    }
+}
+````
+
+## File: src/services/notification-service.ts
+````typescript
+import notificationModel from "../models/notification-model";
+
+export class NotificationService {
+    static async pushNotiToSystem({
+        type = "SHOP-001",
+        receivedId = 1,
+        senderId = 1,
+        options = {},
+    }: {
+        type?: string;
+        receivedId?: string | number;
+        senderId?: string | number;
+        options?: Record<string, any>;
+    }) {
+        try {
+            let noti_content;
+
+            if (type === "SHOP-001") {
+                noti_content = `${
+                    options.shopName || "Shop"
+                } just added a product: ${
+                    options.productName || "New Product"
+                }`;
+            } else if (type === "PROMOTION-001") {
+                noti_content = `${
+                    options.shopName || "Shop"
+                } just added a voucher: ${
+                    options.voucherName || "New Voucher"
+                }`;
+            } else if (type === "ORDER-001") {
+                noti_content = `New order received: ${options.orderId}`;
+            } else if (type === "ORDER-002") {
+                noti_content = `Order status updated: ${options.orderId}`;
+            } else if (type === "PROMOTION-002") {
+                noti_content = `New promotion available: ${options.promotionName}`;
+            } else {
+                noti_content = `System notification`;
+            }
+
+            const newNoti = await notificationModel.create({
+                noti_type: type,
+                noti_content: noti_content,
+                noti_senderId: senderId,
+                noti_recivedId: receivedId,
+                noti_options: options,
+            });
+
+            return newNoti;
+        } catch (error) {
+            console.error("Notification creation failed:", error);
+            throw error;
+        }
+    }
+
+    static async pushNotiToSystemAsync({
+        type = "SHOP-001",
+        receivedId = 1,
+        senderId = 1,
+        options = {},
+    }: {
+        type?: string;
+        receivedId?: string | number;
+        senderId?: string | number;
+        options?: Record<string, any>;
+    }) {
+        // Fire and forget - don't wait for notification creation
+        setImmediate(async () => {
+            try {
+                await this.pushNotiToSystem({
+                    type,
+                    receivedId,
+                    senderId,
+                    options,
+                });
+            } catch (error) {
+                console.error("Async notification failed:", error);
+            }
+        });
+    }
+
+    static listNotiByUser = async ({
+        userId = 1,
+        type = "ALL",
+        isRead = 0,
+    }) => {
+        const match = { noti_recivedId: userId };
+
+        if (type != "ALL") {
+            match.noti_type = type;
+        }
+
+        return await notificationModel.aggregate([
+            { $match: match },
+            {
+                $project: {
+                    noti_type: 1,
+                    noti_senderId: 1,
+                    noti_receivedId: 1,
+                    noti_content: 1,
+                    createAt: 1,
+                },
+            },
+        ]);
+    };
+}
+````
+
+## File: src/services/rbac-service.ts
+````typescript
+import resourceModel from "../models/resource-model";
+import roleModel from "../models/role-model";
+
+/**
+ * new resource
+ * @thaideptrai218
+ * @param {string} name
+ * @param {string} slug
+ * @param {string} description
+ */
+export const createResource = async ({
+    name = "profile",
+    slug = "p0001",
+    description = "",
+}) => {
+    try {
+        //1. Check name or slug exists
+
+        //2. New resource
+        const resource = await resourceModel.create({
+            src_name: name,
+            src_desc: description,
+            src_slug: slug,
+        });
+
+        return resource;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const resourceList = async ({
+    userId = 0,
+    limit = 30,
+    offset = 0,
+    search = "",
+}) => {
+    try {
+        //1. Check admin from middleware function
+
+        //2. get list of resource
+        const resource = await resourceModel.aggregate([
+            {
+                $project: {
+                    name: "$src_name",
+                    slug: "$src_slug",
+                    description: "$src_description",
+                    resourceId: "$_id",
+                    createdAt: 1,
+                },
+            },
+        ]);
+
+        return resource;
+    } catch (error) {
+        return [];
+    }
+};
+
+export const createRole = async ({
+    name = "shop",
+    slug = "s0001",
+    description = "extend from shop or user",
+    grants = [],
+}) => {
+    try {
+        //1. Check role exists
+
+        //2. New role.
+        const role = await roleModel.create({
+            role_name: name,
+            role_desc: description,
+            role_grants: grants,
+            role_slug: slug,
+        });
+
+        return role;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const roleList = async ({
+    userId = 0,
+    limit = 30,
+    offset = 0,
+    search = "",
+}) => {
+    try {
+        const roles = await roleModel.aggregate([
+            {
+                $unwind: "$role_grants",
+            },
+            {
+                $lookup: {
+                    from: "resources",
+                    localField: "role_grants.resource",
+                    foreignField: "_id",
+                    as: "resource",
+                },
+            },
+            {
+                $unwind: "$resource",
+            },
+            {
+                $project: {
+                    role: "$role_name",
+                    resource: "$resource.src_name",
+                    action: "$role_grants.actions",
+                    attributes: "$role_grants.attributes",
+                },
+            },
+            {
+                $unwind: "$action",
+            },
+            {
+                $project: {
+                    _id: 0,
+                    role: 1,
+                    resource: 1,
+                    action: 1,
+                    attributes: 1,
+                },
+            },
+        ]);
+
+        return roles;
+    } catch (error) {
+        return error;
+    }
+};
+````
+
+## File: src/services/shop-service.ts
+````typescript
+import { shopModel } from "../models/shop-model";
+
+export const findByEmail = async ({
+    email,
+    select = {
+        email: 1,
+        password: 1,
+        name: 1,
+        status: 1,
+        roles: 1,
+    },
+}: {
+    email: string;
+    select?: Record<string, 0 | 1> | string;
+}) => {
+    return await shopModel.findOne({ email }).select(select).lean();
+};
+````
+
+## File: src/services/template-service.ts
+````typescript
+import templateModel from "../models/template-model";
+
+export const newTemplate = async ({ tem_name, tem_html }) => {
+    //1. Check if exists
+    const isExist = await templateModel.findOne({ tem_name });
+    if (isExist) return isExist;
+
+    //2 create a new template
+    const newTem = await templateModel.create({
+        tem_name, //unique name
+        tem_html,
+    });
+
+    return newTem;
+};
+
+export const getTemplate = async ({ tem_name }) => {
+    const template = await templateModel.findOne({
+        tem_name,
+    });
+
+    if (!template) {
+        return createOtpTemplate();
+    }
+
+    return template;
+};
+
+export const createOtpTemplate = async () => {
+    const html = htmlEmailToken();
+    return await newTemplate({
+        tem_name: "HTML EMAIL OTP",
+        tem_html: html,
+    });
+};
+
+const htmlEmailToken = () => {
+
+    return `
+
+        <!DOCTYPE html>
+
+        <html lang="en">
+
+        <head>
+
+            <meta charset="UTF-8">
+
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+            <title>OTP Verification</title>
+
+        </head>
+
+        <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
+
+            <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+
+                <h2 style="color: #333333; text-align: center;">Welcome to {{shop_name}}!</h2>
+
+                <p style="font-size: 16px; color: #555555;">Hello {{user_name}},</p>
+
+                <p style="font-size: 16px; color: #555555;">Thank you for registering. Please click the button below to verify your email address:</p>
+
+                
+
+                <div style="text-align: center; margin: 30px 0;">
+
+                    <a href="{{verify_link}}" style="background-color: #007BFF; color: white; padding: 14px 28px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 18px; display: inline-block;">Verify Email</a>
+
+                </div>
+
+
+
+                <p style="font-size: 16px; color: #555555;">Or copy and paste this link into your browser:</p>
+
+                <p style="font-size: 14px; color: #007BFF; word-break: break-all;">{{verify_link}}</p>
+
+
+
+                <p style="font-size: 14px; color: #999999; margin-top: 30px; text-align: center;">This link will expire in 1 minute. If you didn't request this, please ignore this email.</p>
+
+            </div>
+
+        </body>
+
+        </html>
+
+    `;
+
+}
+
+;
+````
+
+## File: src/test/message_queue/kafka/consumer.ts
+````typescript
+import { Kafka, logLevel } from "kafkajs";
+
+const kafka = new Kafka({
+    clientId: "my-app",
+    brokers: ["localhost:9092"],
+    logLevel: logLevel.NOTHING,
+});
+
+const consumer = kafka.consumer({ groupId: "test-group" });
+
+const runConsumer = async () => {
+    await consumer.connect();
+    await consumer.subscribe({ topic: "test-topic", fromBeginning: true });
+
+    await consumer.run({
+        eachMessage: async ({ topic, partition, message }) => {
+            console.log({
+                value: message?.value.toString(),
+            });
+        },
+    });
+};
+
+runConsumer().catch(console.error);
+````
+
+## File: src/test/message_queue/kafka/producer.ts
+````typescript
+import { Kafka, logLevel } from "kafkajs";
+
+const kafka = new Kafka({
+    clientId: "my-app",
+    brokers: ["localhost:9092"],
+    logLevel: logLevel.NOTHING,
+});
+
+const producer = kafka.producer();
+
+const runProducer = async () => {
+    await producer.connect();
+    await producer.send({
+        topic: "test-topic",
+        messages: [{ value: "Hello KafkaJS user by TipsJavascript!" }],
+    });
+
+    await producer.disconnect();
+};
+
+runProducer().catch(console.error);
+````
+
+## File: src/test/message_queue/rabbitmq/comsumer.ts
+````typescript
+import amqplib from "amqplib";
+import { TOO_MANY_REQUESTS } from "http-status-codes";
+const message = "hello rabbitmq from tipsjavascript!";
+
+const runComsumer = async () => {
+    try {
+        const connection = await amqplib.connect("amqp://localhost:5672");
+        const channel = await connection.createChannel();
+
+        const queueName = "test-topic";
+        await channel.assertQueue(queueName, {
+            durable: true,
+        });
+
+        channel.consume(
+            queueName,
+            (msg) => {
+                if (msg !== null) {
+                    console.log("Received:", msg.content.toString());
+                    // channel.ack(msg);
+                } else {
+                    console.log("Consumer cancelled by server");
+                }
+            },
+            {
+                noAck: true,
+            }
+        );
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+runComsumer().catch(console.error);
+````
+
+## File: src/test/message_queue/rabbitmq/producer.ts
+````typescript
+import amqplib from "amqplib";
+const message = "hello rabbitmq from tipsjavascript!";
+
+const runProducer = async () => {
+    try {
+        const connection = await amqplib.connect("amqp://localhost:5672");
+        const channel = await connection.createChannel();
+
+        const queueName = "test-topic";
+        await channel.assertQueue(queueName, {
+            durable: true,
+        });
+
+        setInterval(() => {
+            channel.sendToQueue(queueName, Buffer.from(message));
+        }, 1000);
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+runProducer().catch(console.error);
+````
+
+## File: src/utils/express-utils.ts
+````typescript
+export function getHeaderAsString(
+    req: Request,
+    headerName: string
+): string | undefined {
+    const headerValue = req.headers[headerName.toLowerCase()]; // Headers are case-insensitive, but accessed by lowercase keys
+
+    if (typeof headerValue === "string") {
+        return headerValue;
+    } else if (Array.isArray(headerValue)) {
+        // If it's an array, you might choose to join them, or take the first element
+        return headerValue[0]; // Example: taking the first value
+    }
+    return undefined; // If undefined or any other unexpected type
+}
+````
+
+## File: src/utils/object-utils.ts
+````typescript
+import _ from 'lodash';
+
+const getInfoData = ({ fields = [], object = {} }) => {
+    return _.pick(object, fields);
+};
+
+export { getInfoData };
+````
+
+## File: .repomixignore
+````
+docs/*
+plans/*
+assets/*
+dist/*
+coverage/*
+build/*
+ios/*
+android/*
+tests/*
+__tests__/*
+__pycache__/*
+node_modules/*
+
+.opencode/*
+.claude/*
+.serena/*
+.pnpm-store/*
+.github/*
+.dart_tool/*
+.idea/*
+.husky/*
+.venv/*
+````
+
+## File: claude_code_zai_env.sh
+````bash
+#!/bin/bash
+
+set -euo pipefail
+
+# ========================
+#       Define Constants
+# ========================
+SCRIPT_NAME=$(basename "$0")
+NODE_MIN_VERSION=18
+NODE_INSTALL_VERSION=22
+NVM_VERSION="v0.40.3"
+CLAUDE_PACKAGE="@anthropic-ai/claude-code"
+CONFIG_DIR="$HOME/.claude"
+CONFIG_FILE="$CONFIG_DIR/settings.json"
+API_BASE_URL="https://api.z.ai/api/anthropic"
+API_KEY_URL="https://z.ai/manage-apikey/apikey-list"
+API_TIMEOUT_MS=3000000
+
+# ========================
+#       Functions
+# ========================
+
+log_info() {
+    echo "🔹 $*"
+}
+
+log_success() {
+    echo "✅ $*"
+}
+
+log_error() {
+    echo "❌ $*" >&2
+}
+
+ensure_dir_exists() {
+    local dir="$1"
+    if [ ! -d "$dir" ]; then
+        mkdir -p "$dir" || {
+            log_error "Failed to create directory: $dir"
+            exit 1
+        }
+    fi
+}
+
+# ========================
+#     Node.js Installation
+# ========================
+
+install_nodejs() {
+    local platform=$(uname -s)
+
+    case "$platform" in
+        Linux|Darwin)
+            log_info "Installing Node.js on $platform..."
+
+            # Install nvm
+            log_info "Installing nvm ($NVM_VERSION)..."
+            curl -s https://raw.githubusercontent.com/nvm-sh/nvm/"$NVM_VERSION"/install.sh | bash
+
+            # Load nvm
+            log_info "Loading nvm environment..."
+            \. "$HOME/.nvm/nvm.sh"
+
+            # Install Node.js
+            log_info "Installing Node.js $NODE_INSTALL_VERSION..."
+            nvm install "$NODE_INSTALL_VERSION"
+
+            # Verify installation
+            node -v &>/dev/null || {
+                log_error "Node.js installation failed"
+                exit 1
+            }
+            log_success "Node.js installed: $(node -v)"
+            log_success "npm version: $(npm -v)"
+            ;;
+        *)
+            log_error "Unsupported platform: $platform"
+            exit 1
+            ;;
+    esac
+}
+
+# ========================
+#     Node.js Check
+# ========================
+
+check_nodejs() {
+    if command -v node &>/dev/null; then
+        current_version=$(node -v | sed 's/v//')
+        major_version=$(echo "$current_version" | cut -d. -f1)
+
+        if [ "$major_version" -ge "$NODE_MIN_VERSION" ]; then
+            log_success "Node.js is already installed: v$current_version"
+            return 0
+        else
+            log_info "Node.js v$current_version is installed but version < $NODE_MIN_VERSION. Upgrading..."
+            install_nodejs
+        fi
+    else
+        log_info "Node.js not found. Installing..."
+        install_nodejs
+    fi
+}
+
+# ========================
+#     Claude Code Installation
+# ========================
+
+install_claude_code() {
+    if command -v claude &>/dev/null; then
+        log_success "Claude Code is already installed: $(claude --version)"
+    else
+        log_info "Installing Claude Code..."
+        npm install -g "$CLAUDE_PACKAGE" || {
+            log_error "Failed to install claude-code"
+            exit 1
+        }
+        log_success "Claude Code installed successfully"
+    fi
+}
+
+configure_claude_json(){
+  node --eval '
+      const os = require("os");
+      const fs = require("fs");
+      const path = require("path");
+
+      const homeDir = os.homedir();
+      const filePath = path.join(homeDir, ".claude.json");
+      if (fs.existsSync(filePath)) {
+          const content = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+          fs.writeFileSync(filePath, JSON.stringify({ ...content, hasCompletedOnboarding: true }, null, 2), "utf-8");
+      } else {
+          fs.writeFileSync(filePath, JSON.stringify({ hasCompletedOnboarding: true }, null, 2), "utf-8");
+      }'
+}
+
+# ========================
+#     API Key Configuration
+# ========================
+
+configure_claude() {
+    log_info "Configuring Claude Code..."
+    echo "   You can get your API key from: $API_KEY_URL"
+    read -s -p "🔑 Please enter your Z.AI API key: " api_key
+    echo
+
+    if [ -z "$api_key" ]; then
+        log_error "API key cannot be empty. Please run the script again."
+        exit 1
+    fi
+
+    ensure_dir_exists "$CONFIG_DIR"
+
+    # Write settings.json
+    node --eval '
+        const os = require("os");
+        const fs = require("fs");
+        const path = require("path");
+
+        const homeDir = os.homedir();
+        const filePath = path.join(homeDir, ".claude", "settings.json");
+        const apiKey = "'"$api_key"'";
+
+        const content = fs.existsSync(filePath)
+            ? JSON.parse(fs.readFileSync(filePath, "utf-8"))
+            : {};
+
+        fs.writeFileSync(filePath, JSON.stringify({
+            ...content,
+            env: {
+                ANTHROPIC_AUTH_TOKEN: apiKey,
+                ANTHROPIC_BASE_URL: "'"$API_BASE_URL"'",
+                API_TIMEOUT_MS: "'"$API_TIMEOUT_MS"'",
+                CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: 1
+            }
+        }, null, 2), "utf-8");
+    ' || {
+        log_error "Failed to write settings.json"
+        exit 1
+    }
+
+    log_success "Claude Code configured successfully"
+}
+
+# ========================
+#        Main
+# ========================
+
+main() {
+    echo "🚀 Starting $SCRIPT_NAME"
+
+    check_nodejs
+    install_claude_code
+    configure_claude_json
+    configure_claude
+
+    echo ""
+    log_success "🎉 Installation completed successfully!"
+    echo ""
+    echo "🚀 You can now start using Claude Code with:"
+    echo "   claude"
+}
+
+main "$@"
+````
+
+## File: eslint.config.mts
+````typescript
+import js from "@eslint/js";
+import globals from "globals";
+import tseslint from "typescript-eslint";
+import { defineConfig } from "eslint/config";
+
+export default defineConfig([
+  { files: ["**/*.{js,mjs,cjs,ts,mts,cts}"], plugins: { js }, extends: ["js/recommended"], languageOptions: { globals: {...globals.browser, ...globals.node} } },
+  tseslint.configs.recommended,
+]);
+````
+
+## File: README.md
+````markdown
+# E-commerce Backend Project
+
+This repository contains the backend for an e-commerce application, built with Node.js and TypeScript. It follows an enterprise-level architecture with clear separation of concerns, utilizing Factory, Repository, and Service patterns to ensure scalability, maintainability, and extensibility.
+
+## Features
+
+- User Authentication & Authorization (JWT, RBAC, API Key)
+- Product Management (CRUD, Factory Pattern for product types)
+- Shopping Cart Functionality
+- Discount Management
+- Comment System
+- Robust Error Handling
+- Comprehensive Security Measures
+- Redis Caching
+
+## Technology Stack
+
+- **Runtime**: Node.js
+- **Language**: TypeScript (strict mode enabled)
+- **Web Framework**: Express.js 5.x
+- **Database**: MongoDB with Mongoose ODM
+- **Authentication**: JWT with bcrypt
+- **Caching**: Redis
+- **Security**: Helmet, CORS, compression
+- **Containerization**: Docker
+
+## Setup Instructions
+
+### Prerequisites
+
+- Node.js (LTS version recommended)
+- Docker & Docker Compose
+- MongoDB (running via Docker or locally)
+- Redis (running via Docker or locally)
+
+### 1. Clone the Repository
+
+```bash
+git clone <repository-url>
+cd ecommerce-backend-nodejs
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+### 3. Environment Configuration
+
+Create a `.env` file in the root directory based on `.env.example`.
+Ensure you configure your MongoDB connection string, JWT secrets, and other necessary environment variables.
+
+### 4. Database Setup
+
+The project uses MongoDB and Redis. You can set them up using Docker Compose:
+
+```bash
+docker-compose up -d
+```
+
+This will start MongoDB and Redis instances in the background.
+
+### 5. Running the Application
+
+#### Development with Hot Reload (Recommended)
+
+```bash
+npx tsx watch server.ts
+```
+
+This command will start the server with automatic restarts on code changes. The application will be accessible on `http://localhost:3055`.
+
+#### Production Build
+
+```bash
+npm start
+```
+
+This compiles the TypeScript code and starts the application. The application will be accessible on `http://localhost:3055`.
+
+### 6. Linting
+
+To check code quality and adherence to styling rules:
+
+```bash
+npx eslint .
+```
+
+### 7. Testing (Planned)
+
+Currently, tests are not implemented, but the framework is in place. When implemented, you can run tests using:
+
+```bash
+npm test
+```
+
+## Documentation
+
+For detailed information about the project, refer to the following documentation:
+
+- [Project Overview and PDR](./docs/project-overview-pdr.md)
+- [Codebase Summary](./docs/codebase-summary.md)
+- [Code Standards](./docs/code-standards.md)
+- [System Architecture](./docs/system-architecture.md)
+````
+
+## File: repomix-output.xml
+````xml
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+src/
+  auth/
+    auth-util.ts
+    check-auth.ts
+  configs/
+    cloudinary-config.ts
+    config-mongodb.ts
+    multer-config.ts
+    nodemailer-config.ts
+    redis-config.ts
+    s3-config.ts
+  controllers/
+    access-controller.ts
+    cart-controller.ts
+    checkout-controller.ts
+    comment-controller.ts
+    discount-controller.ts
+    email-controller.ts
+    inventory-controller.ts
+    notification-controller.ts
+    product-controller.ts
+    profile-controller.ts
+    rbac-controller.ts
+    upload-controller.ts
+    user-controller.ts
+  core/
+    error-respone.ts
+    success-respone.ts
+  databases/
+    init_mongoose.ts
+  helpers/
+    asyncHandler.ts
+    check-connect.ts
+    responseHandler.ts
+  loggers/
+    mylogger.ts
+    winston_log.ts
+  middleware/
+    access-control.ts
+    rbac.ts
+  models/
+    repositories/
+      cart-rep.ts
+      discount.repo.ts
+      inventory-repo.ts
+      product.repo.ts
+      sku.repo.ts
+      spu.repo.ts
+    apikey-model.ts
+    cart-model.ts
+    comment-model.ts
+    discount-model.ts
+    inventory-model.ts
+    key-token-model.ts
+    key-token.ts
+    notification-model.ts
+    order-schema.ts
+    otp-model.ts
+    product-model.ts
+    resource-model.ts
+    role-model.ts
+    shop-model.ts
+    sku.model.ts
+    spu.model.ts
+    template-model.ts
+    user-model.ts
+  rest/
+    access-post.http
+    cart-post.http
+    checkout-post.http
+    comment-post.http
+    discount-post.http
+    email.http
+    notification-post.http
+    product-post.http
+    rbac-post.http
+    upload.http
+    user.http
+  routers/
+    access/
+      index.ts
+    cart/
+      index.ts
+    checkout/
+      index.ts
+    comment/
+      index.ts
+    discount/
+      index.ts
+    email/
+      index.ts
+    inventory/
+      index.ts
+    notification/
+      index.ts
+    product/
+      index.ts
+    profile/
+      index.ts
+    rbac/
+      index.ts
+    shop/
+      index.ts
+    upload/
+      index.ts
+    user/
+      index.ts
+    index.ts
+  services/
+    access-service.ts
+    apikey-service.ts
+    cart-service.ts
+    checkout-service.ts
+    comment-service.ts
+    discount-service.ts
+    email-service.ts
+    inventory-service.ts
+    key-token-service.ts
+    notification-service.ts
+    otp-service.ts
+    product-service.ts
+    rbac-service.ts
+    redis.ts
+    shop-service.ts
+    template-service.ts
+    upload-service.ts
+    user-service.ts
+  test/
+    message_queue/
+      kafka/
+        consumer.ts
+        producer.ts
+      rabbitmq/
+        comsumer.ts
+        producer.ts
+        producerDLX.ts
+  uploads/
+    1764568823926-image.png
+    1764568893693-579275702_1358039752585825_1371037800666208771_n.jpg
+    1764569257320-conceptual_schema.png
+    1764598102388-'.jpg
+    1764598102389-454632390_122166440162130994_3562077091712649013_n.jpg
+    1764598102390-454718379_122166440036130994_7475295732919095036_n.jpg
+  utils/
+    express-utils.ts
+    index.ts
+    object-utils.ts
+  app.ts
+.gitignore
+.repomixignore
+claude_code_zai_env.sh
+CLAUDE.md
+docker-compose.yml
+eslint.config.mts
+GEMINI.md
+index.html
+package.json
+README.md
+server.ts
+tsconfig.json
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="src/models/repositories/sku.repo.ts">
+import { SkuModel } from "../sku.model";
+
+class SkuRepository {
+  static async createSku(sku: any) {
+    return await SkuModel.create(sku);
+  }
+
+  static async createManySkus(skus: any[]) {
+    return await SkuModel.insertMany(skus);
+  }
+
+  static async findSkuById(sku_id: string) {
+    return await SkuModel.findById(sku_id).lean();
+  }
+
+  static async findSkuByUniqueId(sku_unique_id: string) {
+    return await SkuModel.findOne({ sku_id: sku_unique_id }).lean();
+  }
+
+  static async findAllSkusBySpuId(product_id: string) {
+    // product_id in SkuModel is the string ID of the SPU, not ObjectId
+    return await SkuModel.find({ product_id }).lean();
+  }
+
+  static async updateSku(sku_id: string, payload: any) {
+    return await SkuModel.findByIdAndUpdate(sku_id, payload, { new: true }).lean();
+  }
+
+  static async updateSkuStock(sku_id: string, quantity: number) {
+    return await SkuModel.findOneAndUpdate(
+      { sku_id: sku_id }, // Using unique string ID or _id? Model has sku_id unique string. Let's support both or clarify.
+      // Usually stock updates happen by unique SKU ID (business ID) or DB ID.
+      // Given findAllSkusBySpuId uses product_id (string), likely sku_id (string) is primary key for logic.
+      // But updateProductQuantity in product.repo uses findByIdAndUpdate.
+      // Let's assume passed sku_id is _id for consistency with updateSku,
+      // BUT SkuModel has sku_stock.
+      { $inc: { sku_stock: quantity } },
+      { new: true }
+    ).lean();
+  }
+
+  // Overload/Variant for updating by database ID
+  static async updateSkuStockByDbId(id: string, quantity: number) {
+      return await SkuModel.findByIdAndUpdate(
+          id,
+          { $inc: { sku_stock: quantity } },
+          { new: true }
+      ).lean();
+  }
+}
+
+export default SkuRepository;
+</file>
+
+<file path="src/models/repositories/spu.repo.ts">
+import { SpuModel } from "../spu.model";
+import { getSelectData, convertToObjectIdMongodb } from "../../utils";
+import { Types } from "mongoose";
+
+class SpuRepository {
+  static async createSpu(spu: any) {
+    return await SpuModel.create(spu);
+  }
+
+  static async findSpuById(spu_id: string) {
+    if (!Types.ObjectId.isValid(spu_id)) return null;
+    return await SpuModel.findById(spu_id).lean();
+  }
+
+  static async findSpuByUniqueId(product_id: string) {
+    return await SpuModel.findOne({ product_id }).lean();
+  }
+
+  static async findAllSpus({
+    limit,
+    sort,
+    page,
+    filter,
+    select,
+  }: {
+    limit: number;
+    sort: string;
+    page: number;
+    filter: any;
+    select: string[];
+  }) {
+    const skip = (page - 1) * limit;
+    const sortBy: any = sort === "ctime" ? { _id: -1 } : { _id: 1 };
+
+    return await SpuModel.find(filter)
+      .sort(sortBy)
+      .skip(skip)
+      .limit(limit)
+      .select(getSelectData(select as any))
+      .lean();
+  }
+
+  static async updateSpu(spu_id: string, payload: any) {
+    if (!Types.ObjectId.isValid(spu_id)) return null;
+    return await SpuModel.findByIdAndUpdate(spu_id, payload, { new: true }).lean();
+  }
+
+  static async publishSpuByShop({
+    product_shop,
+    spu_id,
+  }: {
+    product_shop: string;
+    spu_id: string;
+  }) {
+    if (!Types.ObjectId.isValid(product_shop) || !Types.ObjectId.isValid(spu_id)) {
+      return null;
+    }
+
+    const foundSpu = await SpuModel.findOne({
+      _id: convertToObjectIdMongodb(spu_id),
+      product_shop: convertToObjectIdMongodb(product_shop),
+    });
+
+    if (!foundSpu) return null;
+
+    foundSpu.isDraft = false;
+    foundSpu.isPublished = true;
+
+    return await foundSpu.save();
+  }
+
+  static async unpublishSpuByShop({
+    product_shop,
+    spu_id,
+  }: {
+    product_shop: string;
+    spu_id: string;
+  }) {
+    if (!Types.ObjectId.isValid(product_shop) || !Types.ObjectId.isValid(spu_id)) {
+      return null;
+    }
+
+    const foundSpu = await SpuModel.findOne({
+      _id: convertToObjectIdMongodb(spu_id),
+      product_shop: convertToObjectIdMongodb(product_shop),
+    });
+
+    if (!foundSpu) return null;
+
+    foundSpu.isDraft = true;
+    foundSpu.isPublished = false;
+
+    return await foundSpu.save();
+  }
+}
+
+export default SpuRepository;
+</file>
+
+<file path="src/models/sku.model.ts">
+import { Schema, model, Document } from 'mongoose';
+
+const DOCUMENT_NAME = 'Sku';
+const COLLECTION_NAME = 'skus';
+
+interface ISku extends Document {
+  sku_id: string; // Unique stock keeping unit ID (e.g., 'sku_red_m_123')
+  sku_tier_idx: number[]; // Index array mapping to SPU variations (e.g., [0, 1] -> Red, Medium)
+  sku_default: boolean; // Is this the default variant to show?
+  sku_slug: string;
+  sku_sort: number; // Sorting order
+  sku_price: number;
+  sku_stock: number; // Inventory count
+  product_id: string; // Reference to SPU ID (string ID, not ObjectId for flexibility)
+
+  isDraft: boolean;
+  isPublished: boolean;
+  isDeleted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const skuSchema = new Schema<ISku>({
+  sku_id: { type: String, required: true, unique: true },
+  sku_tier_idx: { type: [Number], default: [0] }, // Maps to SPU product_variations
+  sku_default: { type: Boolean, default: false },
+  sku_slug: { type: String, index: true }, // e.g., 'iphone-15-midnight-256gb'
+  sku_sort: { type: Number, default: 0 },
+  sku_price: { type: Number, required: true }, // Using Number for consistency with SPU
+  sku_stock: { type: Number, default: 0, min: 0 }, // Simple inventory tracking
+
+  product_id: { type: String, required: true, index: true }, // Link to SPU
+
+  isDraft: { type: Boolean, default: true, index: true, select: false },
+  isPublished: { type: Boolean, default: false, index: true, select: false },
+  isDeleted: { type: Boolean, default: false },
+}, {
+  timestamps: true,
+  collection: COLLECTION_NAME
+});
+
+export const SkuModel = model<ISku>(DOCUMENT_NAME, skuSchema);
+</file>
+
+<file path="src/models/spu.model.ts">
+import { Schema, model, Document, Types } from 'mongoose';
+import slugify from 'slugify';
+
+const DOCUMENT_NAME = 'Spu';
+const COLLECTION_NAME = 'spus';
+
+interface IProductVariation {
+  name: string;
+  options: string[];
+}
+
+interface ISpu extends Document {
+  product_id: string; // Internal random unique ID
+  product_name: string;
+  product_thumb: string;
+  product_description: string;
+  product_slug: string;
+  product_price: number; // Base price or range (min price)
+  product_category: string[]; // Hierarchy: ["Electronics", "Phones", "Apple"]
+  product_shop: Types.ObjectId;
+  product_attributes: Record<string, unknown>; // Flexible common attributes
+  product_variations: IProductVariation[]; // Denormalized list of available options (e.g. colors: [red, blue], sizes: [M, L])
+  isDraft: boolean;
+  isPublished: boolean;
+  isDeleted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const spuSchema = new Schema<ISpu>({
+  product_id: { type: String, required: true, unique: true }, // e.g., 'spu_12345'
+  product_name: { type: String, required: true },
+  product_thumb: { type: String, required: true },
+  product_description: { type: String },
+  product_slug: { type: String, index: true },
+  product_price: { type: Number, required: true },
+  product_category: { type: [String], default: [] },
+  product_shop: { type: Schema.Types.ObjectId, ref: 'Shop', required: true },
+
+  // Attributes common to all variants (e.g., Brand, Material for clothes)
+  product_attributes: { type: Schema.Types.Mixed, required: true },
+
+  // Summary of available variations for easy filtering (Denormalization)
+  // Example: { colors: ["Red", "Blue"], sizes: ["S", "M"] }
+  product_variations: { type: Schema.Types.Mixed, default: [] },
+
+  isDraft: { type: Boolean, default: true, index: true, select: false },
+  isPublished: { type: Boolean, default: false, index: true, select: false },
+  isDeleted: { type: Boolean, default: false },
+}, {
+  timestamps: true,
+  collection: COLLECTION_NAME
+});
+
+// Middleware for slug
+spuSchema.pre('save', function(next) {
+  if (this.isModified('product_name')) {
+    this.product_slug = slugify(this.product_name, { lower: true });
+  }
+  next();
+});
+
+export const SpuModel = model<ISpu>(DOCUMENT_NAME, spuSchema);
+</file>
+
+<file path="src/configs/cloudinary-config.ts">
+import cloudinary from "cloudinary";
+
+cloudinary.v2.config({
+    api_key: "774459327296593",
+    cloud_name: "ddzylihf0",
+    api_secret: "QMO-jDxQfX5rZYEjmdbURoYGSA0",
+});
+
+export default cloudinary.v2;
+</file>
+
+<file path="src/configs/config-mongodb.ts">
+// level 01
+
+const dev = {
+    app: {
+        port: process.env["PORT"] || 3000,
+    },
+    db: {
+        host: process.env["DB_HOST"] || "localhost",
+        port: process.env["DB_PORT"] || 27017,
+        name: process.env["DB_NAME"] || "dbDev",
+    },
+};
+
+const pro = {
+    app: {
+        port: process.env["PORT"] || 3000,
+    },
+    db: {
+        host: process.env["DB_HOST"] || "localhost",
+        port: process.env["DB_PORT"] || 27017,
+        name: process.env["DB_NAME"] || "dbProduct",
+    },
+};
+
+const config: object = { dev, pro };
+const env = process.env["NODE_ENV"] || "dev";
+export default config[env as keyof typeof config];
+</file>
+
+<file path="src/configs/multer-config.ts">
+import multer from "multer";
+
+const uploadMem = multer({
+    storage: multer.memoryStorage(),
+});
+
+const uploadDisk = multer({
+    storage: multer.diskStorage({
+        destination: function (req, file, cb) {
+            cb(null, "./src/uploads/");
+        },
+        filename: function (req, file, cb) {
+            cb(null, `${Date.now()}-${file.originalname}`);
+        },
+    }),
+});
+
+export { uploadMem, uploadDisk };
+</file>
+
+<file path="src/configs/nodemailer-config.ts">
+import nodemailer from "nodemailer";
+
+export const transport = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 587,
+    auth: {
+        user: process.env.EMAIL_NAME || "welterial218@gmail.com",
+        pass: process.env.EMAIL_APP_PASSWORD || "nfpy focz duce bahd",
+    },
+    pool: true,
+    maxConnections: 5,
+    maxMessages: 100,
+    rateLimit: 10,
+    debug: true,
+});
+</file>
+
+<file path="src/configs/redis-config.ts">
+import { Redis } from "ioredis";
+import { RedisErrorRespone } from "../core/error-respone";
+
+let client: Redis, connectionTimeout: NodeJS.Timeout;
+
+const statusConnectRedis = {
+    CONNECT: "connect",
+    END: "end",
+    RECONNECT: "reconnecting",
+    ERROR: "error",
+};
+
+const REDIS_CONNECT_TIMEOUT = 10000,
+    REDIS_CONNECT_MESSAGE = {
+        code: -99,
+        message: {
+            vn: "REDIS LOI ROI AE",
+            en: "SERVICE connect error",
+        },
+    };
+
+const handleTimeoutError = () => {
+    if (connectionTimeout) clearTimeout(connectionTimeout);
+    connectionTimeout = setTimeout(() => {
+        console.error(
+            `Redis Connection Error: ${REDIS_CONNECT_MESSAGE.message.en} - ${REDIS_CONNECT_MESSAGE.message.vn}`
+        );
+    }, REDIS_CONNECT_TIMEOUT);
+};
+
+const handleEventConnection = (connectionRedis: Redis) => {
+    // check if connection is null
+    if (!connectionRedis) {
+        throw new Error("Connection is null");
+    }
+
+    connectionRedis.on(statusConnectRedis.CONNECT, () => {
+        console.log(`ConnectionRedis - Connection status: connected`);
+        clearTimeout(connectionTimeout);
+    });
+
+    connectionRedis.on(statusConnectRedis.END, () => {
+        console.log(`ConnectionRedis - Connection status: disconnected`);
+        handleTimeoutError();
+    });
+
+    connectionRedis.on(statusConnectRedis.RECONNECT, () => {
+        console.log(`ConnectionRedis - Connection status: reconnecting`);
+        clearTimeout(connectionTimeout);
+    });
+
+    connectionRedis.on(statusConnectRedis.ERROR, () => {
+        console.log(`ConnectionRedis - Connection status: error`);
+        handleTimeoutError();
+    });
+};
+
+export const initReids = () => {
+    const instanceRedis = new Redis({
+        retryStrategy: (times) => 10000,
+        
+    });
+
+    client = instanceRedis;
+    handleEventConnection(instanceRedis);
+};
+
+export const getRedis = () => client;
+
+export const closeRedis = () => client.quit();
+</file>
+
+<file path="src/configs/s3-config.ts">
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+
+const s3Config = {
+    region: "ap-southeast-2",
+    credentials: {
+        accessKeyId: process.env.AWS_BUCKET_ACCESS_KEY,
+        secretAccessKey: process.env.AWS_BUCKET_SECRET_KEY,
+    },
+};
+
+if (!process.env.AWS_BUCKET_ACCESS_KEY || !process.env.AWS_BUCKET_SECRET_KEY) {
+    console.error("Missing AWS S3 credentials in environment variables.");
+}
+
+const s3 = new S3Client(s3Config);
+
+export { s3, PutObjectCommand };
+</file>
+
+<file path="src/controllers/cart-controller.ts">
+import type { Request, Response } from "express";
+import { CartService } from "../services/cart-service";
+import type { CartProduct } from "../services/cart-service";
+import { NotFoundError } from "../core/error-respone";
+import { Created, OK } from "../core/success-respone";
+import { Types } from "mongoose";
+import { asyncHandler } from "../helpers/asyncHandler";
+
+class CartController {
+    /**
+     * @description Add product to user cart (basic version)
+     * @param req - Express request object
+     * @param res - Express response object
+     * @returns JSON response with updated cart
+     */
+    addToCart = asyncHandler(async (req: Request, res: Response) => {
+        const { userId } = req.user;
+        const { productId, quantity, shopId, name, price } = req.body;
+
+        const product: CartProduct = {
+            productId: new Types.ObjectId(productId),
+            quantity: quantity || 1,
+            shopId: shopId ? new Types.ObjectId(shopId) : undefined,
+            name,
+            price,
+        };
+
+        const cart = await CartService.addToCart({
+            userId: parseInt(userId),
+            product,
+        });
+
+        return new OK("Product added to cart successfully!", cart).send(res);
+    });
+
+    /**
+     * @description Add products to cart with shop validation (advanced version)
+     * @param req - Express request object
+     * @param res - Express response object
+     * @returns JSON response with updated cart
+     */
+    addToCartV2 = asyncHandler(async (req: Request, res: Response) => {
+        const { userId } = req.user;
+        const { shopOrderIds } = req.body;
+
+        const cart = await CartService.addToCartV2({
+            userId: parseInt(userId),
+            shopOrderIds,
+        });
+
+        return new OK("Products added to cart successfully!", cart).send(res);
+    });
+
+    /**
+     * @description Remove product from user cart
+     * @param req - Express request object
+     * @param res - Express response object
+     * @returns JSON response with update result
+     */
+    removeFromCart = asyncHandler(async (req: Request, res: Response) => {
+        const { userId } = req.user;
+        const { productId } = req.params;
+
+        const result = await CartService.deleteUserCart({
+            userId: parseInt(userId),
+            productId: new Types.ObjectId(productId),
+        });
+
+        return new OK("Product removed from cart successfully!", result).send(
+            res
+        );
+    });
+
+    /**
+     * @description Get user's cart with all products
+     * @param req - Express request object
+     * @param res - Express response object
+     * @returns JSON response with user cart
+     */
+    getUserCart = asyncHandler(async (req: Request, res: Response) => {
+        const { userId } = req.user;
+
+        const cart = await CartService.getListUserCart({
+            userId: parseInt(userId),
+        });
+
+        return new OK("Cart retrieved successfully!", cart).send(res);
+    });
+
+    /**
+     * @description Clear entire cart for user
+     * @param req - Express request object
+     * @param res - Express response object
+     * @returns JSON response with update result
+     */
+    clearCart = asyncHandler(async (req: Request, res: Response) => {
+        const { userId } = req.user;
+
+        const result = await CartService.clearUserCart({
+            userId: parseInt(userId),
+        });
+
+        return new OK("Cart cleared successfully!", result).send(res);
+    });
+
+    /**
+     * @description Update product quantity in cart (direct increment/decrement)
+     * @param req - Express request object
+     * @param res - Express response object
+     * @returns JSON response with updated cart
+     */
+    updateProductQuantity = asyncHandler(async (req: Request, res: Response) => {
+        const { userId } = req.user;
+        const { productId, quantity } = req.body;
+
+        const cart = await CartService.updateUserCartQuantity({
+            userId: parseInt(userId),
+            product: {
+                productId: new Types.ObjectId(productId),
+                quantity: parseInt(quantity),
+            },
+        });
+
+        return new OK("Product quantity updated successfully!", cart).send(res);
+    });
+
+    /**
+     * @description Update cart state (e.g., mark as completed)
+     * @param req - Express request object
+     * @param res - Express response object
+     * @returns JSON response with update result
+     */
+    updateCartState = asyncHandler(async (req: Request, res: Response) => {
+        const { userId } = req.user;
+        const { newState } = req.body;
+
+        const result = await CartService.updateCartState({
+            userId: parseInt(userId),
+            newState,
+        });
+
+        return new OK("Cart state updated successfully!", result).send(res);
+    });
+}
+
+export default new CartController();
+</file>
+
+<file path="src/controllers/checkout-controller.ts">
+import type { Request, Response } from "express";
+import { CheckoutService } from "../services/checkout-service";
+import { NotFoundError, BadRequestError } from "../core/error-respone";
+import { OK, Created } from "../core/success-respone";
+import { Types } from "mongoose";
+import { asyncHandler } from "../helpers/asyncHandler";
+
+class CheckoutController {
+    /**
+     * @description Review checkout order with pricing and discounts
+     * @param req - Express request object
+     * @param res - Express response object
+     * @returns JSON response with checkout review
+     */
+    checkOutReview = asyncHandler(async (req: Request, res: Response) => {
+        const { userId } = req.user;
+        const { cartId, shop_order_ids = [] } = req.body;
+
+        if (!cartId || !shop_order_ids.length) {
+            throw new BadRequestError("Cart ID and shop orders are required!");
+        }
+
+        const checkoutReview = await CheckoutService.checkOutReview({
+            cartId: new Types.ObjectId(cartId),
+            userId: parseInt(userId),
+            shop_order_ids,
+        });
+
+        return new OK("Checkout review completed!", checkoutReview).send(res);
+    });
+
+    /**
+     * @description Execute checkout order and create orders
+     * @param req - Express request object
+     * @param res - Express response object
+     * @returns JSON response with created orders
+     */
+    checkOutOrder = asyncHandler(async (req: Request, res: Response) => {
+        const { userId } = req.user;
+        const { cartId, shop_order_ids = [] } = req.body;
+
+        if (!cartId || !shop_order_ids.length) {
+            throw new BadRequestError("Cart ID and shop orders are required!");
+        }
+
+        const orderResult = await CheckoutService.checkOutOrder({
+            cartId: new Types.ObjectId(cartId),
+            userId: parseInt(userId),
+            shop_order_ids,
+        });
+
+        return new Created("Orders created successfully!", orderResult).send(res);
+    });
+
+    /**
+     * @description Get order history for user
+     * @param req - Express request object
+     * @param res - Express response object
+     * @returns JSON response with order history
+     */
+    getOrderHistory = asyncHandler(async (req: Request, res: Response) => {
+        const { userId } = req.user;
+        const { page = 1, limit = 10, status } = req.query;
+
+        // This would typically call an OrderService.getOrdersByUser method
+        // For now, return a placeholder response
+        const orders = {
+            userId,
+            orders: [],
+            pagination: {
+                page: parseInt(page as string),
+                limit: parseInt(limit as string),
+                total: 0,
+                total_pages: 0,
+            },
+        };
+
+        return new OK("Order history retrieved!", orders).send(res);
+    });
+
+    /**
+     * @description Get order details by ID
+     * @param req - Express request object
+     * @param res - Express response object
+     * @returns JSON response with order details
+     */
+    getOrderById = asyncHandler(async (req: Request, res: Response) => {
+        const { userId } = req.user;
+        const { orderId } = req.params;
+
+        if (!orderId) {
+            throw new BadRequestError("Order ID is required!");
+        }
+
+        // This would typically call an OrderService.getOrderById method
+        // For now, return a placeholder response
+        const order = {
+            orderId: new Types.ObjectId(orderId),
+            userId,
+            status: "Not implemented",
+        };
+
+        return new OK("Order details retrieved!", order).send(res);
+    });
+}
+
+export default new CheckoutController();
+</file>
+
+<file path="src/controllers/comment-controller.ts">
+import type { Request, Response } from "express";
+import { CommentService } from "../services/comment-service";
+import { NotFoundError } from "../core/error-respone";
+import { Created, OK } from "../core/success-respone";
+import { Types } from "mongoose";
+
+class CommentController {
+    static async createComment(req: Request, res: Response) {
+        const { productId, content, parentCommentId } = req.body;
+        const { userId } = req.user;
+
+        const comment = await CommentService.createComment({
+            productId,
+            userId,
+            content,
+            parentCommentId
+        });
+
+        return new Created("Comment created successfully!", comment).send(res);
+    }
+
+    static async getCommentsByProduct(req: Request, res: Response) {
+        const { productId } = req.params;
+        const { page = 1, limit = 20 } = req.query;
+
+        const comments = await CommentService.getCommentsByProduct({
+            productId,
+            page: Number(page),
+            limit: Number(limit)
+        });
+
+        return new OK("Get comments successfully!", comments).send(res);
+    }
+
+    static async getCommentReplies(req: Request, res: Response) {
+        const { commentId } = req.params;
+        const { page = 1, limit = 10 } = req.query;
+
+        const replies = await CommentService.getCommentReplies({
+            parentCommentId: commentId,
+            page: Number(page),
+            limit: Number(limit)
+        });
+
+        return new OK("Get comment replies successfully!", replies).send(res);
+    }
+
+    static async updateComment(req: Request, res: Response) {
+        const { commentId } = req.params;
+        const { content } = req.body;
+        const { userId } = req.user;
+
+        const updatedComment = await CommentService.updateComment({
+            commentId,
+            userId,
+            content
+        });
+
+        if (!updatedComment) {
+            throw new NotFoundError("Comment not found or unauthorized");
+        }
+
+        return new OK("Comment updated successfully!", updatedComment).send(res);
+    }
+
+    static async deleteComment(req: Request, res: Response) {
+        const { commentId } = req.params;
+        const { userId } = req.user;
+
+        const deletedComment = await CommentService.deleteComment({
+            commentId,
+            userId
+        });
+
+        if (!deletedComment) {
+            throw new NotFoundError("Comment not found or unauthorized");
+        }
+
+        return new OK("Comment deleted successfully!", null).send(res);
+    }
+
+    static async getCommentById(req: Request, res: Response) {
+        const { commentId } = req.params;
+
+        const comment = await CommentService.getCommentById(commentId);
+
+        if (!comment) {
+            throw new NotFoundError("Comment not found");
+        }
+
+        return new OK("Get comment successfully!", comment).send(res);
+    }
+}
+
+export default CommentController;
+</file>
+
+<file path="src/controllers/discount-controller.ts">
+import type { Request, Response, NextFunction } from "express";
+import { DiscountService } from "../services/discount-service";
+import { asyncHandler } from "../helpers/asyncHandler";
+import { Created, OK } from "../core/success-respone";
+
+class DiscountController {
+    createDiscountCode = asyncHandler(
+        async (req: Request, res: Response, next: NextFunction) => {
+            const { userId } = req.user;
+            const discount = await DiscountService.createDiscountCode({
+                ...req.body,
+                shopId: userId,
+            });
+            return new Created("Discount code created successfully!", discount).send(res);
+        }
+    );
+
+    updateDiscountCode = asyncHandler(
+        async (req: Request, res: Response, next: NextFunction) => {
+            const { userId } = req.user;
+            const { discountId } = req.params;
+            const discount = await DiscountService.updateDiscountCode({
+                discountId,
+                shopId: userId,
+                updateData: req.body,
+            });
+            return new OK("Discount code updated successfully!", discount).send(res);
+        }
+    );
+
+    getAllDiscountCodesByShop = asyncHandler(
+        async (req: Request, res: Response, next: NextFunction) => {
+            const { userId } = req.user;
+            const { limit = 50, page = 1, sort = "createdAt", is_active = true } = req.query;
+
+            const result = await DiscountService.getDiscountCodesByShopId({
+                shopId: userId,
+                limit: Number(limit),
+                page: Number(page),
+                sort: sort as "createdAt" | "name" | "value" | "endDate",
+                is_active: is_active === "true",
+            });
+            return new OK("Get discount codes successfully!", result).send(res);
+        }
+    );
+
+    getDiscountCodeWithProducts = asyncHandler(
+        async (req: Request, res: Response, next: NextFunction) => {
+            const { code } = req.params;
+            const { userId } = req.user;
+            const { limit = 50, page = 1 } = req.query;
+
+            const result = await DiscountService.getAllDiscountCodeWithProduct({
+                code,
+                shopId: userId,
+                limit: Number(limit),
+                page: Number(page),
+            });
+            return new OK("Get discount code with products successfully!", result).send(res);
+        }
+    );
+
+    getDiscountAmount = asyncHandler(
+        async (req: Request, res: Response, next: NextFunction) => {
+            const { userId } = req.user;
+            const { codeId } = req.params;
+            const { shopId, products } = req.body;
+
+            const result = await DiscountService.getDiscountAmount({
+                codeId,
+                userId,
+                shopId,
+                products,
+            });
+            return new OK("Get discount amount successfully!", result).send(res);
+        }
+    );
+
+    deleteDiscountCode = asyncHandler(
+        async (req: Request, res: Response, next: NextFunction) => {
+            const { userId } = req.user;
+            const { discountId } = req.params;
+
+            const result = await DiscountService.deleteDiscountCode({
+                discountId,
+                shopId: userId,
+            });
+            return new OK("Discount code deleted successfully!", result).send(res);
+        }
+    );
+
+    cancelDiscountCode = asyncHandler(
+        async (req: Request, res: Response, next: NextFunction) => {
+            const { userId } = req.user;
+            const { codeId } = req.params;
+            const { shopId } = req.body;
+
+            const result = await DiscountService.cancelDiscountCode({
+                codeId,
+                userId,
+                shopId,
+            });
+            return new OK("Discount code cancelled successfully!", result).send(res);
+        }
+    );
+}
+
+export default new DiscountController();
+</file>
+
+<file path="src/controllers/email-controller.ts">
+import { SuccessResponse } from "../core/success-respone";
+import { newTemplate } from "../services/template-service";
+import { sendEmailToken } from "../services/email-service";
+
+class EmailController {
+    newTemplate = async (req, res, next) => {
+        new SuccessResponse("new template", await newTemplate(req.body)).send(
+            res
+        );
+    };
+
+    sendEmailToken = async (req, res, next) => {
+        new SuccessResponse(
+            "Send email token",
+            201,
+            await sendEmailToken(req.body)
+        ).send(res);
+    };
+}
+
+export default new EmailController();
+</file>
+
+<file path="src/controllers/inventory-controller.ts">
+import type { Request, Response } from "express";
+import { NotFoundError, BadRequestError } from "../core/error-respone";
+import { OK, Created } from "../core/success-respone";
+import { Types } from "mongoose";
+import { asyncHandler } from "../helpers/asyncHandler";
+import { InventoryService } from "../services/inventory-service";
+
+class InvetoryController {
+    /**
+     * @description Review checkout order with pricing and discounts
+     * @param req - Express request object
+     * @param res - Express response object
+     * @returns JSON response with checkout review
+     */
+    addStocckToInventory = asyncHandler(async (req: Request, res: Response) => {
+        return new OK(
+            "Checkout review completed!",
+            await InventoryService.addStockToInventory(req.body)
+        ).send(res);
+    });
+}
+
+export default new InvetoryController();
+</file>
+
+<file path="src/controllers/notification-controller.ts">
+import type { Request, Response } from "express";
+import { NotificationService } from "../services/notification-service";
+import { OK, Created } from "../core/success-respone";
+
+class NotificationController {
+    static async listNotifications(req: Request, res: Response) {
+        const { userId } = req.body;
+        const { type = "ALL", isRead = 0 } = req.query;
+
+        const notifications = await NotificationService.listNotiByUser({
+            userId,
+            type: type as string,
+            isRead: Number(isRead),
+        });
+
+        return new OK(
+            "Get notifications successfully!",
+            notifications
+        ).send(res);
+    }
+
+    static async createNotification(req: Request, res: Response) {
+        const { type, receivedId, senderId, options } = req.body;
+
+        const newNotification = await NotificationService.pushNotiToSystem({
+            type,
+            receivedId,
+            senderId,
+            options,
+        });
+
+        return new Created(
+            "Notification created successfully!",
+            newNotification
+        ).send(res);
+    }
+
+    static async markAsRead(req: Request, res: Response) {
+        const { userId } = req.user;
+        const { notificationId } = req.params;
+
+        // This would need to be implemented in the service
+        // For now, return success response
+        return new OK(
+            "Notification marked as read successfully!",
+            { notificationId, userId }
+        ).send(res);
+    }
+}
+
+export default NotificationController;
+</file>
+
+<file path="src/controllers/profile-controller.ts">
+import { SuccessResponse } from "../core/success-respone";
+
+const profiles = [
+    {
+        user_id: 1,
+        user_name: "CR7",
+        user_avt: "image.com/user/1",
+    },
+    {
+        user_id: 2,
+        user_name: "M10",
+        user_avt: "image.com/user/2",
+    },
+    {
+        user_id: 3,
+        user_name: "tipsjs",
+        user_avt: "image.com/user/3",
+    },
+];
+
+class ProfileController {
+    profiles = async (req, res, next) => {
+        new SuccessResponse("view all profile", 200, profiles).send(res);
+    };
+
+    profile = async (req, res, next) => {
+        new SuccessResponse("view One profile", 200, {
+            user_id: 2,
+            user_name: "M10",
+            user_avt: "image.com/user/2",
+        }).send(res);
+    };
+}
+
+export default new ProfileController();
+</file>
+
+<file path="src/controllers/rbac-controller.ts">
+import { NextFunction, Request, Response } from "express";
+import { SuccessResponse } from "../core/success-respone";
+import {
+    createResource,
+    createRole,
+    resourceList,
+    roleList,
+} from "../services/rbac-service";
+
+/**
+ * @description create a new role
+ * @param req
+ * @param res
+ * @param next
+ */
+export const newRole = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    new SuccessResponse({
+        message: "created role",
+        metadata: await createRole(req.body),
+    }).send(res);
+};
+
+export const newResource = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    new SuccessResponse(
+        "created resource",
+        await createResource(req.body)
+    ).send(res);
+};
+
+export const listRole = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    new SuccessResponse({
+        message: "get list role",
+        metadata: await roleList(req.query),
+    }).send(res);
+};
+
+export const listResource = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    new SuccessResponse({
+        message: "get list resource",
+        metadata: await resourceList(req.query),
+    }).send(res);
+};
+</file>
+
+<file path="src/helpers/asyncHandler.ts">
+import type { Request, Response, NextFunction, RequestHandler } from "express";
+
+const asyncHandler = (fn: RequestHandler) => {
+    return (req: Request, res: Response, next: NextFunction) => {
+        Promise.resolve(fn(req, res, next)).catch(next);
+    };
+};
+
+export { asyncHandler };
+</file>
+
+<file path="src/helpers/check-connect.ts">
+import mongooese from "mongoose";
+import os from "os";
+import process from "process";
+
+const _SECOND = 5000;
+const countConnect = (): number => {
+    const numConnection = mongooese.connections.length;
+    return numConnection;
+};
+
+const checkOverload = () => {
+    setInterval(() => {
+        const numberOfConnections = countConnect();
+        const numbCores = os.cpus().length;
+        const memoryUsage = process.memoryUsage().rss;
+        // example maximum number of connections based on number of cores
+        const maxConnections = numbCores * 5;
+
+        console.log(`Active connections:: ${numberOfConnections}`);
+        console.log(`Memory usage:: ${memoryUsage / 1024 / 1024} MB`);
+
+        if (numberOfConnections > maxConnections) {
+            console.log(`Connection overload detected!`);
+        }
+    }, _SECOND); //Monitor every 5 seconds
+};
+
+export { countConnect, checkOverload };
+</file>
+
+<file path="src/loggers/mylogger.ts">
+import winston, { format } from "winston";
+import {} from "winston-daily-rotate-file";
+const { combine, timestamp, json, align, printf } = winston.format;
+
+export interface LogParams {
+    context: string;
+    requestId: string;
+    metadata?: Record<string, any>;
+}
+
+class MyLogger {
+    logger: winston.Logger;
+
+    constructor() {
+        const formatPrint = printf(
+            ({ level, message, context, requestId, timestamp, metadata }) => {
+                return `${timestamp}:: ${level}::${context}::${requestId}::${message}::${JSON.stringify(
+                    metadata
+                )}`;
+            }
+        );
+
+        this.logger = winston.createLogger({
+            format: format.combine(
+                timestamp({
+                    format: "YYYY-MM-DD hh:mm:ss",
+                }),
+                formatPrint
+            ),
+            transports: [
+                new winston.transports.Console(),
+                new winston.transports.DailyRotateFile({
+                    dirname: "logs",
+                    filename: "application-%DATE%.info.log",
+                    datePattern: "YYYY-MM-DD-HH",
+                    zippedArchive: true,
+                    maxSize: "1m",
+                    maxFiles: "14d",
+                    level: "info",
+                    format: format.combine(
+                        timestamp({
+                            format: "YYYY-MM-DD hh:mm:ss",
+                        }),
+                        formatPrint
+                    ),
+                }),
+                new winston.transports.DailyRotateFile({
+                    dirname: "logs",
+                    filename: "application-%DATE%.error.log",
+                    datePattern: "YYYY-MM-DD-HH",
+                    zippedArchive: true,
+                    maxSize: "1m",
+                    maxFiles: "14d",
+                    level: "error",
+                    format: format.combine(
+                        timestamp({
+                            format: "YYYY-MM-DD hh:mm:ss",
+                        }),
+                        formatPrint
+                    ),
+                }),
+            ],
+        });
+    }
+
+    log(message: string, params: LogParams) {
+        const logObject = Object.assign(
+            {
+                message,
+            },
+            params
+        );
+
+        this.logger.info(logObject);
+    }
+
+    error(message: string, params: LogParams) {
+        const logObject = Object.assign(
+            {
+                message,
+            },
+            params
+        );
+
+        this.logger.error(logObject);
+    }
+}
+
+export default new MyLogger();
+</file>
+
+<file path="src/middleware/rbac.ts">
+import { NextFunction, Request, Response } from "express";
+import { AuthFailureError } from "../core/error-respone";
+import rbac from "./access-control";
+import { roleList } from "../services/rbac-service";
+
+type RoleAction =
+    | "createAny"
+    | "createOwn"
+    | "readAny"
+    | "readOwn"
+    | "updateAny"
+    | "updateOwn"
+    | "deleteAny"
+    | "deleteOwn";
+
+export const grantAccess = (action: string, resource: string) => {
+    return async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            rbac.setGrants(
+                await roleList({
+                    userId: 9999,
+                })
+            );
+            const roleName = req.query.role as string;
+            if (!roleName) {
+                throw new AuthFailureError("Invalid request");
+            }
+
+            const permission = rbac
+                .can(roleName)
+                [action as RoleAction](resource);
+            if (!permission.granted) {
+                throw new AuthFailureError("You do not have enough permission");
+            }
+
+            next();
+        } catch (error) {
+            next(error);
+        }
+    };
+};
+</file>
+
+<file path="src/models/repositories/cart-rep.ts">
+import { convertToObjectIdMongodb } from "../../utils";
+import cartModel from "../cart-model";
+
+export class CartRepository {
+    static async findCartById(cartId: string) {
+        return await cartModel
+            .findOne({
+                _id: convertToObjectIdMongodb(cartId),
+                cart_state: "active",
+            })
+            .lean();
+    }
+
+    static async deleteUserCart(userId: number) {
+        return await cartModel.deleteOne({
+            cart_userId: userId,
+        });
+    }
+}
+</file>
+
+<file path="src/models/repositories/discount.repo.ts">
+import { getSelectData, getUnSelectData } from "../../utils";
+import { discountModel } from "../discount-model";
+import type { Types } from "mongoose";
+
+class DiscountRepository {
+    static async findAllDiscountUnselect({
+        limit,
+        sort,
+        page,
+        filter,
+        unSelect,
+    }: {
+        limit: number;
+        sort: string;
+        page: number;
+        filter: any;
+        unSelect: string[];
+    }) {
+        const skip = (page - 1) * limit;
+        const sortBy = sort === "ctime" ? { _id: -1 } : { _id: 1 };
+
+        const discounts = await discountModel
+            .find(filter)
+            .sort(sortBy)
+            .skip(skip)
+            .limit(limit)
+            .select(getUnSelectData(unSelect))
+            .lean()
+            .exec();
+
+        return discounts;
+    }
+
+    static async countDiscounts(filter: any): Promise<number> {
+        return await discountModel.countDocuments(filter);
+    }
+
+    static async findDiscountById({
+        discount_id,
+        select,
+    }: {
+        discount_id: string;
+        select?: string[];
+    }) {
+        return await discountModel
+            .findById(discount_id)
+            .select(select ? getSelectData(select) : {});
+    }
+
+    static async findDiscountByCode({
+        code,
+        shopId,
+        select,
+    }: {
+        code: string;
+        shopId: Types.ObjectId;
+        select?: string[];
+    }) {
+        return await discountModel
+            .findOne({
+                discount_code: code.toUpperCase(),
+                discount_shopId: shopId,
+            })
+            .select(select ? getSelectData(select) : {});
+    }
+
+    static async findDiscountByCodeAndShop(code: string, shopId: Types.ObjectId) {
+        return await discountModel.findOne({
+            discount_code: code.toUpperCase(),
+            discount_shopId: shopId
+        }).lean();
+    }
+
+    static async validateDiscount({
+        discountId,
+        shopId,
+        userId,
+    }: {
+        discountId: Types.ObjectId;
+        shopId: Types.ObjectId;
+        userId?: Types.ObjectId;
+    }) {
+        const foundDiscount = await discountModel.findOne({
+            _id: discountId,
+            discount_shopId: shopId,
+        });
+
+        if (!foundDiscount) {
+            throw new Error("Discount not found");
+        }
+
+        if (!foundDiscount.discount_is_active) {
+            throw new Error("Discount is not active");
+        }
+
+        const now = new Date();
+        if (
+            now < foundDiscount.discount_start_date ||
+            now > foundDiscount.discount_end_date
+        ) {
+            throw new Error("Discount has expired or not yet active");
+        }
+
+        // Check usage limits
+        if (
+            foundDiscount.discount_max_uses !== null &&
+            foundDiscount.discount_uses_count >= foundDiscount.discount_max_uses
+        ) {
+            throw new Error("Discount has reached maximum usage limit");
+        }
+
+        // Check user-specific usage limit if userId provided
+        if (userId && !foundDiscount.canBeUsedBy(userId)) {
+            throw new Error(
+                "User has reached maximum usage limit for this discount"
+            );
+        }
+
+        return foundDiscount;
+    }
+
+    static async validateDiscountByCode({
+        code,
+        shopId,
+        userId,
+    }: {
+        code: string;
+        shopId: Types.ObjectId;
+        userId?: Types.ObjectId;
+    }) {
+        const foundDiscount = await discountModel.findOne({
+            discount_code: code.toUpperCase(),
+            discount_shopId: shopId,
+        });
+
+        if (!foundDiscount) {
+            throw new Error("Discount code not found");
+        }
+
+        // Use the same validation logic
+        return await this.validateDiscount({
+            discountId: foundDiscount._id,
+            shopId,
+            userId,
+        });
+    }
+}
+
+export default DiscountRepository;
+</file>
+
+<file path="src/models/cart-model.ts">
+import { Schema, model, Types } from "mongoose";
+
+const DOCUMENT_NAME = "Cart";
+const COLLECTION_NAME = "carts";
+
+// Discount type enum for better type safety
+export enum DiscountType {
+    PERCENTAGE = "percentage",
+    FIXED_AMOUNT = "fixed_amount",
+    BOGO = "bogo",
+    FREE_SHIPPING = "free_shipping",
+}
+
+// Discount applicability enum
+export enum DiscountAppliesTo {
+    ALL = "all",
+    SPECIFIC = "specific",
+    CATEGORY = "category",
+}
+
+const cartSchema = new Schema(
+    {
+        cart_state: {
+            type: String,
+            required: true,
+            enum: ["active", "completed", "failed", "pending"],
+            default: "active",
+        },
+
+        cart_products: {
+            type: Array,
+            required: true,
+            default: [],
+        },
+
+        cart_count_product: {
+            type: Number,
+            default: 0,
+        },
+
+        cart_userId: { type: Number, required: true },
+    },
+    {
+        collection: COLLECTION_NAME,
+        timestamps: true,
+    }
+);
+
+export default model(DOCUMENT_NAME, cartSchema);
+</file>
+
+<file path="src/models/comment-model.ts">
+import { model, Schema } from "mongoose";
+
+const DOCUMENT_NAME = "Comment";
+const COLLECTION_NAME = "comments";
+
+const commentSchema = new Schema(
+    {
+        comment_productId: { type: Schema.Types.ObjectId, ref: "Product" },
+        comment_userId: { type: Schema.Types.ObjectId, ref: "Shop" },
+        comment_content: { type: String, default: "text" },
+        comment_left: { type: Number, default: 0 },
+        comment_right: { type: Number, default: 0 },
+        comment_parentId: { type: Schema.Types.ObjectId, ref: DOCUMENT_NAME },
+        isDeleted: { type: Boolean, default: false },
+    },
+    {
+        timestamps: true,
+        collection: COLLECTION_NAME,
+    }
+);
+
+export default model(DOCUMENT_NAME, commentSchema);
+</file>
+
+<file path="src/models/inventory-model.ts">
+import { Schema, model, Types } from "mongoose"; // Erase if already required
+
+const DOCUMENT_NAME = "Inventory";
+const COLLECTION_NAME = "inventories";
+
+// Declare the Schema of the Mongo model
+const inventorySchema = new Schema(
+    {
+        inven_productId: { type: Types.ObjectId, ref: "Product" },
+        inven_location: { type: String, default: "unknown" },
+        inven_stock: { type: Number, required: true },
+        inven_shopId: { type: Types.ObjectId, ref: "Shop" },
+        inven_reservations: { type: Array, default: [] },
+    },
+    {
+        collection: COLLECTION_NAME,
+        timestamps: true,
+    }
+);
+
+//Export the model
+export default model(DOCUMENT_NAME, inventorySchema);
+</file>
+
+<file path="src/models/notification-model.ts">
+import { model, Schema } from "mongoose";
+
+const DOCUMENT_NAME = "Notification";
+const COLLECTION_NAME = "notifications";
+
+const notificationSchema = new Schema(
+    {
+        noti_type: {
+            type: String,
+            enum: [
+                "ORDER-001",
+                "ORDER-002",
+                "PROMOTION-001",
+                "PROMOTION-002",
+                "SHOP-001",
+            ],
+            required: true,
+        },
+        noti_senderId: { type: String, required: true },
+        noti_recivedId: { type: String, required: true },
+        noti_content: { type: String, required: true },
+        noti_options: { type: Object, default: {} },
+    },
+    {
+        timestamps: true,
+        collection: COLLECTION_NAME,
+    }
+);
+
+export default model(DOCUMENT_NAME, notificationSchema);
+</file>
+
+<file path="src/models/order-schema.ts">
+import { DEFAULT_REDIS_OPTIONS } from "ioredis/built/redis/RedisOptions";
+import { Schema, model } from "mongoose";
+
+const DOCUMENT_NAME = "Order";
+const COLLECTION_NAME = "orders";
+
+// Base Product Schema - stores common product information
+const orderSchema = new Schema(
+    {
+        order_userId: { type: Number, required: true },
+        order_checkout: { type: Object, default: {} },
+        /**
+         * order_checkout = {
+         *  totalPrice,
+         *  totalApplyDiscount,
+         *  feeShip
+         * }
+         */
+        order_shipping: { type: Object, default: {} },
+        /**
+         *
+         * street,
+         * city,
+         * state,
+         * country
+         */
+
+        order_payment: { type: Object, default: {} },
+        order_products: { type: Array, required: true },
+        order_trackingNumber: { type: String, default: "#00001" },
+        order_status: {
+            type: String,
+            enum: ["pending", "confirmed", "shipped", "cancelled", "delivered"],
+            default: "pending",
+        },
+    },
+    {
+        collection: COLLECTION_NAME,
+        timestamps: true,
+    }
+);
+
+export default model(DOCUMENT_NAME, orderSchema);
+</file>
+
+<file path="src/models/otp-model.ts">
+import { model, Schema } from "mongoose";
+
+const DOCUMENT_NAME = "otp-log";
+const COLLECTION_NAME = "otp-logs";
+
+const otpSchema = new Schema(
+    {
+        otp_token: { type: String, required: true },
+        otp_email: { type: String, required: true },
+        otp_status: {
+            type: String,
+            default: "pending",
+            enum: ["pending", "active", "block"],
+        },
+        expiredAt: { type: Date, default: Date.now, expires: 60 },
+    },
+    {
+        collection: COLLECTION_NAME,
+        timestamps: true,
+    }
+);
+
+export default model(DOCUMENT_NAME, otpSchema);
+</file>
+
+<file path="src/models/resource-model.ts">
+import { model, Schema } from "mongoose";
+
+const DOCUMENT_NAME = "Resource";
+const COLLECTION_NAME = "resources";
+
+const resourceSchema = new Schema(
+    {
+        src_name: {type: String, required: true},
+        src_slug: {type: String, required: true},
+        src_desc: {type: String, default: ''},
+    },
+    {
+        timestamps: true,
+        collection: COLLECTION_NAME,
+    }
+);
+
+export default model(DOCUMENT_NAME, resourceSchema);
+</file>
+
+<file path="src/models/role-model.ts">
+import { model, Schema } from "mongoose";
+
+const DOCUMENT_NAME = "Role";
+const COLLECTION_NAME = "roles";
+
+const roleSchema = new Schema(
+    {
+        role_name: {
+            type: String,
+            default: "user",
+            enum: ["user", "shop", "admin"],
+        },
+        role_slug: { type: String, required: true },
+        role_status: {
+            type: String,
+            default: "active",
+            enum: ["active", "block", "pending"],
+        },
+        role_desc: { type: String, default: "" },
+        role_grants: [
+            {
+                resource: {
+                    type: Schema.Types.ObjectId,
+                    ref: "Resource",
+                    required: true,
+                },
+                actions: [{ type: String, required: true }],
+                attributes: { type: String, default: "*" },
+            },
+        ],
+    },
+    {
+        timestamps: true,
+        collection: COLLECTION_NAME,
+    }
+);
+
+export default model(DOCUMENT_NAME, roleSchema);
+</file>
+
+<file path="src/models/template-model.ts">
+import { model, Schema } from "mongoose";
+
+const DOCUMENT_NAME = "Template";
+const COLLECTION_NAME = "templates";
+
+const templateSchema = new Schema(
+    {
+        tem_name: { type: String, required: true },
+        tem_status: { type: String, default: "active" },
+        tem_html: { type: String, required: true },
+    },
+    {
+        collection: COLLECTION_NAME,
+        timestamps: true,
+    }
+);
+
+export default model(DOCUMENT_NAME, templateSchema);
+</file>
+
+<file path="src/models/user-model.ts">
+import { model, Schema, SchemaType } from "mongoose";
+
+const DOCUMENT_NAME = "User";
+const COLLECTION_NAME = "users";
+
+const userSchema = new Schema(
+    {
+        usr_id: { type: Number, required: true },
+        usr_slug: { type: String, required: true },
+        usr_name: { type: String, default: "" },
+        usr_password: { type: String, default: "" },
+        usr_salt: { type: String, default: "" },
+        usr_email: { type: String, required: true },
+        usr_phone: { type: String, default: "" },
+        user_sex: { type: String, default: "" },
+        usr_avatar: { type: String, default: "" },
+        usr_dob: { type: Date, default: null },
+        usr_role: { type: Schema.Types.ObjectId, ref: "Role" },
+        usr_status: {
+            type: String,
+            default: "pending",
+            enum: ["pending", "active", "block"],
+        },
+    },
+    {
+        timestamps: true,
+        collection: COLLECTION_NAME,
+    }
+);
+
+export default model(DOCUMENT_NAME, userSchema);
+</file>
+
+<file path="src/rest/cart-post.http">
+@url_dev=http://localhost:3055
+@api_key=niggar-api-key
+@client_id=69074f5479cbc75d6571e355
+@authorization=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTA3NGY1NDc5Y2JjNzVkNjU3MWUzNTUiLCJlbWFpbCI6IndlbHRlcmlhbEBnbWFpbC5jb20iLCJuYW1lIjoiVGhhaSBEaW5oIiwiaWF0IjoxNzYyMDg3MzM1LCJleHAiOjE3NjMzODMzMzV9.pZk63-gb0HXC5DOqyhmJTTFP2PN4in8zuVg83Jn16CA
+@placeholder_api_key=niggar-api-key
+
+### Add product to cart (basic version)
+POST {{url_dev}}/v1/api/cart
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "productId": "690751d279cbc75d6571e36d",
+    "quantity": 2,
+    "shopId": "69074f5479cbc75d6571e355",
+    "name": "Sample Product",
+    "price": 29.99
+}
+
+### Add another product to cart
+POST {{url_dev}}/v1/api/cart
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "productId": "690751d579cbc75d6571e375",
+    "quantity": 1,
+    "shopId": "69074f5479cbc75d6571e355",
+    "name": "Another Product",
+    "price": 49.99
+}
+
+### Add products to cart with shop validation (advanced version)
+POST {{url_dev}}/v1/api/cart/v2
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "shopOrderIds": [
+        {
+            "shopId": "69074f5479cbc75d6571e355",
+            "item_product": [
+                {
+                    "productId": "690751d279cbc75d6571e36d",
+                    "quantity": 10,
+                    "old_quantity": 2
+                }
+            ]
+        }
+    ]
+}
+
+### Get user cart
+GET {{url_dev}}/v1/api/cart
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+### Remove product from cart
+DELETE {{url_dev}}/v1/api/cart/690751d579cbc75d6571e375
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+### Clear entire cart
+DELETE {{url_dev}}/v1/api/cart
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+### Set product quantity to 5 items (SET behavior)
+PATCH {{url_dev}}/v1/api/cart/quantity
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "productId": "690751d279cbc75d6571e36d",
+    "quantity": 5
+}
+
+### Set product quantity to 1 item (SET behavior)
+PATCH {{url_dev}}/v1/api/cart/quantity
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "productId": "690751d279cbc75d6571e36d",
+    "quantity": 1
+}
+
+### Remove product by setting quantity to 0 (auto-removes)
+PATCH {{url_dev}}/v1/api/cart/quantity
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "productId": "690751d579cbc75d6571e375",
+    "quantity": 0
+}
+
+### Update cart state (mark as completed)
+PATCH {{url_dev}}/v1/api/cart/state
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "newState": "completed"
+}
+
+### Update cart state (mark as pending)
+PATCH {{url_dev}}/v1/api/cart/state
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "newState": "pending"
+}
+
+### Test removing product with quantity 0 using V2 endpoint
+POST {{url_dev}}/v1/api/cart/v2
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "shopOrderIds": [
+        {
+            "shopId": "69074f5479cbc75d6571e355",
+            "item_product": [
+                {
+                    "productId": "65fb8b8c5f9d1a2a8c8b4567",
+                    "quantity": 0,
+                    "old_quantity": 3
+                }
+            ]
+        }
+    ]
+}
+
+### Get cart after operations
+GET {{url_dev}}/v1/api/cart
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+</file>
+
+<file path="src/rest/comment-post.http">
+@url_dev=http://localhost:3055
+@api_key=niggar-api-key
+@clientId=6900378dbddfc4d935b6856b
+@authorization=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTAwMzc4ZGJkZGZjNGQ5MzViNjg1NmIiLCJlbWFpbCI6IndlbHRlcmlhbEBnbWFpbC5jb20iLCJuYW1lIjoiVGhhaSBEaW5oIiwiaWF0IjoxNzYzNTM3MDE2LCJleHAiOjE3NjQ4MzMwMTZ9.DaBsU9weSEazPbcvUAI_o5K6KZX9eb_Y8Tyzfky5qqM
+
+@product_id= 69003a15b67a52859b72fef0
+### Create a new Root Comment
+POST {{url_dev}}/v1/api/comment
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "productId": "{{product_id}}",
+    "content": "Comment 1.2.1.2 (Sun Dresses)",
+    "parentCommentId": "691d7c7ae4a3142ca59faca3"
+}
+
+### Create another Root Comment
+POST {{url_dev}}/v1/api/comment
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "productId": "{{product_id}}",
+    "content": "Yes! v2",
+    "parentCommentId": "691d7298413a896b1ae3985f"
+}
+
+### Get all comments for a product
+GET {{url_dev}}/v1/api/comment/product/{{product_id}}?page=1&limit=10
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### Get a specific comment by ID
+GET {{url_dev}}/v1/api/comment/69074f5479cbc75d6571e355
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### Get replies for a comment
+GET {{url_dev}}/v1/api/comment/691d7c7ae4a3142ca59faca3/replies?page=1&limit=5
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### Update a comment
+PATCH {{url_dev}}/v1/api/comment/69074f5479cbc75d6571e355
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "content": "Updated comment: This product exceeded my expectations!"
+}
+
+### Delete a comment
+DELETE {{url_dev}}/v1/api/comment/691d7be2e4a3142ca59fac7b
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### Create a Reply Comment (will fail until MPTT logic is fixed)
+POST {{url_dev}}/v1/api/comment
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "productId": "{{product_id}}",
+    "content": "I agree! The quality is outstanding.",
+    "parentCommentId": "69074f5479cbc75d6571e355"
+}
+
+### Get comments with pagination
+GET {{url_dev}}/v1/api/comment/product/{{product_id}}?page=2&limit=5
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+</file>
+
+<file path="src/rest/email.http">
+@url_dev=http://localhost:3055
+
+### Create a new Template (Optional - will auto-create default if missing)
+POST {{url_dev}}/v1/api/email/new_template
+Content-Type: application/json
+
+{
+    "tem_name": "HTML EMAIL OTP",
+    "tem_html": "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>OTP Verification</title></head><body><h2>Welcome to {{shop_name}}!</h2><p>Hello {{user_name}},</p><p>Please verify: <a href=\"{{verify_link}}\">Verify Email</a></p></body></html>"
+}
+
+### Send Email Token
+POST {{url_dev}}/v1/api/email/send_email_token
+Content-Type: application/json
+
+{
+    "email": "welterial@gmail.com"
+}
+</file>
+
+<file path="src/rest/notification-post.http">
+@url_dev=http://localhost:3055
+@api_key=niggar-api-key
+@clientId=6900378dbddfc4d935b6856b
+@authorization= eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTAwMzc4ZGJkZGZjNGQ5MzViNjg1NmIiLCJlbWFpbCI6IndlbHRlcmlhbEBnbWFpbC5jb20iLCJuYW1lIjoiVGhhaSBEaW5oIiwiaWF0IjoxNzYzNTM3MDE2LCJleHAiOjE3NjQ4MzMwMTZ9.DaBsU9weSEazPbcvUAI_o5K6KZX9eb_Y8Tyzfky5qqM
+
+### Create Shop Notification
+POST {{url_dev}}/v1/api/notification
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "type": "SHOP-001",
+    "receivedId": "6900378dbddfc4d935b6856b",
+    "senderId": "6900378dbddfc4d935b6856b",
+    "options": {
+        "productName": "Premium Laptop",
+        "shopName": "TechStore"
+    }
+}
+
+### Create Promotion Notification
+POST {{url_dev}}/v1/api/notification
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "type": "PROMOTION-001",
+    "receivedId": "6900378dbddfc4d935b6856b",
+    "senderId": "6900378dbddfc4d935b6856b",
+    "options": {
+        "voucherName": "SUMMER2024",
+        "shopName": "TechStore"
+    }
+}
+
+### Create Order Notification
+POST {{url_dev}}/v1/api/notification
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "type": "ORDER-001",
+    "receivedId": "6900378dbddfc4d935b6856b",
+    "senderId": "shop123",
+    "options": {
+        "orderId": "ORD-2024-001"
+    }
+}
+
+### Create Order Status Update Notification
+POST {{url_dev}}/v1/api/notification
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "type": "ORDER-002",
+    "receivedId": "6900378dbddfc4d935b6856b",
+    "senderId": "shop123",
+    "options": {
+        "orderId": "ORD-2024-001"
+    }
+}
+
+### Create Promotion Available Notification
+POST {{url_dev}}/v1/api/notification
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "type": "PROMOTION-002",
+    "receivedId": "6900378dbddfc4d935b6856b",
+    "senderId": "6900378dbddfc4d935b6856b",
+    "options": {
+        "promotionName": "Flash Sale 50% Off"
+    }
+}
+
+### Get All Notifications
+GET {{url_dev}}/v1/api/notification
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "userId": "1"
+}
+
+### Get Shop Notifications Only
+GET {{url_dev}}/v1/api/notification?type=SHOP-001
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### Get Promotion Notifications Only
+GET {{url_dev}}/v1/api/notification?type=PROMOTION-001
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### Get Order Notifications Only
+GET {{url_dev}}/v1/api/notification?type=ORDER-001
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### Mark Notification as Read
+PATCH {{url_dev}}/v1/api/notification/507f1f77bcf86cd799439011/read
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### Test Asynchronous Notification (via Product Creation)
+POST {{url_dev}}/v1/api/product
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "product_type": "Electronics",
+    "product_name": "Test Notification Product",
+    "product_thumb": "http://example.com/test.jpg",
+    "product_description": "Product to test async notification creation",
+    "product_price": 99.99,
+    "product_quantity": 50,
+    "product_shop": "{{clientId}}",
+    "product_attributes": {
+        "manufacturer": "TestBrand",
+        "model": "TEST-001",
+        "warranty": "1 year"
+    }
+}
+</file>
+
+<file path="src/rest/rbac-post.http">
+@url_dev=http://localhost:3055
+@api_key=your_api_key_here
+@client_id=your_client_id_here
+@authorization=your_jwt_token_here
+
+### Create a new Resource
+POST {{url_dev}}/v1/api/rbac/resource
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "name": "balance",
+    "slug": "p0002",
+    "description": "balance test"
+}
+
+### Get all Resources
+GET {{url_dev}}/v1/api/rbac/resources
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+### Create a new Role (e.g., Manager)
+POST {{url_dev}}/v1/api/rbac/role
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "name": "user",
+    "slug": "s00003",
+    "description": "user",
+    "grants": [
+        {
+            "resource": "6939102ad5ab2f78b497f84d",
+            "actions": ["read:own", "update:own"],
+            "attributes": "*"
+        }
+    ]
+}
+
+### Get all Roles
+GET {{url_dev}}/v1/api/rbac/roles
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+</file>
+
+<file path="src/rest/user.http">
+@url_dev=http://localhost:3055
+
+### Create a new User (Register)
+POST {{url_dev}}/v1/api/user/new_user
+Content-Type: application/json
+
+{
+    "email": "welterial@gmail.com"
+}
+</file>
+
+<file path="src/routers/cart/index.ts">
+import express from "express";
+import cartController from "../../controllers/cart-controller";
+import { asyncHandler } from "../../helpers/asyncHandler";
+import { authentication } from "../../auth/check-auth";
+
+const router = express.Router();
+
+// Apply authentication middleware to all cart routes
+router.use(authentication);
+
+/**
+ * @route POST /cart
+ * @description Add product to user cart (basic version)
+ * @access Private
+ */
+router.post("/", asyncHandler(cartController.addToCart));
+
+/**
+ * @route POST /cart/v2
+ * @description Add products to cart with shop validation (advanced version)
+ * @access Private
+ */
+router.post("/v2", asyncHandler(cartController.addToCartV2));
+
+/**
+ * @route GET /cart
+ * @description Get user's cart with all products
+ * @access Private
+ */
+router.get("/", asyncHandler(cartController.getUserCart));
+
+/**
+ * @route DELETE /cart/:productId
+ * @description Remove product from user cart
+ * @access Private
+ */
+router.delete("/:productId", asyncHandler(cartController.removeFromCart));
+
+/**
+ * @route DELETE /cart
+ * @description Clear entire cart for user
+ * @access Private
+ */
+router.delete("/", asyncHandler(cartController.clearCart));
+
+/**
+ * @route PATCH /cart/quantity
+ * @description Update product quantity in cart (direct increment/decrement)
+ * @access Private
+ */
+router.patch("/quantity", asyncHandler(cartController.updateProductQuantity));
+
+/**
+ * @route PATCH /cart/state
+ * @description Update cart state (e.g., mark as completed)
+ * @access Private
+ */
+router.patch("/state", asyncHandler(cartController.updateCartState));
+
+export default router;
+</file>
+
+<file path="src/routers/checkout/index.ts">
+import express from "express";
+import checkoutController from "../../controllers/checkout-controller";
+import { asyncHandler } from "../../helpers/asyncHandler";
+import { authentication } from "../../auth/check-auth";
+
+const router = express.Router();
+
+// Apply authentication middleware to all checkout routes
+router.use(authentication);
+
+/**
+ * @route POST /checkout/review
+ * @description Review checkout order with pricing and discounts
+ * @access Private
+ */
+router.post("/review", asyncHandler(checkoutController.checkOutReview));
+
+/**
+ * @route POST /checkout/order
+ * @description Execute checkout order and create orders
+ * @access Private
+ */
+router.post("/order", asyncHandler(checkoutController.checkOutOrder));
+
+/**
+ * @route GET /checkout/history
+ * @description Get order history for user
+ * @access Private
+ */
+router.get("/history", asyncHandler(checkoutController.getOrderHistory));
+
+/**
+ * @route GET /checkout/:orderId
+ * @description Get order details by ID
+ * @access Private
+ */
+router.get("/:orderId", asyncHandler(checkoutController.getOrderById));
+
+export default router;
+</file>
+
+<file path="src/routers/comment/index.ts">
+import express from "express";
+import commentController from "../../controllers/comment-controller";
+import { asyncHandler } from "../../helpers/asyncHandler";
+import { authentication } from "../../auth/check-auth";
+
+const router = express.Router();
+
+// Public routes
+router.get(
+    "/product/:productId",
+    asyncHandler(commentController.getCommentsByProduct)
+);
+router.get("/:commentId", asyncHandler(commentController.getCommentById));
+router.get(
+    "/:commentId/replies",
+    asyncHandler(commentController.getCommentReplies)
+);
+
+// Apply authentication middleware to all remaining routes
+router.use(authentication);
+
+router.post("/", asyncHandler(commentController.createComment));
+router.patch("/:commentId", asyncHandler(commentController.updateComment));
+router.delete("/:commentId", asyncHandler(commentController.deleteComment));
+
+export default router;
+</file>
+
+<file path="src/routers/discount/index.ts">
+import express from "express";
+import discountController from "../../controllers/discount-controller";
+import { asyncHandler } from "../../helpers/asyncHandler";
+import { authentication } from "../../auth/check-auth";
+
+const router = express.Router();
+
+// Apply authentication middleware to all discount routes
+router.use(authentication);
+
+// Create discount code
+router.post("/", asyncHandler(discountController.createDiscountCode));
+
+// Update discount code
+router.patch("/:discountId", asyncHandler(discountController.updateDiscountCode));
+
+// Get all discount codes for shop
+router.get("/shop/all", asyncHandler(discountController.getAllDiscountCodesByShop));
+
+// Get discount code with products
+router.get("/code/:code", asyncHandler(discountController.getDiscountCodeWithProducts));
+
+// Calculate discount amount
+router.post("/amount/:codeId", asyncHandler(discountController.getDiscountAmount));
+
+// Delete discount code
+router.delete("/:discountId", asyncHandler(discountController.deleteDiscountCode));
+
+// Cancel discount code usage
+router.post("/cancel/:codeId", asyncHandler(discountController.cancelDiscountCode));
+
+export default router;
+</file>
+
+<file path="src/routers/email/index.ts">
+import express from "express";
+import { asyncHandler } from "../../helpers/asyncHandler";
+import emailController from "../../controllers/email-controller";
+
+const router = express.Router();
+
+router.post("/new_template", asyncHandler(emailController.newTemplate));
+router.post("/send_email_token", asyncHandler(emailController.sendEmailToken));
+
+export default router;
+</file>
+
+<file path="src/routers/inventory/index.ts">
+import express from "express";
+import { asyncHandler } from "../../helpers/asyncHandler";
+import { authentication } from "../../auth/check-auth";
+import inventoryController from "../../controllers/inventory-controller";
+
+const router = express.Router();
+
+// Apply authentication middleware to all checkout routes
+router.use(authentication);
+
+/**
+ * @route POST /checkout/review
+ * @description Review checkout order with pricing and discounts
+ * @access Private
+ */
+router.post("/review", asyncHandler(inventoryController.addStocckToInventory));
+
+// /**
+//  * @route POST /checkout/order
+//  * @description Execute checkout order and create orders
+//  * @access Private
+//  */
+// router.post("/order", asyncHandler(checkoutController.checkOutOrder));
+
+// /**
+//  * @route GET /checkout/history
+//  * @description Get order history for user
+//  * @access Private
+//  */
+// router.get("/history", asyncHandler(checkoutController.getOrderHistory));
+
+// /**
+//  * @route GET /checkout/:orderId
+//  * @description Get order details by ID
+//  * @access Private
+//  */
+// router.get("/:orderId", asyncHandler(checkoutController.getOrderById));
+
+export default router;
+</file>
+
+<file path="src/routers/notification/index.ts">
+import express from "express";
+import notificationController from "../../controllers/notification-controller";
+import { asyncHandler } from "../../helpers/asyncHandler";
+import { authentication } from "../../auth/check-auth";
+
+const router = express.Router();
+
+// Apply authentication middleware to all notification routes
+router.use(authentication);
+
+// Get user notifications
+router.get(
+    "/",
+    asyncHandler(notificationController.listNotifications)
+);
+
+// Create notification (admin/system use)
+router.post(
+    "/",
+    asyncHandler(notificationController.createNotification)
+);
+
+// Mark notification as read
+router.patch(
+    "/:notificationId/read",
+    asyncHandler(notificationController.markAsRead)
+);
+
+export default router;
+</file>
+
+<file path="src/routers/rbac/index.ts">
+import express from "express";
+import { asyncHandler } from "../../helpers/asyncHandler";
+import {
+    listResource,
+    listRole,
+    newResource,
+    newRole,
+} from "../../controllers/rbac-controller";
+
+const router = express.Router();
+
+router.post("/role", asyncHandler(newRole));
+router.get("/roles", asyncHandler(listRole));
+
+router.post("/resource", asyncHandler(newResource));
+router.get("/resources", asyncHandler(listResource));
+
+export default router;
+</file>
+
+<file path="src/routers/shop/index.ts">
+
+</file>
+
+<file path="src/services/comment-service.ts">
+import commentModel from "../models/comment-model";
+import { convertToObjectIdMongodb } from "../utils";
+
+export class CommentService {
+    static async createComment({
+        productId,
+        userId,
+        content,
+        parentCommentId = null,
+    }: {
+        productId: string;
+        userId: number;
+        content: string;
+        parentCommentId?: string | null;
+    }) {
+        const comment = new commentModel({
+            comment_productId: convertToObjectIdMongodb(productId),
+            comment_userId: userId,
+            comment_content: content,
+            comment_parentId: parentCommentId ? convertToObjectIdMongodb(parentCommentId) : null,
+        });
+
+        let rightValue;
+
+        if (!parentCommentId) {
+            // ROOT COMMENT: Find the highest right value for this product
+            const maxRightValue = await commentModel.findOne(
+                {
+                    comment_productId: convertToObjectIdMongodb(productId),
+                },
+                { comment_right: 1 },
+                { sort: { comment_right: -1 } }
+            );
+
+            if (maxRightValue) {
+                rightValue = maxRightValue.comment_right + 1;
+            } else {
+                rightValue = 1;
+            }
+        } else {
+            // REPLY COMMENT: Find parent comment
+            const parentComment = await commentModel.findById(parentCommentId);
+
+            if (!parentComment) {
+                throw new Error('Parent comment not found');
+            }
+
+            // Validate parent belongs to same product
+            if (parentComment.comment_productId?.toString() !== productId) {
+                throw new Error('Parent comment belongs to different product');
+            }
+
+            // Set insertion point at parent's right value
+            rightValue = parentComment.comment_right;
+
+            // CRITICAL: Shift existing ranges to make space
+            // Update all comments with left >= rightValue (shift right by 2)
+            await commentModel.updateMany(
+                {
+                    comment_productId: convertToObjectIdMongodb(productId),
+                    comment_left: { $gte: rightValue }
+                },
+                { $inc: { comment_left: 2 } }
+            );
+
+            // Update all comments with right >= rightValue (shift right by 2)
+            await commentModel.updateMany(
+                {
+                    comment_productId: convertToObjectIdMongodb(productId),
+                    comment_right: { $gte: rightValue }
+                },
+                { $inc: { comment_right: 2 } }
+            );
+        }
+
+        // Set the new comment's left and right values
+        comment.comment_left = rightValue;
+        comment.comment_right = rightValue + 1;
+
+        await comment.save();
+        return comment;
+    }
+
+    static async getCommentsByProduct({
+        productId,
+        page = 1,
+        limit = 20
+    }: {
+        productId: string;
+        page?: number;
+        limit?: number;
+    }) {
+        const skip = (page - 1) * limit;
+
+        const comments = await commentModel
+            .find({
+                comment_productId: convertToObjectIdMongodb(productId),
+                isDeleted: false
+            })
+            .sort({ comment_left: 1 })
+            .skip(skip)
+            .limit(limit)
+            .populate('comment_userId', 'name avatar')
+            .lean();
+
+        return this.buildTreeHierarchy(comments);
+    }
+
+    static async getCommentReplies({
+        parentCommentId,
+        page = 1,
+        limit = 10
+    }: {
+        parentCommentId: string;
+        page?: number;
+        limit?: number;
+    }) {
+        const skip = (page - 1) * limit;
+
+        // Find parent comment to get its range
+        const parentComment = await commentModel.findById(parentCommentId);
+        if (!parentComment) {
+            throw new Error('Parent comment not found');
+        }
+
+        // Find all comments within parent's range (excluding parent itself)
+        const replies = await commentModel
+            .find({
+                comment_productId: parentComment.comment_productId,
+                comment_left: { $gt: parentComment.comment_left },
+                comment_right: { $lt: parentComment.comment_right },
+                isDeleted: false
+            })
+            .sort({ comment_left: 1 })
+            .skip(skip)
+            .limit(limit)
+            .populate('comment_userId', 'name avatar')
+            .lean();
+
+        return this.buildTreeHierarchy(replies);
+    }
+
+    static async updateComment({
+        commentId,
+        userId,
+        content
+    }: {
+        commentId: string;
+        userId: number;
+        content: string;
+    }) {
+        return await commentModel.findOneAndUpdate(
+            {
+                _id: commentId,
+                comment_userId: userId,
+                isDeleted: false
+            },
+            {
+                comment_content: content
+            },
+            {
+                new: true,
+                runValidators: true
+            }
+        ).populate('comment_userId', 'name avatar');
+    }
+
+    static async deleteComment({
+        commentId,
+        userId
+    }: {
+        commentId: string;
+        userId: number;
+    }) {
+        // Find the comment to delete
+        const commentToDelete = await commentModel.findOne({
+            _id: commentId,
+            comment_userId: userId,
+            isDeleted: false
+        });
+
+        if (!commentToDelete) {
+            throw new Error('Comment not found or unauthorized');
+        }
+
+        const { comment_left, comment_right, comment_productId } = commentToDelete;
+        const range = comment_right - comment_left + 1;
+
+        // Delete the comment and all its descendants
+        await commentModel.deleteMany({
+            comment_productId,
+            comment_left: { $gte: comment_left },
+            comment_right: { $lte: comment_right }
+        });
+
+        // Shift left values to close the gap
+        await commentModel.updateMany(
+            {
+                comment_productId,
+                comment_left: { $gt: comment_right }
+            },
+            { $inc: { comment_left: -range } }
+        );
+
+        // Shift right values to close the gap
+        await commentModel.updateMany(
+            {
+                comment_productId,
+                comment_right: { $gt: comment_right }
+            },
+            { $inc: { comment_right: -range } }
+        );
+
+        return { success: true, message: 'Comment deleted successfully' };
+    }
+
+    static async getCommentById(commentId: string) {
+        return await commentModel
+            .findOne({
+                _id: commentId,
+                isDeleted: false
+            })
+            .populate('comment_userId', 'name avatar')
+            .populate('comment_parentId', 'comment_content')
+            .lean();
+    }
+
+    // Helper method to build nested tree structure from flat MPTT data
+    static buildTreeHierarchy(comments: any[]) {
+        const tree = [];
+        const stack = [];
+
+        for (const comment of comments) {
+            // Remove nodes from stack until we find the parent
+            while (stack.length > 0 && stack[stack.length - 1].comment_right < comment.comment_left) {
+                stack.pop();
+            }
+
+            if (stack.length === 0) {
+                // Root level comment
+                tree.push(comment);
+            } else {
+                // Child comment - add to parent's replies
+                if (!stack[stack.length - 1].replies) {
+                    stack[stack.length - 1].replies = [];
+                }
+                stack[stack.length - 1].replies.push(comment);
+            }
+
+            stack.push(comment);
+        }
+
+        return tree;
+    }
+}
+</file>
+
+<file path="src/services/inventory-service.ts">
+import { BadRequestError } from "../core/error-respone";
+import inventoryModel from "../models/inventory-model";
+import { productModel } from "../models/product-model";
+import ProductService from "./product-service";
+
+export class InventoryService {
+    static async addStockToInventory({
+        stock,
+        productId,
+        shopId,
+        localtion = "CoCKCKCKCKCK",
+    }) {
+        const product = await ProductService.getProductById(productId);
+
+        if (!product) throw new BadRequestError("The product doest not exists!")
+        return await inventoryModel.findOneAndUpdate({
+            inven_shopId: shopId,
+            inven_productId: productId
+        }, {
+            $inc: {
+                inven_stock: stock
+            },
+            $set: {
+                inven_location: localtion
+            }
+        }, {
+            upsert: true,
+            new: true
+        })
+    }
+}
+</file>
+
+<file path="src/services/notification-service.ts">
+import notificationModel from "../models/notification-model";
+
+export class NotificationService {
+    static async pushNotiToSystem({
+        type = "SHOP-001",
+        receivedId = 1,
+        senderId = 1,
+        options = {},
+    }: {
+        type?: string;
+        receivedId?: string | number;
+        senderId?: string | number;
+        options?: Record<string, any>;
+    }) {
+        try {
+            let noti_content;
+
+            if (type === "SHOP-001") {
+                noti_content = `${
+                    options.shopName || "Shop"
+                } just added a product: ${
+                    options.productName || "New Product"
+                }`;
+            } else if (type === "PROMOTION-001") {
+                noti_content = `${
+                    options.shopName || "Shop"
+                } just added a voucher: ${
+                    options.voucherName || "New Voucher"
+                }`;
+            } else if (type === "ORDER-001") {
+                noti_content = `New order received: ${options.orderId}`;
+            } else if (type === "ORDER-002") {
+                noti_content = `Order status updated: ${options.orderId}`;
+            } else if (type === "PROMOTION-002") {
+                noti_content = `New promotion available: ${options.promotionName}`;
+            } else {
+                noti_content = `System notification`;
+            }
+
+            const newNoti = await notificationModel.create({
+                noti_type: type,
+                noti_content: noti_content,
+                noti_senderId: senderId,
+                noti_recivedId: receivedId,
+                noti_options: options,
+            });
+
+            return newNoti;
+        } catch (error) {
+            console.error("Notification creation failed:", error);
+            throw error;
+        }
+    }
+
+    static async pushNotiToSystemAsync({
+        type = "SHOP-001",
+        receivedId = 1,
+        senderId = 1,
+        options = {},
+    }: {
+        type?: string;
+        receivedId?: string | number;
+        senderId?: string | number;
+        options?: Record<string, any>;
+    }) {
+        // Fire and forget - don't wait for notification creation
+        setImmediate(async () => {
+            try {
+                await this.pushNotiToSystem({
+                    type,
+                    receivedId,
+                    senderId,
+                    options,
+                });
+            } catch (error) {
+                console.error("Async notification failed:", error);
+            }
+        });
+    }
+
+    static listNotiByUser = async ({
+        userId = 1,
+        type = "ALL",
+        isRead = 0,
+    }) => {
+        const match = { noti_recivedId: userId };
+
+        if (type != "ALL") {
+            match.noti_type = type;
+        }
+
+        return await notificationModel.aggregate([
+            { $match: match },
+            {
+                $project: {
+                    noti_type: 1,
+                    noti_senderId: 1,
+                    noti_receivedId: 1,
+                    noti_content: 1,
+                    createAt: 1,
+                },
+            },
+        ]);
+    };
+}
+</file>
+
+<file path="src/services/rbac-service.ts">
+import resourceModel from "../models/resource-model";
+import roleModel from "../models/role-model";
+
+/**
+ * new resource
+ * @thaideptrai218
+ * @param {string} name
+ * @param {string} slug
+ * @param {string} description
+ */
+export const createResource = async ({
+    name = "profile",
+    slug = "p0001",
+    description = "",
+}) => {
+    try {
+        //1. Check name or slug exists
+
+        //2. New resource
+        const resource = await resourceModel.create({
+            src_name: name,
+            src_desc: description,
+            src_slug: slug,
+        });
+
+        return resource;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const resourceList = async ({
+    userId = 0,
+    limit = 30,
+    offset = 0,
+    search = "",
+}) => {
+    try {
+        //1. Check admin from middleware function
+
+        //2. get list of resource
+        const resource = await resourceModel.aggregate([
+            {
+                $project: {
+                    name: "$src_name",
+                    slug: "$src_slug",
+                    description: "$src_description",
+                    resourceId: "$_id",
+                    createdAt: 1,
+                },
+            },
+        ]);
+
+        return resource;
+    } catch (error) {
+        return [];
+    }
+};
+
+export const createRole = async ({
+    name = "shop",
+    slug = "s0001",
+    description = "extend from shop or user",
+    grants = [],
+}) => {
+    try {
+        //1. Check role exists
+
+        //2. New role.
+        const role = await roleModel.create({
+            role_name: name,
+            role_desc: description,
+            role_grants: grants,
+            role_slug: slug,
+        });
+
+        return role;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const roleList = async ({
+    userId = 0,
+    limit = 30,
+    offset = 0,
+    search = "",
+}) => {
+    try {
+        const roles = await roleModel.aggregate([
+            {
+                $unwind: "$role_grants",
+            },
+            {
+                $lookup: {
+                    from: "resources",
+                    localField: "role_grants.resource",
+                    foreignField: "_id",
+                    as: "resource",
+                },
+            },
+            {
+                $unwind: "$resource",
+            },
+            {
+                $project: {
+                    role: "$role_name",
+                    resource: "$resource.src_name",
+                    action: "$role_grants.actions",
+                    attributes: "$role_grants.attributes",
+                },
+            },
+            {
+                $unwind: "$action",
+            },
+            {
+                $project: {
+                    _id: 0,
+                    role: 1,
+                    resource: 1,
+                    action: 1,
+                    attributes: 1,
+                },
+            },
+        ]);
+
+        return roles;
+    } catch (error) {
+        return error;
+    }
+};
+</file>
+
+<file path="src/services/shop-service.ts">
+import { shopModel } from "../models/shop-model";
+
+export const findByEmail = async ({
+    email,
+    select = {
+        email: 1,
+        password: 1,
+        name: 1,
+        status: 1,
+        roles: 1,
+    },
+}: {
+    email: string;
+    select?: Record<string, 0 | 1> | string;
+}) => {
+    return await shopModel.findOne({ email }).select(select).lean();
+};
+</file>
+
+<file path="src/services/template-service.ts">
+import templateModel from "../models/template-model";
+
+export const newTemplate = async ({ tem_name, tem_html }) => {
+    //1. Check if exists
+    const isExist = await templateModel.findOne({ tem_name });
+    if (isExist) return isExist;
+
+    //2 create a new template
+    const newTem = await templateModel.create({
+        tem_name, //unique name
+        tem_html,
+    });
+
+    return newTem;
+};
+
+export const getTemplate = async ({ tem_name }) => {
+    const template = await templateModel.findOne({
+        tem_name,
+    });
+
+    if (!template) {
+        return createOtpTemplate();
+    }
+
+    return template;
+};
+
+export const createOtpTemplate = async () => {
+    const html = htmlEmailToken();
+    return await newTemplate({
+        tem_name: "HTML EMAIL OTP",
+        tem_html: html,
+    });
+};
+
+const htmlEmailToken = () => {
+
+    return `
+
+        <!DOCTYPE html>
+
+        <html lang="en">
+
+        <head>
+
+            <meta charset="UTF-8">
+
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+            <title>OTP Verification</title>
+
+        </head>
+
+        <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
+
+            <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+
+                <h2 style="color: #333333; text-align: center;">Welcome to {{shop_name}}!</h2>
+
+                <p style="font-size: 16px; color: #555555;">Hello {{user_name}},</p>
+
+                <p style="font-size: 16px; color: #555555;">Thank you for registering. Please click the button below to verify your email address:</p>
+
+                
+
+                <div style="text-align: center; margin: 30px 0;">
+
+                    <a href="{{verify_link}}" style="background-color: #007BFF; color: white; padding: 14px 28px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 18px; display: inline-block;">Verify Email</a>
+
+                </div>
+
+
+
+                <p style="font-size: 16px; color: #555555;">Or copy and paste this link into your browser:</p>
+
+                <p style="font-size: 14px; color: #007BFF; word-break: break-all;">{{verify_link}}</p>
+
+
+
+                <p style="font-size: 14px; color: #999999; margin-top: 30px; text-align: center;">This link will expire in 1 minute. If you didn't request this, please ignore this email.</p>
+
+            </div>
+
+        </body>
+
+        </html>
+
+    `;
+
+}
+
+;
+</file>
+
+<file path="src/test/message_queue/kafka/consumer.ts">
+import { Kafka, logLevel } from "kafkajs";
+
+const kafka = new Kafka({
+    clientId: "my-app",
+    brokers: ["localhost:9092"],
+    logLevel: logLevel.NOTHING,
+});
+
+const consumer = kafka.consumer({ groupId: "test-group" });
+
+const runConsumer = async () => {
+    await consumer.connect();
+    await consumer.subscribe({ topic: "test-topic", fromBeginning: true });
+
+    await consumer.run({
+        eachMessage: async ({ topic, partition, message }) => {
+            console.log({
+                value: message?.value.toString(),
+            });
+        },
+    });
+};
+
+runConsumer().catch(console.error);
+</file>
+
+<file path="src/test/message_queue/kafka/producer.ts">
+import { Kafka, logLevel } from "kafkajs";
+
+const kafka = new Kafka({
+    clientId: "my-app",
+    brokers: ["localhost:9092"],
+    logLevel: logLevel.NOTHING,
+});
+
+const producer = kafka.producer();
+
+const runProducer = async () => {
+    await producer.connect();
+    await producer.send({
+        topic: "test-topic",
+        messages: [{ value: "Hello KafkaJS user by TipsJavascript!" }],
+    });
+
+    await producer.disconnect();
+};
+
+runProducer().catch(console.error);
+</file>
+
+<file path="src/test/message_queue/rabbitmq/comsumer.ts">
+import amqplib from "amqplib";
+import { TOO_MANY_REQUESTS } from "http-status-codes";
+const message = "hello rabbitmq from tipsjavascript!";
+
+const runComsumer = async () => {
+    try {
+        const connection = await amqplib.connect("amqp://localhost:5672");
+        const channel = await connection.createChannel();
+
+        const queueName = "test-topic";
+        await channel.assertQueue(queueName, {
+            durable: true,
+        });
+
+        channel.consume(
+            queueName,
+            (msg) => {
+                if (msg !== null) {
+                    console.log("Received:", msg.content.toString());
+                    // channel.ack(msg);
+                } else {
+                    console.log("Consumer cancelled by server");
+                }
+            },
+            {
+                noAck: true,
+            }
+        );
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+runComsumer().catch(console.error);
+</file>
+
+<file path="src/test/message_queue/rabbitmq/producer.ts">
+import amqplib from "amqplib";
+const message = "hello rabbitmq from tipsjavascript!";
+
+const runProducer = async () => {
+    try {
+        const connection = await amqplib.connect("amqp://localhost:5672");
+        const channel = await connection.createChannel();
+
+        const queueName = "test-topic";
+        await channel.assertQueue(queueName, {
+            durable: true,
+        });
+
+        setInterval(() => {
+            channel.sendToQueue(queueName, Buffer.from(message));
+        }, 1000);
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+runProducer().catch(console.error);
+</file>
+
+<file path="src/utils/express-utils.ts">
+export function getHeaderAsString(
+    req: Request,
+    headerName: string
+): string | undefined {
+    const headerValue = req.headers[headerName.toLowerCase()]; // Headers are case-insensitive, but accessed by lowercase keys
+
+    if (typeof headerValue === "string") {
+        return headerValue;
+    } else if (Array.isArray(headerValue)) {
+        // If it's an array, you might choose to join them, or take the first element
+        return headerValue[0]; // Example: taking the first value
+    }
+    return undefined; // If undefined or any other unexpected type
+}
+</file>
+
+<file path="src/utils/object-utils.ts">
+import _ from 'lodash';
+
+const getInfoData = ({ fields = [], object = {} }) => {
+    return _.pick(object, fields);
+};
+
+export { getInfoData };
+</file>
+
+<file path=".repomixignore">
+docs/*
+plans/*
+assets/*
+dist/*
+coverage/*
+build/*
+ios/*
+android/*
+tests/*
+__tests__/*
+__pycache__/*
+node_modules/*
+
+.opencode/*
+.claude/*
+.serena/*
+.pnpm-store/*
+.github/*
+.dart_tool/*
+.idea/*
+.husky/*
+.venv/*
+</file>
+
+<file path="claude_code_zai_env.sh">
+#!/bin/bash
+
+set -euo pipefail
+
+# ========================
+#       Define Constants
+# ========================
+SCRIPT_NAME=$(basename "$0")
+NODE_MIN_VERSION=18
+NODE_INSTALL_VERSION=22
+NVM_VERSION="v0.40.3"
+CLAUDE_PACKAGE="@anthropic-ai/claude-code"
+CONFIG_DIR="$HOME/.claude"
+CONFIG_FILE="$CONFIG_DIR/settings.json"
+API_BASE_URL="https://api.z.ai/api/anthropic"
+API_KEY_URL="https://z.ai/manage-apikey/apikey-list"
+API_TIMEOUT_MS=3000000
+
+# ========================
+#       Functions
+# ========================
+
+log_info() {
+    echo "🔹 $*"
+}
+
+log_success() {
+    echo "✅ $*"
+}
+
+log_error() {
+    echo "❌ $*" >&2
+}
+
+ensure_dir_exists() {
+    local dir="$1"
+    if [ ! -d "$dir" ]; then
+        mkdir -p "$dir" || {
+            log_error "Failed to create directory: $dir"
+            exit 1
+        }
+    fi
+}
+
+# ========================
+#     Node.js Installation
+# ========================
+
+install_nodejs() {
+    local platform=$(uname -s)
+
+    case "$platform" in
+        Linux|Darwin)
+            log_info "Installing Node.js on $platform..."
+
+            # Install nvm
+            log_info "Installing nvm ($NVM_VERSION)..."
+            curl -s https://raw.githubusercontent.com/nvm-sh/nvm/"$NVM_VERSION"/install.sh | bash
+
+            # Load nvm
+            log_info "Loading nvm environment..."
+            \. "$HOME/.nvm/nvm.sh"
+
+            # Install Node.js
+            log_info "Installing Node.js $NODE_INSTALL_VERSION..."
+            nvm install "$NODE_INSTALL_VERSION"
+
+            # Verify installation
+            node -v &>/dev/null || {
+                log_error "Node.js installation failed"
+                exit 1
+            }
+            log_success "Node.js installed: $(node -v)"
+            log_success "npm version: $(npm -v)"
+            ;;
+        *)
+            log_error "Unsupported platform: $platform"
+            exit 1
+            ;;
+    esac
+}
+
+# ========================
+#     Node.js Check
+# ========================
+
+check_nodejs() {
+    if command -v node &>/dev/null; then
+        current_version=$(node -v | sed 's/v//')
+        major_version=$(echo "$current_version" | cut -d. -f1)
+
+        if [ "$major_version" -ge "$NODE_MIN_VERSION" ]; then
+            log_success "Node.js is already installed: v$current_version"
+            return 0
+        else
+            log_info "Node.js v$current_version is installed but version < $NODE_MIN_VERSION. Upgrading..."
+            install_nodejs
+        fi
+    else
+        log_info "Node.js not found. Installing..."
+        install_nodejs
+    fi
+}
+
+# ========================
+#     Claude Code Installation
+# ========================
+
+install_claude_code() {
+    if command -v claude &>/dev/null; then
+        log_success "Claude Code is already installed: $(claude --version)"
+    else
+        log_info "Installing Claude Code..."
+        npm install -g "$CLAUDE_PACKAGE" || {
+            log_error "Failed to install claude-code"
+            exit 1
+        }
+        log_success "Claude Code installed successfully"
+    fi
+}
+
+configure_claude_json(){
+  node --eval '
+      const os = require("os");
+      const fs = require("fs");
+      const path = require("path");
+
+      const homeDir = os.homedir();
+      const filePath = path.join(homeDir, ".claude.json");
+      if (fs.existsSync(filePath)) {
+          const content = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+          fs.writeFileSync(filePath, JSON.stringify({ ...content, hasCompletedOnboarding: true }, null, 2), "utf-8");
+      } else {
+          fs.writeFileSync(filePath, JSON.stringify({ hasCompletedOnboarding: true }, null, 2), "utf-8");
+      }'
+}
+
+# ========================
+#     API Key Configuration
+# ========================
+
+configure_claude() {
+    log_info "Configuring Claude Code..."
+    echo "   You can get your API key from: $API_KEY_URL"
+    read -s -p "🔑 Please enter your Z.AI API key: " api_key
+    echo
+
+    if [ -z "$api_key" ]; then
+        log_error "API key cannot be empty. Please run the script again."
+        exit 1
+    fi
+
+    ensure_dir_exists "$CONFIG_DIR"
+
+    # Write settings.json
+    node --eval '
+        const os = require("os");
+        const fs = require("fs");
+        const path = require("path");
+
+        const homeDir = os.homedir();
+        const filePath = path.join(homeDir, ".claude", "settings.json");
+        const apiKey = "'"$api_key"'";
+
+        const content = fs.existsSync(filePath)
+            ? JSON.parse(fs.readFileSync(filePath, "utf-8"))
+            : {};
+
+        fs.writeFileSync(filePath, JSON.stringify({
+            ...content,
+            env: {
+                ANTHROPIC_AUTH_TOKEN: apiKey,
+                ANTHROPIC_BASE_URL: "'"$API_BASE_URL"'",
+                API_TIMEOUT_MS: "'"$API_TIMEOUT_MS"'",
+                CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: 1
+            }
+        }, null, 2), "utf-8");
+    ' || {
+        log_error "Failed to write settings.json"
+        exit 1
+    }
+
+    log_success "Claude Code configured successfully"
+}
+
+# ========================
+#        Main
+# ========================
+
+main() {
+    echo "🚀 Starting $SCRIPT_NAME"
+
+    check_nodejs
+    install_claude_code
+    configure_claude_json
+    configure_claude
+
+    echo ""
+    log_success "🎉 Installation completed successfully!"
+    echo ""
+    echo "🚀 You can now start using Claude Code with:"
+    echo "   claude"
+}
+
+main "$@"
+</file>
+
+<file path="eslint.config.mts">
+import js from "@eslint/js";
+import globals from "globals";
+import tseslint from "typescript-eslint";
+import { defineConfig } from "eslint/config";
+
+export default defineConfig([
+  { files: ["**/*.{js,mjs,cjs,ts,mts,cts}"], plugins: { js }, extends: ["js/recommended"], languageOptions: { globals: {...globals.browser, ...globals.node} } },
+  tseslint.configs.recommended,
+]);
+</file>
+
+<file path="README.md">
+# E-commerce Backend Project
+
+This repository contains the backend for an e-commerce application, built with Node.js and TypeScript. It follows an enterprise-level architecture with clear separation of concerns, utilizing Factory, Repository, and Service patterns to ensure scalability, maintainability, and extensibility.
+
+## Features
+
+- User Authentication & Authorization (JWT, RBAC, API Key)
+- Product Management (CRUD, Factory Pattern for product types)
+- Shopping Cart Functionality
+- Discount Management
+- Comment System
+- Robust Error Handling
+- Comprehensive Security Measures
+- Redis Caching
+
+## Technology Stack
+
+- **Runtime**: Node.js
+- **Language**: TypeScript (strict mode enabled)
+- **Web Framework**: Express.js 5.x
+- **Database**: MongoDB with Mongoose ODM
+- **Authentication**: JWT with bcrypt
+- **Caching**: Redis
+- **Security**: Helmet, CORS, compression
+- **Containerization**: Docker
+
+## Setup Instructions
+
+### Prerequisites
+
+- Node.js (LTS version recommended)
+- Docker & Docker Compose
+- MongoDB (running via Docker or locally)
+- Redis (running via Docker or locally)
+
+### 1. Clone the Repository
+
+```bash
+git clone <repository-url>
+cd ecommerce-backend-nodejs
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+### 3. Environment Configuration
+
+Create a `.env` file in the root directory based on `.env.example`.
+Ensure you configure your MongoDB connection string, JWT secrets, and other necessary environment variables.
+
+### 4. Database Setup
+
+The project uses MongoDB and Redis. You can set them up using Docker Compose:
+
+```bash
+docker-compose up -d
+```
+
+This will start MongoDB and Redis instances in the background.
+
+### 5. Running the Application
+
+#### Development with Hot Reload (Recommended)
+
+```bash
+npx tsx watch server.ts
+```
+
+This command will start the server with automatic restarts on code changes. The application will be accessible on `http://localhost:3055`.
+
+#### Production Build
+
+```bash
+npm start
+```
+
+This compiles the TypeScript code and starts the application. The application will be accessible on `http://localhost:3055`.
+
+### 6. Linting
+
+To check code quality and adherence to styling rules:
+
+```bash
+npx eslint .
+```
+
+### 7. Testing (Planned)
+
+Currently, tests are not implemented, but the framework is in place. When implemented, you can run tests using:
+
+```bash
+npm test
+```
+
+## Documentation
+
+For detailed information about the project, refer to the following documentation:
+
+- [Project Overview and PDR](./docs/project-overview-pdr.md)
+- [Codebase Summary](./docs/codebase-summary.md)
+- [Code Standards](./docs/code-standards.md)
+- [System Architecture](./docs/system-architecture.md)
+</file>
+
+<file path="src/controllers/user-controller.ts">
+import { SuccessResponse } from "../core/success-respone";
+import { checkLoginEmailTokenService, newUser } from "../services/user-service";
+
+class UserController {
+    newUser = async (req, res, next) => {
+        const response = await newUser(req.body);
+        new SuccessResponse(
+            "otp email for user sucessfuly",
+            201,
+            response
+        ).send(res);
+    };
+
+    checkRegisterEmailToken = async (req, res, next) => {
+        const { token } = req.query;
+        console.log("===============", token, "===================");
+        const response = await checkLoginEmailTokenService({ token });
+        new SuccessResponse("User registered successfully", 201, response).send(
+            res
+        );
+    };
+}
+
+export default new UserController();
+</file>
+
+<file path="src/helpers/responseHandler.ts">
+import type { Response } from "express";
+import { SuccessResponse } from "../core/success-respone";
+
+const sendSuccessResponse = (res: Response, response: SuccessResponse) => {
+    return res.status(response.status).json({
+        message: response.message,
+        metadata: response.metadata,
+        options: response.options,
+    });
+};
+
+export { sendSuccessResponse };
+</file>
+
+<file path="src/loggers/winston_log.ts">
+import winston from "winston";
+const { combine, timestamp, json, align, printf } = winston.format;
+const logger = winston.createLogger({
+    level: process.env.LOG_LEVEL || "debug",
+    format: winston.format.combine(
+        timestamp({
+            format: "YYYY-MM-DD hh:mm:ss.SSS A",
+        }),
+        align(),
+        printf((info) => `[${info.timestamp}] ${info.level}: ${info.message}`)
+    ),
+    transports: [
+        new winston.transports.Console(),
+        new winston.transports.File({
+            dirname: "logs",
+            filename: "test.log",
+        }),
+    ],
+});
+
+export default logger;
+</file>
+
+<file path="src/middleware/access-control.ts">
+import { AccessControl } from "accesscontrol";
+
+// const grantList = [
+//     {
+//         role: "admin",
+//         resource: "profile",
+//         action: "read:any",
+//         attributes: "*, !views",
+//     },
+//     {
+//         role: "admin",
+//         resource: "profile",
+//         action: "create:any",
+//         attributes: "*",
+//     },
+//     {
+//         role: "admin",
+//         resource: "profile",
+//         action: "update:any",
+//         attributes: "*",
+//     },
+//     {
+//         role: "admin",
+//         resource: "profile",
+//         action: "delete:any",
+//         attributes: "*",
+//     },
+//     { role: "shop", resource: "profile", action: "read:own", attributes: "*" },
+//     {
+//         role: "admin",
+//         resource: "balance",
+//         action: "read:any",
+//         attributes: "*",
+//     },
+//     {
+//         role: "shop",
+//         resource: "balance",
+//         action: "read:own",
+//         attributes: "*",
+//     },
+// ];
+
+
+
+
+export default new AccessControl();
+</file>
+
+<file path="src/models/repositories/inventory-repo.ts">
+import inventory from "../inventory-model";
+
+export class InventoryRepository {
+    static insertInventory = async ({
+        productId,
+        shopId,
+        stock,
+        location = "unknown",
+    }) => {
+        return await inventory.create({
+            inven_productId: productId,
+            inven_shopId: shopId,
+            inven_stock: stock,
+            inven_location: location,
+        });
+    };
+
+    static reservationInventory = async ({ productId, quantity, cartId }) => {
+        return inventory.updateOne(
+            { inven_productId: productId, inven_stock: { $gte: quantity } },
+            {
+                $inc: {
+                    inven_stock: -quantity,
+                },
+                $push: {
+                    inven_reservations: {
+                        quantity,
+                        cartId,
+                    },
+                },
+            },
+            { upsert: true }
+        );
+    };
+}
+</file>
+
+<file path="src/models/apikey-model.ts">
+import { model, Schema } from "mongoose";
+
+const DOCUMENT_NAME = "Apikey";
+const COLLECTION_NAME = "apikeys";
+
+// Declare the Schema of the Mongo model
+const userSchema = new Schema(
+    {
+        key: { type: String, required: true, unique: true },
+        status: { type: Boolean, default: false },
+        permissions: {
+            type: [String],
+            required: true,
+            enum: ["0000", "1111", "2222"],
+        },
+    },
+    {
+        timestamps: true,
+        collection: COLLECTION_NAME,
+    }
+);
+
+model(DOCUMENT_NAME, userSchema)
+    .findOneAndUpdate(
+        {
+            key: "niggar-api-key",
+        },
+        { permissions: ["0000", "1111", "2222"], status: true },
+        {
+            upsert: true,
+            new: true,
+            setDefaultsOnInsert: true,
+        }
+    )
+    .then((result) => {
+        console.log("ApiKey Upsert Result:", result);
+    })
+    .catch((err) => {
+        console.error("ApiKey Upsert Error:", err);
+    });
+
+export default model(DOCUMENT_NAME, userSchema);
+</file>
+
+<file path="src/models/discount-model.ts">
+import { Schema, model, Types } from "mongoose";
+
+const DOCUMENT_NAME = "Discount";
+const COLLECTION_NAME = "discounts";
+
+// Discount type enum for better type safety
+export enum DiscountType {
+    PERCENTAGE = "percentage",
+    FIXED_AMOUNT = "fixed_amount",
+    BOGO = "bogo",
+    FREE_SHIPPING = "free_shipping",
+}
+
+// Discount applicability enum
+export enum DiscountAppliesTo {
+    ALL = "all",
+    SPECIFIC = "specific",
+    CATEGORY = "category",
+}
+
+const discountSchema = new Schema(
+    {
+        // Basic Information
+        discount_name: {
+            type: String,
+            required: true,
+            trim: true,
+            maxlength: 100,
+        },
+        discount_description: {
+            type: String,
+            required: true,
+            maxlength: 500,
+        },
+
+        // Discount Configuration
+        discount_type: {
+            type: String,
+            required: true,
+            enum: Object.values(DiscountType),
+        },
+        discount_value: {
+            type: Number,
+            required: true,
+            min: 0,
+            validate: {
+                validator: function (this: any, value: number) {
+                    if (this.discount_type === DiscountType.PERCENTAGE) {
+                        return value <= 100;
+                    }
+                    return value >= 0;
+                },
+                message: "Percentage discount cannot exceed 100%",
+            },
+        },
+        discount_code: {
+            type: String,
+            required: true,
+            unique: true,
+            uppercase: true,
+            trim: true,
+            minlength: 3,
+            maxlength: 20,
+            match: /^[A-Z0-9]+$/, // Only alphanumeric codes
+        },
+
+        // Timing Controls
+        discount_start_date: {
+            type: Date,
+            required: true,
+            validate: {
+                validator: function (value: Date) {
+                    return value >= new Date();
+                },
+                message: "Start date cannot be in the past",
+            },
+        },
+        discount_end_date: {
+            type: Date,
+            required: true,
+            validate: {
+                validator: function (this: any, value: Date) {
+                    return value > this.discount_start_date;
+                },
+                message: "End date must be after start date",
+            },
+        },
+
+        // Usage Controls
+        discount_max_uses: {
+            type: Number,
+            default: null, // null = unlimited
+            min: 1,
+        },
+        discount_uses_count: {
+            type: Number,
+            default: 0,
+            min: 0,
+        },
+        discount_users_used: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: "Shop",
+            },
+        ],
+        discount_max_uses_per_user: {
+            type: Number,
+            default: 1,
+            min: 1,
+        },
+
+        // Order Requirements
+        discount_min_order_value: {
+            type: Number,
+            default: 0,
+            min: 0,
+        },
+        discount_max_discount_amount: {
+            type: Number,
+            default: null, // null = no cap
+            min: 0,
+        },
+
+        // Multi-tenancy (following existing pattern)
+        discount_shopId: {
+            type: Schema.Types.ObjectId,
+            ref: "Shop",
+            required: true,
+        },
+
+        // Status Management
+        discount_is_active: {
+            type: Boolean,
+            default: true,
+            index: true,
+        },
+
+        // Applicability Rules
+        discount_applies_to: {
+            type: String,
+            enum: Object.values(DiscountAppliesTo),
+            default: DiscountAppliesTo.ALL,
+        },
+        discount_product_ids: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: "Product",
+            },
+        ],
+        // discount_category_ids: [{
+        //   type: Schema.Types.ObjectId,
+        //   ref: "Category" // Future category model
+        // }],
+
+        // // Advanced Features
+        // discount_is_stackable: {
+        //   type: Boolean,
+        //   default: false
+        // },
+        // discount_priority: {
+        //   type: Number,
+        //   default: 0, // Higher = higher priority
+        //   min: 0
+        // },
+
+        // // Additional metadata
+        // discount_tags: [{
+        //   type: String,
+        //   trim: true,
+        //   maxlength: 50
+        // }],
+        // discount_conditions: {
+        //   type: Schema.Types.Mixed,
+        //   default: {}
+        // }
+    },
+    {
+        collection: COLLECTION_NAME,
+        timestamps: true,
+        toJSON: { virtuals: true },
+        toObject: { virtuals: true },
+    }
+);
+
+// Virtual for checking if discount is currently valid
+discountSchema.virtual("isCurrentlyValid").get(function () {
+    const now = new Date();
+    return (
+        this.discount_is_active &&
+        now >= this.discount_start_date &&
+        now <= this.discount_end_date &&
+        (this.discount_max_uses === null ||
+            this.discount_uses_count < this.discount_max_uses)
+    );
+});
+
+// Virtual for remaining uses
+discountSchema.virtual("remainingUses").get(function () {
+    if (this.discount_max_uses === null) return null;
+    return Math.max(0, this.discount_max_uses - this.discount_uses_count);
+});
+
+// Indexes for Performance
+discountSchema.index({ discount_shop: 1, discount_code: 1 });
+discountSchema.index({ discount_start_date: 1, discount_end_date: 1 });
+discountSchema.index({ discount_is_active: 1, discount_end_date: 1 });
+discountSchema.index({ discount_shop: 1, discount_is_active: 1 });
+discountSchema.index({
+    discount_code: "text",
+    discount_name: "text",
+    discount_description: "text",
+});
+discountSchema.index({ discount_applies_to: 1, discount_product_ids: 1 });
+discountSchema.index({ discount_priority: -1 });
+
+// Validation Middleware
+discountSchema.pre("save", function (next) {
+    // Validate end date is after start date
+    if (this.discount_end_date <= this.discount_start_date) {
+        return next(new Error("End date must be after start date"));
+    }
+
+    // Validate percentage discounts
+    if (
+        this.discount_type === DiscountType.PERCENTAGE &&
+        this.discount_value > 100
+    ) {
+        return next(new Error("Percentage discount cannot exceed 100%"));
+    }
+
+    // Validate fixed amount has minimum order value requirement if needed
+    if (
+        this.discount_type === DiscountType.FIXED_AMOUNT &&
+        this.discount_min_order_value < this.discount_value
+    ) {
+        return next(
+            new Error(
+                "Minimum order value should be at least equal to fixed discount amount"
+            )
+        );
+    }
+
+    next();
+});
+
+// Static methods for common queries
+discountSchema.statics.findActiveDiscounts = function (shopId: Types.ObjectId) {
+    const now = new Date();
+    return this.find({
+        discount_shop: shopId,
+        discount_is_active: true,
+        discount_start_date: { $lte: now },
+        discount_end_date: { $gte: now },
+    });
+};
+
+discountSchema.statics.findByCode = function (
+    code: string,
+    shopId: Types.ObjectId
+) {
+    return this.findOne({
+        discount_code: code.toUpperCase(),
+        discount_shop: shopId,
+        discount_is_active: true,
+    });
+};
+
+// Instance methods
+discountSchema.methods.canBeUsedBy = function (userId: Types.ObjectId) {
+    // Check if user has already used this discount
+    const userUsageCount = this.discount_users_used.filter((id) =>
+        id.equals(userId)
+    ).length;
+    return userUsageCount < this.discount_max_uses_per_user;
+};
+
+discountSchema.methods.recordUsage = function (userId: Types.ObjectId) {
+    this.discount_uses_count += 1;
+    if (!this.discount_users_used.some((id) => id.equals(userId))) {
+        this.discount_users_used.push(userId);
+    }
+};
+
+export const discountModel = model(DOCUMENT_NAME, discountSchema);
+export type DiscountDocument = typeof discountModel.prototype;
+</file>
+
+<file path="src/models/key-token.ts">
+
+</file>
+
+<file path="src/models/shop-model.ts">
+import { Schema, model } from "mongoose"; // Erase if already required
+
+const DOCUMENT_NAME = "Shop";
+const COLLECTION_NAME = "shops";
+
+// Declare the Schema of the Mongo model
+const userSchema = new Schema(
+    {
+        name: {
+            type: String,
+            required: true,
+            unique: true,
+            index: true,
+        },
+        email: {
+            type: String,
+            required: true,
+            unique: true,
+            trim: true,
+        },
+        password: {
+            type: String,
+            required: true,
+        },
+
+        status: {
+            type: String,
+            enum: ["active", "inactive"],
+            default: "inactive",
+        },
+
+        verify: {
+            type: Schema.Types.Boolean,
+            default: false,
+        },
+
+        roles: {
+            type: Array,
+            default: [],
+        },
+    },
+    {
+        collection: COLLECTION_NAME,
+    }
+);
+
+//Export the model
+export const shopModel = model(DOCUMENT_NAME, userSchema);
+</file>
+
+<file path="src/rest/checkout-post.http">
+@url_dev=http://localhost:3055
+@api_key=niggar-api-key
+@client_id=6900378dbddfc4d935b6856b 
+@authorization= eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTAwMzc4ZGJkZGZjNGQ5MzViNjg1NmIiLCJlbWFpbCI6IndlbHRlcmlhbEBnbWFpbC5jb20iLCJuYW1lIjoiVGhhaSBEaW5oIiwiaWF0IjoxNzYzNTM3MDE2LCJleHAiOjE3NjQ4MzMwMTZ9.DaBsU9weSEazPbcvUAI_o5K6KZX9eb_Y8Tyzfky5qqM
+
+### Add products to cart first for checkout testing
+POST {{url_dev}}/v1/api/cart
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "productId": "690751d279cbc75d6571e36d",
+    "quantity": 2,
+    "shopId": "69074f5479cbc75d6571e355",
+    "name": "Sample Product",
+    "price": 29.99
+}
+
+### Get cart to see cart ID
+GET {{url_dev}}/v1/api/cart
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+### Review checkout with single shop and no discount
+POST {{url_dev}}/v1/api/checkout/review
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "cartId": "690752a9e6e96615de89904b",
+    "shop_order_ids": [
+        {
+            "shopId": "69074f5479cbc75d6571e355",
+            "shop_discounts": [],
+            "item_products": [
+                {
+                    "productId": "690751d279cbc75d6571e36d",
+                    "quantity": 2,
+                    "price": 29.99
+                }
+            ]
+        }
+    ]
+}
+
+### Review checkout with multiple shops
+POST {{url_dev}}/v1/api/checkout/review
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "cartId": "690752a9e6e96615de89904b",
+    "shop_order_ids": [
+        {
+            "shopId": "69074f5479cbc75d6571e355",
+            "shop_discounts": [
+                {
+                    "shopId": "69074f5479cbc75d6571e355",
+                    "discountId": "690771febf6dbfe0ac40b634",
+                    "codeId": "SAVESPECIFIC"
+                }
+            ],
+            "item_products": [
+                {
+                    "productId": "690751d279cbc75d6571e36d",
+                    "quantity": 2,
+                    "price": 29.99
+                },
+                {
+                    "productId": "690751d579cbc75d6571e375",
+                    "quantity": 1,
+                    "price": 49.99
+                }
+            ]
+        },
+        {
+            "shopId": "69074f5479cbc75d6571e355",
+            "shop_discounts": [],
+            "item_products": [
+               {
+                    "productId": "690751d279cbc75d6571e36d",
+                    "quantity": 2,
+                    "price": 29.99
+                },
+                {
+                    "productId": "690751d579cbc75d6571e375",
+                    "quantity": 1,
+                    "price": 49.99
+                }
+            ]
+        }
+    ]
+}
+
+### Execute checkout order (create actual orders)
+POST {{url_dev}}/v1/api/checkout/order
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "cartId": "YOUR_CART_ID_HERE",
+    "shop_order_ids": [
+        {
+            "shopId": "69074f5479cbc75d6571e355",
+            "shop_discounts": [],
+            "item_products": [
+                {
+                    "productId": "690751d279cbc75d6571e36d",
+                    "quantity": 2,
+                    "price": 29.99
+                }
+            ]
+        }
+    ]
+}
+
+### Get order history
+GET {{url_dev}}/v1/api/checkout/history?page=1&limit=10
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+### Get order history with status filter
+GET {{url_dev}}/v1/api/checkout/history?page=1&limit=5&status=pending
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+### Get specific order details
+GET {{url_dev}}/v1/api/checkout/ORDER_ID_HERE
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+### Test checkout with invalid cart ID (should fail)
+POST {{url_dev}}/v1/api/checkout/review
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "cartId": "INVALID_CART_ID",
+    "shop_order_ids": [
+        {
+            "shopId": "69074f5479cbc75d6571e355",
+            "shop_discounts": [],
+            "item_products": [
+                {
+                    "productId": "690751d279cbc75d6571e36d",
+                    "quantity": 2,
+                    "price": 29.99
+                }
+            ]
+        }
+    ]
+}
+
+### Test checkout with empty shop orders (should fail)
+POST {{url_dev}}/v1/api/checkout/review
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "cartId": "YOUR_CART_ID_HERE",
+    "shop_order_ids": []
+}
+
+### Test checkout without authentication (should fail)
+POST {{url_dev}}/v1/api/checkout/review
+Content-Type: application/json
+x-api-key: {{api_key}}
+
+{
+    "cartId": "YOUR_CART_ID_HERE",
+    "shop_order_ids": [
+        {
+            "shopId": "69074f5479cbc75d6571e355",
+            "shop_discounts": [],
+            "item_products": [
+                {
+                    "productId": "690751d279cbc75d6571e36d",
+                    "quantity": 2,
+                    "price": 29.99
+                }
+            ]
+        }
+    ]
+}
+</file>
+
+<file path="src/routers/profile/index.ts">
+import express from "express";
+import profileController from "../../controllers/profile-controller";
+import { grantAccess } from "../../middleware/rbac";
+
+const router = express.Router();
+
+router.get(
+    "/viewAny",
+    grantAccess("readAny", "profile"),
+    profileController.profiles
+);
+
+router.get(
+    "viewOwn",
+    grantAccess("readOwn", "profile"),
+    profileController.profile
+);
+
+export default router;
+</file>
+
+<file path="src/routers/user/index.ts">
+import express from "express";
+import { asyncHandler } from "../../helpers/asyncHandler";
+import userController from "../../controllers/user-controller";
+
+const router = express.Router();
+
+router.post("/new_user", asyncHandler(userController.newUser));
+router.get("/verify", asyncHandler(userController.checkRegisterEmailToken));
+
+export default router;
+</file>
+
+<file path="src/services/cart-service.ts">
+/**
+ * Cart Service - Manages user shopping cart operations
+ *
+ * Key features:
+ * - Add product to cart [user]
+ * - Update product quantity in cart [user]
+ * - Remove product from cart [user]
+ * - Get user cart [user]
+ * - Clear cart [user]
+ * - Delete cart item [user]
+ */
+
+import { Types } from "mongoose";
+import { NotFoundError } from "../core/error-respone";
+import cartModel from "../models/cart-model";
+import ProductRepository from "../models/repositories/product.repo";
+import { convertToObjectIdMongodb } from "../utils";
+
+// Define cart product interface for better type safety
+export interface CartProduct {
+    productId: Types.ObjectId;
+    quantity: number;
+    shopId?: Types.ObjectId;
+    name?: string;
+    price?: number;
+}
+
+// Define cart service interface
+export interface CartServiceInterface {
+    productId: Types.ObjectId;
+    quantity: number;
+    old_quantity?: number;
+    shopId?: Types.ObjectId;
+}
+
+export class CartService {
+    /**
+     * Create a new cart for user or add product to existing cart
+     * @param param - Object containing userId and product
+     * @param param.userId - User ID
+     * @param param.product - Product object to add to cart
+     * @returns Updated cart document
+     */
+    static async createUserCart({
+        userId,
+        product,
+    }: {
+        userId: number;
+        product: CartProduct;
+    }) {
+        return await cartModel.findOneAndUpdate(
+            { cart_userId: userId, cart_state: "active" },
+            {
+                $addToSet: {
+                    cart_products: product,
+                },
+                $inc: {
+                    cart_count_product: product.quantity || 1,
+                },
+            },
+            {
+                upsert: true,
+                new: true,
+            }
+        );
+    }
+
+    /**
+     * Update product quantity in user's cart (sets to exact value)
+     * @param param - Object containing userId and product details
+     * @param param.userId - User ID
+     * @param param.product - Product object with productId and target quantity
+     * @returns Updated cart document
+     */
+    static async updateUserCartQuantity({
+        userId,
+        product,
+    }: {
+        userId: number;
+        product: { productId: Types.ObjectId; quantity: number };
+    }) {
+        const { productId, quantity: targetQuantity } = product;
+
+        // First, get current cart to find existing product quantity
+        const currentCart = await cartModel.findOne({
+            cart_userId: userId,
+            cart_state: "active",
+        });
+
+        if (!currentCart) {
+            throw new NotFoundError("Cart not found");
+        }
+
+        const existingProduct = currentCart.cart_products.find(
+            (p) => p.productId.toString() === productId.toString()
+        );
+
+        if (!existingProduct) {
+            throw new NotFoundError("Product not found in cart");
+        }
+
+        const currentQuantity = existingProduct.quantity;
+        const quantityDiff = targetQuantity - currentQuantity;
+
+        if (quantityDiff === 0) {
+            // No change needed, return current cart
+            return currentCart;
+        }
+
+        if (targetQuantity <= 0) {
+            // Remove product if quantity is 0 or negative
+            return await CartService.deleteUserCart({
+                userId,
+                productId,
+            });
+        }
+
+        // Update with calculated difference
+        const updatedCart = await cartModel.findOneAndUpdate(
+            {
+                cart_userId: userId,
+                "cart_products.productId": convertToObjectIdMongodb(productId),
+                cart_state: "active",
+            },
+            {
+                $set: {
+                    "cart_products.$.quantity": targetQuantity,
+                },
+                $inc: {
+                    cart_count_product: quantityDiff,
+                },
+            },
+            { new: true }
+        );
+
+        return updatedCart;
+    }
+
+    /**
+     * Add product to user cart (basic version)
+     * @param param - Object containing userId and product
+     * @param param.userId - User ID
+     * @param param.product - Product object to add
+     * @returns Updated cart document
+     */
+    static async addToCart({
+        userId,
+        product = {} as CartProduct,
+    }: {
+        userId: number;
+        product?: CartProduct;
+    }) {
+        const userCart = await cartModel.findOne({
+            cart_userId: userId,
+            cart_state: "active",
+        });
+
+        // If no cart exists for user, create a new one
+        if (!userCart) {
+            return await CartService.createUserCart({ userId, product });
+        }
+
+        // If cart exists, check if the product is already in it.
+        const existingProduct = userCart.cart_products.find(
+            (p) => p.productId.toString() === product.productId.toString()
+        );
+
+        if (existingProduct) {
+            // Product exists, update quantity.
+            return await CartService.updateUserCartQuantity({
+                userId,
+                product: {
+                    productId: product.productId,
+                    quantity: product.quantity || 1,
+                },
+            });
+        }
+
+        // Product does not exist in cart, add it to the array atomically
+        return await cartModel.findOneAndUpdate(
+            { cart_userId: userId },
+            {
+                $push: { cart_products: product },
+                $inc: {
+                    cart_count_product: product.quantity || 1,
+                },
+            },
+            { new: true }
+        );
+    }
+
+    /**
+     * Add products to cart with shop validation (advanced version)
+     * @param param - Object containing userId and product details
+     * @param param.userId - User ID
+     * @param param.product - Product details with shop validation
+     * @param param.shopOrderIds - Shop order details
+     * @returns Updated cart document
+     */
+    static async addToCartV2({
+        userId,
+        product = {} as CartServiceInterface,
+        shopOrderIds,
+    }: {
+        userId: number;
+        product?: CartServiceInterface;
+        shopOrderIds?: Array<{
+            shopId: Types.ObjectId;
+            item_product: Array<{
+                productId: Types.ObjectId;
+                quantity: number;
+                old_quantity?: number;
+            }>;
+        }>;
+    }) {
+        if (!shopOrderIds || shopOrderIds.length === 0) {
+            throw new NotFoundError("Shop order information is required");
+        }
+
+        const { productId, quantity, old_quantity } =
+            shopOrderIds[0]?.item_product[0];
+
+        if (!productId) {
+            throw new NotFoundError("Product ID is required");
+        }
+
+        // Check if product exists
+        const foundProduct = await ProductRepository.findProduct(productId);
+        if (!foundProduct) throw new NotFoundError("Product not found");
+
+        // Validate product belongs to the specified shop
+        if (
+            foundProduct.product_shop?.toString() !==
+            shopOrderIds[0]?.shopId.toString()
+        ) {
+            throw new NotFoundError(
+                "Product does not belong to the specified shop"
+            );
+        }
+
+        // If quantity is 0, remove product from cart
+        if (quantity === 0) {
+            return await CartService.deleteUserCart({
+                userId,
+                productId: productId,
+            });
+        }
+
+        // Calculate the quantity difference
+        // const quantityDiff = quantity - (old_quantity || 0);
+
+        return await CartService.updateUserCartQuantity({
+            userId,
+            product: {
+                productId,
+                quantity: quantity,
+            },
+        });
+    }
+
+    /**
+     * Remove product from user's cart
+     * @param param - Object containing userId and productId
+     * @param param.userId - User ID
+     * @param param.productId - Product ID to remove
+     * @returns Update operation result
+     */
+    static async deleteUserCart({
+        userId,
+        productId,
+    }: {
+        userId: number;
+        productId: Types.ObjectId;
+    }) {
+        const cart = await cartModel.findOne({
+            cart_userId: userId,
+            cart_state: "active",
+        });
+
+        if (!cart) {
+            throw new NotFoundError("Cart not found");
+        }
+
+        const productToRemove = cart.cart_products.find(
+            (p) => p.productId.toString() === productId.toString()
+        );
+
+        const deleteResult = await cartModel.updateOne(
+            { cart_userId: userId, cart_state: "active" },
+            {
+                $pull: {
+                    cart_products: {
+                        productId: productId,
+                    },
+                },
+                $inc: {
+                    cart_count_product: -(productToRemove?.quantity || 0),
+                },
+            }
+        );
+
+        return deleteResult;
+    }
+
+    /**
+     * Get user's cart with product details
+     * @param param - Object containing userId
+     * @param param.userId - User ID
+     * @returns User's cart document
+     */
+    static async getListUserCart({ userId }: { userId: number }) {
+        const cart = await cartModel
+            .findOne({
+                cart_userId: userId,
+                cart_state: "active",
+            })
+            .lean();
+
+        if (!cart) {
+            throw new NotFoundError("Cart not found");
+        }
+
+        return cart;
+    }
+
+    /**
+     * Clear entire cart for user
+     * @param param - Object containing userId
+     * @param param.userId - User ID
+     * @returns Update operation result
+     */
+    static async clearUserCart({ userId }: { userId: number }) {
+        const deleteResult = await cartModel.updateOne(
+            { cart_userId: userId, cart_state: "active" },
+            {
+                $set: {
+                    cart_products: [],
+                    cart_count_product: 0,
+                },
+            }
+        );
+
+        return deleteResult;
+    }
+
+    /**
+     * Update cart state (e.g., from active to completed)
+     * @param param - Object containing userId and newState
+     * @param param.userId - User ID
+     * @param param.newState - New cart state
+     * @returns Update operation result
+     */
+    static async updateCartState({
+        userId,
+        newState,
+    }: {
+        userId: number;
+        newState: "active" | "completed" | "failed" | "pending";
+    }) {
+        const updateResult = await cartModel.updateOne(
+            { cart_userId: userId, cart_state: "active" },
+            {
+                $set: {
+                    cart_state: newState,
+                },
+            }
+        );
+
+        return updateResult;
+    }
+}
+</file>
+
+<file path="src/services/checkout-service.ts">
+import { BadRequestError } from "../core/error-respone";
+import orderSchema from "../models/order-schema";
+import { CartRepository } from "../models/repositories/cart-rep";
+import ProductRepository from "../models/repositories/product.repo";
+import { DiscountService } from "./discount-service";
+import { acquireLock, releaseLock } from "./redis";
+
+export class CheckoutService {
+    /**
+    payload:
+    {
+        cartId,
+        userId,
+        shop_orders_ids: [
+            {
+                shopId,
+                shop_discountss: [
+                    {
+                        shopId,
+                        discountId,
+                        codeId,
+                    }
+                ]
+                item_products: [
+                    {price, 
+                    quantity
+                    productId}
+                ]
+            }
+        ]
+    }  
+     
+     */
+
+    static async checkOutReview({ cartId, userId, shop_order_ids = [] }) {
+        // check cartId
+        const foundCart = await CartRepository.findCartById(cartId);
+        if (!foundCart) throw new BadRequestError("Cart doest not exist!");
+
+        const checkout_order = {
+                totalPrice: 0,
+                feeShip: 0,
+                totalDiscount: 0,
+                totalCheckout: 0,
+            },
+            shop_order_ids_new = [];
+
+        for (let i = 0; i < shop_order_ids.length; i++) {
+            const {
+                shopId,
+                shop_discounts = [],
+                item_products = [],
+            } = shop_order_ids[i];
+            if (!item_products || item_products.length === 0) {
+                throw new BadRequestError("No products provided for checkout!");
+            }
+
+            const checkProductServer =
+                await ProductRepository.checkProductByServer(item_products);
+
+            if (!checkProductServer || checkProductServer.length === 0) {
+                throw new BadRequestError(
+                    "No valid products found for checkout!"
+                );
+            }
+
+            // Check if any product validation failed
+            const invalidProducts = checkProductServer.filter(
+                (product) => !product
+            );
+            if (invalidProducts.length > 0) {
+                throw new BadRequestError(
+                    "Some products are invalid or not available!"
+                );
+            }
+
+            const checkOutPrice = checkProductServer.reduce((acc, product) => {
+                return acc + product?.quantity * product?.price;
+            }, 0);
+
+            checkout_order.totalPrice += checkOutPrice;
+
+            const itemCheckOut = {
+                shopId,
+                shop_discounts,
+                priceRaw: checkOutPrice,
+                priceApplyDiscount: checkOutPrice,
+                item_products: checkProductServer,
+            };
+
+            if (shop_discounts.length > 0) {
+                const { discountAmount = 0 } =
+                    await DiscountService.getDiscountAmount({
+                        codeId: shop_discounts[0].codeId,
+                        userId,
+                        shopId,
+                        products: checkProductServer,
+                    });
+
+                checkout_order.totalDiscount += discountAmount;
+                itemCheckOut.priceApplyDiscount =
+                    checkOutPrice - discountAmount;
+            }
+
+            shop_order_ids_new.push(itemCheckOut);
+        }
+
+        // Calculate final checkout total
+        checkout_order.totalCheckout =
+            checkout_order.totalPrice +
+            checkout_order.feeShip -
+            checkout_order.totalDiscount;
+
+        return {
+            shop_order_ids,
+            shop_order_ids_new,
+            checkout_order,
+        };
+    }
+
+    /**
+     * Execute the checkout order by creating orders and updating inventory
+     * @param {Object} params - Checkout parameters
+     * @param {string} params.userId - User ID
+     * @param {string} params.cartId - Cart ID
+     * @param {Array} params.shop_order_ids - Shop order IDs from checkout review
+     * @returns {Promise<Object>} Created order information
+     */
+    static async checkOutOrder({ userId, cartId, shop_order_ids = [] }) {
+        const { shop_order_ids: shopOrderIds, ...checkoutOrder } =
+            await this.checkOutReview({
+                cartId,
+                userId,
+                shop_order_ids,
+            });
+
+        const orders = [];
+
+        for (const shopOrder of shopOrderIds) {
+            const { shopId, item_products = [] } = shopOrder;
+
+            // Create order for each shop
+            const order = {
+                userId,
+                shopId,
+                status: "pending",
+                items: item_products.map((product) => ({
+                    productId: product.productId,
+                    quantity: product.quantity,
+                    price: product.price,
+                    shopId,
+                })),
+                totalAmount: shopOrder.priceApplyDiscount,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            };
+
+            orders.push(order);
+
+            // Update product inventory
+            for (const product of item_products) {
+                await ProductRepository.updateProductQuantity(
+                    product.productId,
+                    -product.quantity
+                );
+            }
+        }
+
+        // Clear cart after successful checkout
+        await CartRepository.deleteUserCart(userId);
+
+        return {
+            orders,
+            checkoutOrder,
+        };
+    }
+
+    static async orderByUser({
+        shop_order_ids,
+        cartId,
+        userId,
+        user_address = {},
+        user_paymenet = {},
+    }) {
+        const { shop_order_ids_new, checkout_order } =
+            await CheckoutService.checkOutReview({
+                cartId,
+                userId,
+                shop_order_ids,
+            });
+
+        // check lai mot lan nua xem vuot ton kho hay ko
+        // get new array products
+        const products = shop_order_ids_new.flatMap(
+            (order) => order.item_products
+        );
+
+        console.log(`[1]:`, products);
+        const aquireProduct = [];
+        for (let i = 0; i < products.length; i++) {
+            const { productId, quantity } = products[i];
+            const keyLock = await acquireLock(productId, quantity, cartId);
+            aquireProduct.push(keyLock ? true : false);
+
+            if (keyLock) {
+                await releaseLock(keyLock);
+            }
+        }
+
+        if (aquireProduct.includes(false)) {
+            throw new BadRequestError("Mot so san phan da dc update");
+        }
+
+        const newOrder = await orderSchema.create({
+            order_userId: userId,
+            order_checkout: checkout_order,
+            order_shipping: user_address,
+            order_payment: user_paymenet,
+            order_products: shop_order_ids_new
+        });
+
+        // if (newOrder) {
+
+        // }
+
+        return newOrder
+    }
+
+    static async getOrderByUser() {
+
+    }
+
+    
+    
+}
+</file>
+
+<file path="src/services/discount-service.ts">
+/**
+ * Discount Services
+ * 1. Generator Discount Code (shop/ admin),
+ * 2. Get discount amount (user)
+ * 3. Get all discount codes [User/shop]
+ * 4. Verify Discount Code
+ * 5. Delete discount Code [admin/ shop],
+ * 6. Cancel discount code [user],
+ *
+ */
+
+import { BadRequestError } from "../core/error-respone";
+import {
+    discountModel,
+    DiscountType,
+    DiscountAppliesTo,
+} from "../models/discount-model";
+import { convertToObjectIdMongodb } from "../utils";
+import ProductRepository from "../models/repositories/product.repo";
+import DiscountRepository from "../models/repositories/discount.repo";
+
+export class DiscountService {
+    static async createDiscountCode(payload: {
+        code: string;
+        name: string;
+        description: string;
+        type: DiscountType;
+        value: number;
+        start_date: string;
+        end_date: string;
+        shopId: string;
+        is_active?: boolean;
+        min_order_value?: number;
+        max_uses?: number;
+        max_uses_per_user?: number;
+        product_ids?: string[];
+        applies_to?: DiscountAppliesTo;
+        max_value?: number;
+    }) {
+        const {
+            code,
+            name,
+            description,
+            type,
+            value,
+            start_date,
+            end_date,
+            shopId,
+            is_active = true,
+            min_order_value = 0,
+            max_uses,
+            max_uses_per_user = 1,
+            product_ids = [],
+            applies_to = DiscountAppliesTo.ALL,
+            max_value,
+        } = payload;
+
+        // Validate dates
+        const startDate = new Date(start_date);
+        const endDate = new Date(end_date);
+        const now = new Date();
+
+        if (startDate >= endDate) {
+            throw new BadRequestError("Start date must be before end date");
+        }
+
+        if (startDate < now && !is_active) {
+            throw new BadRequestError(
+                "Cannot create inactive discount with past start date"
+            );
+        }
+
+        // Check if discount code already exists for this shop
+        const foundDiscount =
+            await DiscountRepository.findDiscountByCodeAndShop(
+                code,
+                convertToObjectIdMongodb(shopId)
+            );
+
+        if (foundDiscount) {
+            throw new BadRequestError(
+                "Discount code already exists for this shop"
+            );
+        }
+
+        // Validate discount type and value
+        if (type === DiscountType.PERCENTAGE && value > 100) {
+            throw new BadRequestError("Percentage discount cannot exceed 100%");
+        }
+
+        if (type === DiscountType.FIXED_AMOUNT && min_order_value < value) {
+            throw new BadRequestError(
+                "Minimum order value should be at least equal to fixed discount amount"
+            );
+        }
+
+        const newDiscount = await discountModel.create({
+            discount_name: name,
+            discount_description: description,
+            discount_type: type,
+            discount_value: value,
+            discount_code: code.toUpperCase(),
+            discount_start_date: startDate,
+            discount_end_date: endDate,
+            discount_shopId: convertToObjectIdMongodb(shopId),
+            discount_is_active: is_active,
+            discount_min_order_value: min_order_value,
+            discount_max_uses: max_uses || null,
+            discount_max_uses_per_user: max_uses_per_user,
+            discount_max_discount_amount: max_value || null,
+            discount_applies_to: applies_to,
+            discount_product_ids: product_ids.map((id) =>
+                convertToObjectIdMongodb(id)
+            ),
+        });
+
+        return newDiscount;
+    }
+
+    static async updateDiscountCode({
+        discountId,
+        shopId,
+        updateData,
+    }: {
+        discountId: string;
+        shopId: string;
+        updateData: Partial<{
+            name: string;
+            description: string;
+            type: DiscountType;
+            value: number;
+            start_date: string;
+            end_date: string;
+            is_active: boolean;
+            min_order_value: number;
+            max_uses: number;
+            max_uses_per_user: number;
+            product_ids: string[];
+            applies_to: DiscountAppliesTo;
+            max_value: number;
+        }>;
+    }) {
+        const discountObjId = convertToObjectIdMongodb(discountId);
+        const shopObjId = convertToObjectIdMongodb(shopId);
+
+        // Check if discount exists and belongs to the shop
+        const existingDiscount = await discountModel.findOne({
+            _id: discountObjId,
+            discount_shopId: shopObjId,
+        });
+
+        if (!existingDiscount) {
+            throw new BadRequestError(
+                "Discount not found or doesn't belong to this shop"
+            );
+        }
+
+        // Field mapping configuration
+        const fieldMapping = {
+            name: "discount_name",
+            description: "discount_description",
+            type: "discount_type",
+            value: "discount_value",
+            is_active: "discount_is_active",
+            min_order_value: "discount_min_order_value",
+            max_uses: "discount_max_uses",
+            max_uses_per_user: "discount_max_uses_per_user",
+            applies_to: "discount_applies_to",
+            max_value: "discount_max_discount_amount",
+        };
+
+        // Prepare update object using field mapping
+        const updateFields: any = {};
+
+        // Map simple fields using the configuration
+        Object.entries(fieldMapping).forEach(([payloadField, dbField]) => {
+            if (
+                updateData[payloadField as keyof typeof updateData] !==
+                undefined
+            ) {
+                updateFields[dbField] =
+                    updateData[payloadField as keyof typeof updateData];
+            }
+        });
+
+        // Handle special fields with transformations
+        if (updateData.start_date !== undefined) {
+            updateFields.discount_start_date = new Date(updateData.start_date);
+        }
+        if (updateData.end_date !== undefined) {
+            updateFields.discount_end_date = new Date(updateData.end_date);
+        }
+        if (updateData.product_ids !== undefined) {
+            updateFields.discount_product_ids = updateData.product_ids.map(
+                (id) => convertToObjectIdMongodb(id)
+            );
+        }
+
+        // Validate date changes
+        if (
+            updateFields.discount_start_date &&
+            updateFields.discount_end_date
+        ) {
+            if (
+                updateFields.discount_start_date >=
+                updateFields.discount_end_date
+            ) {
+                throw new BadRequestError("Start date must be before end date");
+            }
+        }
+
+        // Validate percentage discount
+        if (
+            updateFields.discount_type === DiscountType.PERCENTAGE &&
+            updateFields.discount_value > 100
+        ) {
+            throw new BadRequestError("Percentage discount cannot exceed 100%");
+        }
+
+        // Validate fixed amount discount
+        if (
+            updateFields.discount_type === DiscountType.FIXED_AMOUNT &&
+            updateFields.discount_min_order_value &&
+            updateFields.discount_value &&
+            updateFields.discount_min_order_value < updateFields.discount_value
+        ) {
+            throw new BadRequestError(
+                "Minimum order value should be at least equal to fixed discount amount"
+            );
+        }
+
+        const updatedDiscount = await discountModel.findByIdAndUpdate(
+            discountObjId,
+            updateFields,
+            { new: true, runValidators: true }
+        );
+
+        return updatedDiscount;
+    }
+
+    static async getAllDiscountCodeWithProduct({
+        code,
+        shopId,
+        limit = 50,
+        page = 1,
+    }: {
+        code: string;
+        shopId: string;
+        limit?: number;
+        page?: number;
+    }) {
+        const shopObjId = convertToObjectIdMongodb(shopId);
+
+        // Find the discount by code and shop
+        const discount = await DiscountRepository.findDiscountByCodeAndShop(
+            code,
+            shopObjId
+        );
+
+        if (!discount) {
+            throw new BadRequestError("Discount code not found");
+        }
+
+        let products = [];
+
+        // If discount applies to specific products, fetch those products
+        if (
+            discount.discount_applies_to === DiscountAppliesTo.SPECIFIC &&
+            discount.discount_product_ids.length > 0
+        ) {
+            // Build filter for specific product IDs
+            const productFilter = {
+                _id: { $in: discount.discount_product_ids },
+                product_shop: shopObjId,
+                isPublished: true,
+            };
+
+            products = await ProductRepository.findAllProduct({
+                limit,
+                sort: "ctime",
+                page,
+                filter: productFilter,
+                select: [
+                    "product_name",
+                    "product_price",
+                    "product_thumb",
+                    "product_description",
+                    "_id",
+                ],
+            });
+        }
+        // If discount applies to all products, fetch all shop products
+        else if (discount.discount_applies_to === DiscountAppliesTo.ALL) {
+            const allProductsFilter = {
+                product_shop: shopObjId,
+                isPublished: true,
+            };
+
+            products = await ProductRepository.findAllProduct({
+                limit,
+                sort: "ctime",
+                page,
+                filter: allProductsFilter,
+                select: [
+                    "product_name",
+                    "product_price",
+                    "product_thumb",
+                    "product_description",
+                    "_id",
+                ],
+            });
+        }
+
+        return {
+            discount: {
+                _id: discount._id,
+                code: discount.discount_code,
+                name: discount.discount_name,
+                description: discount.discount_description,
+                type: discount.discount_type,
+                value: discount.discount_value,
+                appliesTo: discount.discount_applies_to,
+                startDate: discount.discount_start_date,
+                endDate: discount.discount_end_date,
+                minOrderValue: discount.discount_min_order_value,
+                isActive: discount.discount_is_active,
+            },
+            products,
+            pagination: {
+                page,
+                limit,
+                total: products.length,
+            },
+        };
+    }
+
+    static async getDiscountCodesByShopId({
+        shopId,
+        limit = 50,
+        page = 1,
+        sort = "createdAt",
+        is_active = true,
+        unSelect = ["__v"],
+    }: {
+        shopId: string;
+        limit?: number;
+        page?: number;
+        sort?: "createdAt" | "name" | "value" | "endDate";
+        is_active?: boolean;
+        unSelect?: string[];
+    }) {
+        const shopObjId = convertToObjectIdMongodb(shopId);
+
+        // Build filter for shop and active status
+        const filter = {
+            discount_shopId: shopObjId,
+            discount_is_active: is_active,
+        };
+
+        // Use repository pattern to get discounts with unselect
+        const discounts = await DiscountRepository.findAllDiscountUnselect({
+            limit,
+            sort: sort === "createdAt" ? "ctime" : sort,
+            page,
+            filter,
+            unSelect,
+        });
+
+        // Get total count for pagination
+        const totalDiscounts = await DiscountRepository.countDiscounts(filter);
+
+        // Transform the data for better API response
+        const transformedDiscounts = discounts.map((discount) => ({
+            _id: discount._id,
+            code: discount.discount_code,
+            name: discount.discount_name,
+            description: discount.discount_description,
+            type: discount.discount_type,
+            value: discount.discount_value,
+            startDate: discount.discount_start_date,
+            endDate: discount.discount_end_date,
+            isActive: discount.discount_is_active,
+            minOrderValue: discount.discount_min_order_value,
+            maxUses: discount.discount_max_uses,
+            usesCount: discount.discount_uses_count,
+            maxUsesPerUser: discount.discount_max_uses_per_user,
+            appliesTo: discount.discount_applies_to,
+            maxDiscountAmount: discount.discount_max_discount_amount,
+            productIdsCount: discount.discount_product_ids?.length || 0,
+            remainingUses:
+                discount.discount_max_uses === null
+                    ? null
+                    : Math.max(
+                          0,
+                          discount.discount_max_uses -
+                              discount.discount_uses_count
+                      ),
+            isCurrentlyValid:
+                discount.discount_is_active &&
+                new Date() >= discount.discount_start_date &&
+                new Date() <= discount.discount_end_date &&
+                (discount.discount_max_uses === null ||
+                    discount.discount_uses_count < discount.discount_max_uses),
+            createdAt: discount.createdAt,
+            updatedAt: discount.updatedAt,
+        }));
+
+        return {
+            discounts: transformedDiscounts,
+            pagination: {
+                page,
+                limit,
+                total: totalDiscounts,
+                totalPages: Math.ceil(totalDiscounts / limit),
+                hasNext: page * limit < totalDiscounts,
+                hasPrev: page > 1,
+            },
+        };
+    }
+
+    static async getDiscountAmount({
+        codeId,
+        userId,
+        shopId,
+        products,
+    }: {
+        codeId: string;
+        userId: string;
+        shopId: string;
+        products: Array<{
+            productId: string;
+            price: number;
+            quantity: number;
+        }>;
+    }) {
+        const discount = await DiscountRepository.validateDiscountByCode({
+            code: codeId, // Use codeId as discount code
+            shopId: convertToObjectIdMongodb(shopId),
+            userId: convertToObjectIdMongodb(userId),
+        });
+
+        const totalOrderValue = products.reduce(
+            (total, product) => total + product.price * product.quantity,
+            0
+        );
+
+        if (totalOrderValue < discount.discount_min_order_value) {
+            throw new BadRequestError(
+                `Minimum order value of ${discount.discount_min_order_value} required`
+            );
+        }
+
+        let applicableProducts = products;
+        let discountAmount = 0;
+
+        if (discount.discount_applies_to === DiscountAppliesTo.SPECIFIC) {
+            const discountProductIds = discount.discount_product_ids.map((id) =>
+                id.toString()
+            );
+            applicableProducts = products.filter((product) =>
+                discountProductIds.includes(product.productId)
+            );
+
+            if (applicableProducts.length === 0) {
+                throw new BadRequestError(
+                    "No products in your order are eligible for this discount"
+                );
+            }
+        }
+
+        switch (discount.discount_type) {
+            case DiscountType.PERCENTAGE:
+                const applicableTotal = applicableProducts.reduce(
+                    (total, product) =>
+                        total + product.price * product.quantity,
+                    0
+                );
+                discountAmount =
+                    applicableTotal * (discount.discount_value / 100);
+                break;
+
+            case DiscountType.FIXED_AMOUNT:
+                discountAmount = discount.discount_value;
+                break;
+
+            case DiscountType.FREE_SHIPPING:
+                discountAmount = 0;
+                break;
+
+            case DiscountType.BOGO:
+                const sortedProducts = applicableProducts.sort(
+                    (a, b) => a.price - b.price
+                );
+                discountAmount =
+                    sortedProducts.length >= 2 ? sortedProducts[0].price : 0;
+                break;
+
+            default:
+                throw new BadRequestError("Invalid discount type");
+        }
+
+        if (
+            discount.discount_max_discount_amount !== null &&
+            discountAmount > discount.discount_max_discount_amount
+        ) {
+            discountAmount = discount.discount_max_discount_amount;
+        }
+
+        return {
+            discountCode: discount.discount_code,
+            discountName: discount.discount_name,
+            discountType: discount.discount_type,
+            discountValue: discount.discount_value,
+            discountAmount,
+            totalOrderValue,
+            finalAmount: totalOrderValue - discountAmount,
+            applicableProducts: applicableProducts.map((product) => ({
+                productId: product.productId,
+                price: product.price,
+                quantity: product.quantity,
+                subtotal: product.price * product.quantity,
+            })),
+            minOrderValue: discount.discount_min_order_value,
+            maxDiscountAmount: discount.discount_max_discount_amount,
+            remainingUses:
+                discount.discount_max_uses === null
+                    ? null
+                    : Math.max(
+                          0,
+                          discount.discount_max_uses -
+                              discount.discount_uses_count -
+                              1
+                      ),
+            canUse: true,
+        };
+    }
+
+    static async deleteDiscountCode({
+        discountId,
+        shopId,
+    }: {
+        discountId: string;
+        shopId: string;
+    }) {
+        const discount = await DiscountRepository.findDiscountByCodeAndShop(
+            discountId,
+            convertToObjectIdMongodb(shopId)
+        );
+
+        if (!discount) {
+            throw new BadRequestError("Discount not found or doesn't belong to this shop");
+        }
+
+        const deletedDiscount = await discountModel.findByIdAndDelete(discount._id);
+
+        if (!deletedDiscount) {
+            throw new BadRequestError("Failed to delete discount");
+        }
+
+        return {
+            message: "Discount deleted successfully",
+            deletedDiscount: {
+                _id: deletedDiscount._id,
+                code: deletedDiscount.discount_code,
+                name: deletedDiscount.discount_name,
+            },
+        };
+    }
+
+    static async cancelDiscountCode({
+        codeId,
+        userId,
+        shopId,
+    }: {
+        codeId: string;
+        userId: string;
+        shopId: string;
+    }) {
+        const discount = await DiscountRepository.validateDiscount({
+            discountId: convertToObjectIdMongodb(codeId),
+            shopId: convertToObjectIdMongodb(shopId),
+            userId: convertToObjectIdMongodb(userId),
+        });
+
+        const userObjId = convertToObjectIdMongodb(userId);
+
+        const hasUsedDiscount = discount.discount_users_used.some((id: any) =>
+            id.equals(userObjId)
+        );
+
+        if (!hasUsedDiscount) {
+            throw new BadRequestError("You have not used this discount yet");
+        }
+
+        const updatedDiscount = await discountModel.findByIdAndUpdate(
+            discount._id,
+            {
+                $pull: { discount_users_used: userObjId },
+                $inc: { discount_uses_count: -1 }
+            },
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedDiscount) {
+            throw new BadRequestError("Failed to cancel discount usage");
+        }
+
+        return {
+            message: "Discount usage cancelled successfully",
+            discount: {
+                _id: updatedDiscount._id,
+                code: updatedDiscount.discount_code,
+                name: updatedDiscount.discount_name,
+                remainingUses: updatedDiscount.discount_max_uses === null
+                    ? null
+                    : Math.max(0, updatedDiscount.discount_max_uses - updatedDiscount.discount_uses_count),
+            },
+        };
+    }
+}
+</file>
+
+<file path="src/services/email-service.ts">
+import type Mail from "nodemailer/lib/mailer";
+import { newOtp } from "./otp-service";
+import { getTemplate } from "./template-service";
+import { transport } from "../configs/nodemailer-config";
+
+const sendEmailLinkVerify = async ({
+    html,
+    toEmail,
+    subject = "Verify Registration Email",
+    text = "VERIFY",
+}) => {
+    const mailOptions: Mail.Options = {
+        from: '"ShopDEV" <anonystick@gmail.com>',
+        to: toEmail,
+        subject,
+        text,
+        html,
+    };
+
+    try {
+        const info = await transport.sendMail(mailOptions);
+        console.log("Message sent", info.messageId);
+        return info;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+};
+
+export const sendEmailToken = async ({
+    email = null,
+    userName = "User", // Default name if not provided
+    shopName = "ShopDEV", // Default shop name
+}) => {
+    try {
+        //1. get a token
+        const token = await newOtp({
+            email,
+        });
+
+        //2. Get template
+        const template = await getTemplate({
+            tem_name: "HTML EMAIL OTP",
+        });
+
+        if (!template) {
+            return console.log("Template not found");
+        }
+
+        //3. Replace placeholder
+        // Construct the verification link
+        // Ideally, the base URL should come from an environment variable (e.g., process.env.FRONTEND_URL)
+        const verifyLink = `http://localhost:3055/v1/api/user/verify?token=${token.otp_token}&email=${email}`;
+
+        const content = template.tem_html
+            .replace("{{verify_link}}", verifyLink) // Replace in Button
+            .replace("{{verify_link}}", verifyLink) // Replace in plain text backup
+            .replace("{{user_name}}", userName)
+            .replace("{{shop_name}}", shopName);
+
+        //4. Send email
+        await sendEmailLinkVerify({
+            html: content,
+            toEmail: email,
+            subject: `Welcome to ${shopName} - Please Verify Your Email`,
+        });
+
+        return 1;
+    } catch (error) {
+        console.error(error);
+    }
+};
+</file>
+
+<file path="src/services/otp-service.ts">
+import crypto from "node:crypto";
+import otpModel from "../models/otp-model";
+
+const generatorTokenRandom = () => {
+    // Generate a random integer between 100000 and 999999 (inclusive)
+    const token = crypto.randomInt(100000, 1000000);
+    return token.toString();
+};
+
+export const newOtp = async ({ email }) => {
+    const token = generatorTokenRandom();
+    const newToken = await otpModel.create({
+        otp_token: token,
+        otp_email: email,
+    });
+    return newToken;
+};
+
+export const checkEmailToken = async ({ token }) => {
+    const foundToken = await otpModel.findOne({
+        otp_token: token,
+    });
+
+    if (!foundToken) throw new Error("Token not found");
+
+    otpModel.deleteOne({ otp_token: token }).then();
+
+    return foundToken;
+};
+</file>
+
+<file path="src/services/user-service.ts">
+import { ErrorResponse } from "../core/error-respone";
+import userModel from "../models/user-model";
+import { sendEmailToken } from "./email-service";
+import { checkEmailToken } from "./otp-service";
+import crypto from "node:crypto";
+import { KeyTokenService } from "./key-token-service";
+import { createTokenPair } from "../auth/auth-util";
+import { getInfoData } from "../utils/object-utils";
+
+export const newUser = async ({ email = null, captcha = null }) => {
+    //1. Check email exists in dbs
+    const user = await userModel.findOne({ usr_email: email }).lean();
+
+    //2. If exists
+    if (user) {
+        return new ErrorResponse("Email already exists", 111);
+    }
+
+    //3. Send token via email user
+    const result = await sendEmailToken({
+        email,
+    });
+
+    return {
+        message: "Verify email user",
+        metadata: {
+            token: result,
+        },
+    };
+};
+
+export const checkLoginEmailTokenService = async ({ token }) => {
+    //1. Check token in mode otp
+    const { otp_email } = await checkEmailToken({ token });
+    if (!otp_email) throw new ErrorResponse(`Token not found`, 404);
+
+    //2. check email exists in user model.
+    const hasUser = await findUserByEmailWithLogin({
+        email: otp_email,
+    });
+    if (hasUser) throw new ErrorResponse(`Email already exists`, 404);
+
+    //3. new user
+    const passwordHash = crypto.randomBytes(10).toString("hex");
+    const newUserId = Date.now();
+    const newUser = await userModel.create({
+        usr_id: newUserId,
+        usr_slug: otp_email,
+        usr_email: otp_email,
+        usr_name: otp_email,
+        usr_password: passwordHash,
+    });
+
+    if (!newUser) throw new ErrorResponse("User creation failed", 500);
+
+    //4. Generate tokens
+    const secretKey = crypto.randomBytes(64).toString("hex");
+    const tokens = await createTokenPair(
+        {
+            userId: newUser._id.toString(),
+            email: otp_email,
+            name: newUser.usr_name,
+        },
+        secretKey
+    );
+
+    const keyStore = await KeyTokenService.createKeyToken({
+        userId: newUser._id,
+        secretKey,
+        refreshToken: tokens.refreshToken,
+    });
+
+    if (!keyStore) {
+        throw new ErrorResponse("keyStore error", 500);
+    }
+
+    return {
+        message: "User registered successfully!",
+        metadata: {
+            user: getInfoData({
+                fields: ["usr_id", "usr_name", "usr_email"],
+                object: newUser,
+            }),
+            tokens,
+        },
+    };
+};
+
+const findUserByEmailWithLogin = async ({ email }) => {
+    const user = await userModel.findOne({ usr_email: email }).lean();
+    return user;
+};
+</file>
+
+<file path="src/test/message_queue/rabbitmq/producerDLX.ts">
+import amqplib from "amqplib";
+
+const runProducer = async () => {
+    try {
+        const connection = await amqplib.connect("amqp://localhost:5672");
+        const channel = await connection.createChannel();
+
+        const notificationExchange = "notificationEx";
+        const notificationQueue = "notificationQueueProcess";
+        const notificationExchangeDLX = "notificationExDLX";
+        const notificationRoutingKeyDLX = "notificationRoutingKeyDLX";
+
+        await channel.assertExchange(notificationExchange, "direct", {
+            durable: true,
+        });
+
+        const queueResult = await channel.assertQueue(notificationQueue, {
+            exclusive: false,
+            deadLetterExchange: notificationExchangeDLX,
+            deadLetterRoutingKey: notificationRoutingKeyDLX,
+        });
+
+        await channel.bindQueue(queueResult.queue, notificationExchange, "");
+
+        const msg = "a new product";
+        console.log(`product msg:: `, msg);
+
+        setInterval(() => {
+            channel.sendToQueue(queueResult.queue, Buffer.from(msg), {
+                expiration: 5000, // Set to 5 seconds to ensure expiration before consumer starts
+            });
+            console.log(`product msg:: `, msg);
+        }, 1000);
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+runProducer().catch(console.error);
+</file>
+
+<file path=".gitignore">
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Diagnostic reports (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Directory for instrumented libs generated by jscoverage/JSCover
+lib-cov
+
+# Coverage directory used by tools like istanbul
+coverage
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# Grunt intermediate storage (https://gruntjs.com/creating-plugins#storing-task-files)
+.grunt
+
+# Bower dependency directory (https://bower.io/)
+bower_components
+
+# node-waf configuration
+.lock-wscript
+
+# Compiled binary addons (https://nodejs.org/api/addons.html)
+build/Release
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Snowpack dependency directory (https://snowpack.dev/)
+web_modules/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variable files
+.env
+.env.*
+!.env.example
+
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
+
+# Next.js build output
+.next
+out
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+.output
+
+# Gatsby files
+.cache/
+# Comment in the public line in if your project uses Gatsby and not Next.js
+# https://nextjs.org/blog/next-9-1#public-directory-support
+# public
+
+# vuepress build output
+.vuepress/dist
+
+# vuepress v2.x temp and cache directory
+.temp
+.cache
+
+# Sveltekit cache directory
+.svelte-kit/
+
+# vitepress build output
+**/.vitepress/dist
+
+# vitepress cache directory
+**/.vitepress/cache
+
+# Docusaurus cache and generated files
+.docusaurus
+
+# Serverless directories
+.serverless/
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# Firebase cache directory
+.firebase/
+
+# TernJS port file
+.tern-port
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# yarn v3
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Vite files
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+.vite/
+.claude
+</file>
+
+<file path="CLAUDE.md">
+# CLAUDE.md - Enhanced System Instructions
+
+**Project**: E-commerce Backend (Node.js/TypeScript)
+**Architecture**: Enterprise-level with Factory/Repository/Service patterns
+**Validation**: Enhanced CAGEERF methodology with 4-phase checkpoints
+
+## Core Principles & Rules
+
+- **Principles**: **YAGNI** (You Aren't Gonna Need It) - **KISS** (Keep It Simple, Stupid) - **DRY** (Don't Repeat Yourself)
+- **Primary Reference**: Follow strict workflows in `.claude/workflows/`:
+    - `development-rules.md`: Coding standards, file naming, and constraints.
+    - `primary-workflow.md`: The 5-step process (Implementation -> Testing -> Quality -> Integration -> Debugging).
+    - `documentation-management.md`: Rules for plans, roadmaps, and changelogs.
+    - `orchestration-protocol.md`: Agent coordination guidelines.
+
+## Development Workflow
+
+### 1. Preparation & Planning
+- **Skills/Commands**: Run `python .claude/scripts/generate_catalogs.py --skills` and `--commands` to activate relevant tools.
+- **Planning**: Use `planner` agent to create detailed plans in `plans/` directory (see `documentation-management.md`).
+    - Use `researcher` agents for exploring technical topics.
+    - Format plans with timestamp: `plans/YYMMDD-HHMM-slug/`.
+
+### 2. Implementation Loop (Primary Workflow)
+1.  **Code**: Implement features using clean, maintainable code.
+    - **No Simulation**: Always implement real code, no mocks unless strictly necessary for tests.
+    - **File Naming**: Descriptive `kebab-case` (self-documenting for LLMs).
+    - **File Size**: Keep under 200 lines; modularize using composition and service classes.
+    - **Compile Check**: Always check for compile errors after changes.
+2.  **Test**: Delegate to `tester` agent.
+    - **Strictness**: DO NOT ignore failing tests. Fix them before proceeding.
+    - **Coverage**: Maintain high coverage (> 80%).
+3.  **Review**: Delegate to `code-reviewer` agent after implementation.
+4.  **Integration**: Delegate to `docs-manager` to update `docs/` (Roadmap, Changelog, Standards).
+
+### 3. Debugging & Maintenance
+- **Bug Reports**: Delegate to `debugger` agent to analyze, then fix, then `tester` to verify.
+- **Tools**:
+    - `npx tsx watch server.ts` (Dev)
+    - `npx eslint .` (Lint)
+    - `docker-compose up` (DB)
+
+## CAGEERF Validation Checkpoints
+
+**CHECKPOINT 1: Context & Plan**
+- Verify architectural alignment (Factory/Repository/Service).
+- Confirm plan exists in `plans/` with clear steps.
+
+**CHECKPOINT 2: Implementation & Quality**
+- **Strict Mode**: No disabled TypeScript rules.
+- **Security**: Validate auth flows, no hardcoded secrets.
+- **Agent Review**: Pass `code-reviewer` checks.
+
+**CHECKPOINT 3: Integration & Testing**
+- **Tests**: Service logic unit tests, API integration tests.
+- **Performance**: < 200ms API response, connection pooling.
+
+**CHECKPOINT 4: Completion & Docs**
+- **Docs**: `docs-manager` updated Roadmap, Changelog, and Architecture.
+- **Final Polish**: `tester` confirms all green.
+
+## Technology Stack & Constraints
+
+### Approved Technologies
+- **Runtime**: Node.js with TypeScript strict mode
+- **Framework**: Express.js 5.x with helmet middleware
+- **Database**: MongoDB with Mongoose ODM
+- **Auth**: JWT with bcrypt password hashing
+- **Security**: CORS, compression, helmet security headers
+
+### Architectural Standards (Strict Enforcement)
+```
+Controllers (src/controllers/) → Services (src/services/) → Repositories (src/models/repositories/) → Models (src/models/)
+```
+- **Factory Pattern**: Required for Product types.
+- **Repository Pattern**: Required for data access.
+- **Service Layer**: Static business logic methods.
+- **Middleware Pattern**: Authentication and validation.
+
+### Code Quality Standards
+- **Cyclomatic Complexity**: < 10 per function
+- **Function Length**: < 50 lines
+- **File Length**: < 200 lines (preferred) / < 300 (max)
+- **Naming**: `kebab-case` files, `PascalCase` classes, `camelCase` functions.
+
+## Security Requirements
+
+### Authentication (Multi-Layer System)
+1. **API Key Validation**: `x-api-key` header
+2. **Permission System**: Role-based access control
+3. **JWT Authentication**: Access tokens with refresh rotation
+4. **Token Security**: Per-user secret keys
+
+### Best Practices
+- **Headers**: `x-api-key`, `x-client-id`, `authorization`, `refreshtoken`
+- **Sanitization**: Input validation, parameterized queries.
+- **No Logs**: Never log sensitive data.
+
+## Documentation Requirements
+
+### Source of Truth: `docs/`
+- **Roadmap**: `docs/development-roadmap.md`
+- **Changelog**: `docs/project-changelog.md`
+- **Architecture**: `docs/system-architecture.md`
+- **Standards**: `docs/code-standards.md`
+
+### Updates
+- **Automatic**: `project-manager` / `docs-manager` MUST update these on status changes.
+- **Plan Location**: `plans/` with detailed phase files (see `documentation-management.md`).
+
+## Git Workflow
+
+### Branch Strategy
+- `main`: Production
+- `develop`: Integration
+- `feature/*`: Features
+- `hotfix/*`: Emergency fixes
+
+### Commit Standards
+- **Pre-commit**: Linting must pass.
+- **Pre-push**: Tests must pass.
+- **Message**: Conventional commits (`type(scope): description`). No AI references.
+- **Privacy**: NO secrets in commits.
+
+## Project-Specific Rules
+
+### E-commerce Domain
+- **Products**: Factory pattern for extensible types.
+- **Inventory**: Real-time management.
+- **Shops**: Data isolation per shop.
+
+### Emergency Protocols
+- **Critical**: Immediate fix, hotfix branch.
+- **High/Medium**: Prioritized release.
+</file>
+
+<file path="GEMINI.md">
+# GEMINI.md
+
+## Project Overview
+
+This project is a Node.js e-commerce backend application built with Express.js and TypeScript. It uses MongoDB as its database and provides a RESTful API for managing shops and authentication. The authentication system is based on JSON Web Tokens (JWT) with a refresh token mechanism.
+
+**Key Technologies:**
+
+*   **Backend:** Node.js, Express.js, TypeScript
+*   **Database:** MongoDB
+*   **Authentication:** JSON Web Tokens (JWT)
+*   **Linting:** ESLint
+
+## Building and Running
+
+**1. Installation:**
+
+```bash
+npm install
+```
+
+**2. Running the Application:**
+
+```bash
+npm start
+```
+
+The application will start on port 3055 by default.
+
+**3. Running in Development:**
+
+The `package.json` does not have a `dev` script. You can run the application in development mode with `tsx` for automatic restarts on file changes:
+
+```bash
+npx tsx watch server.ts
+```
+
+**4. Testing:**
+
+The `package.json` does not have a `test` script.
+
+```json
+"scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+},
+```
+
+## Development Conventions
+
+*   **Coding Style:** The project uses ESLint for code linting. The configuration can be found in the `eslint.config.mts` file.
+*   **Branching:** The project is in a Git repository, but there are no specific branching conventions mentioned.
+*   **Committing:** There are no specific commit message conventions mentioned.
+*   **Testing:** There are no tests in the project.
+
+```
+</file>
+
+<file path="src/controllers/upload-controller.ts">
+import { BadRequestError } from "../core/error-respone";
+import { SuccessResponse } from "../core/success-respone";
+import {
+    uploadImageFromLocal,
+    uploadImageFromUrl,
+    uploadImagesFromLocalFiles,
+    uploadImageFromLocalS3,
+} from "../services/upload-service";
+
+class UploadController {
+    uploadFile = async (req, res, next) => {
+        new SuccessResponse(
+            "Upload sucessfully",
+            200,
+            await uploadImageFromUrl()
+        ).send(res);
+    };
+    vsuploadFileThumb = async (req, res, next) => {
+        const { file } = req;
+
+        if (!file) {
+            throw new BadRequestError("FIle missing");
+        }
+
+        new SuccessResponse(
+            "Upload sucessfully",
+            200,
+            await uploadImageFromLocal({ path: file.path })
+        ).send(res);
+    };
+    uploadImageFromLocalFiles = async (req, res, next) => {
+        const { files } = req;
+
+        if (!files) {
+            throw new BadRequestError("FIle missing");
+        }
+
+        new SuccessResponse(
+            "Upload sucessfully",
+            200,
+            await uploadImagesFromLocalFiles({
+                files,
+            })
+        ).send(res);
+    };
+    uploadImageFromLocalS3 = async (req, res, next) => {
+        const { file } = req;
+
+        if (!file) {
+            throw new BadRequestError("File missing");
+        }
+
+        new SuccessResponse(
+            "Upload successfully",
+            200,
+            await uploadImageFromLocalS3({ file })
+        ).send(res);
+    };
+}
+
+export default new UploadController();
+</file>
+
+<file path="src/databases/init_mongoose.ts">
+import mongoose from "mongoose";
+import { countConnect, checkOverload } from "../helpers/check-connect";
+import dbconfig from "../configs/config-mongodb";
+
+const connectString = `mongodb://${dbconfig.db.host}:${dbconfig.db.port}/${dbconfig.db.name}`;
+
+console.log(`connectionString:: `, connectString);
+
+class Database {
+    static instance: any;
+    constructor() {
+        this.connect();
+    }
+
+    connect(type = "mongodb") {
+        if (1 === 1) {
+            mongoose.set("debug", true);
+            mongoose.set("debug", { color: true });
+        }
+        mongoose
+            .connect(connectString, {
+                maxPoolSize: 50,
+            })
+            .then((_) =>
+                console.log(
+                    `Connected success, number of connections ${countConnect()}`
+                )
+            )
+            .catch((err) => {
+                throw err;
+            });
+    }
+    static getInstance() {
+        if (!Database.instance) {
+            Database.instance = new Database();
+        }
+        return Database.instance;
+    }
+}
+
+const instanceMongodb = Database.getInstance();
+
+export default instanceMongodb;
+</file>
+
+<file path="src/rest/discount-post.http">
+@url_dev=http://localhost:3055
+@api_key=niggar-api-key
+@client_id=69074f5479cbc75d6571e355
+@authorization=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTA3NGY1NDc5Y2JjNzVkNjU3MWUzNTUiLCJlbWFpbCI6IndlbHRlcmlhbEBnbWFpbC5jb20iLCJuYW1lIjoiVGhhaSBEaW5oIiwiaWF0IjoxNzYyMDg3MzM1LCJleHAiOjE3NjMzODMzMzV9.pZk63-gb0HXC5DOqyhmJTTFP2PN4in8zuVg83Jn16CA
+
+### Create Discount Code
+POST {{url_dev}}/v1/api/discount/
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "code": "SAVESpecific",
+    "name": "20% Off Everything",
+    "description": "Get 20% off on all products",
+    "type": "percentage",
+    "value": 20,
+    "start_date": "2025-11-30T00:00:00.000Z",
+    "end_date": "2025-12-30T23:59:59.999Z",
+    "is_active": true,
+    "min_order_value": 100,
+    "max_uses": 100,
+    "max_uses_per_user": 1,
+    "applies_to": "specific",
+    "max_value": 50,
+    "product_ids": ["690751d279cbc75d6571e36d", "690751d579cbc75d6571e375"]
+}
+
+### Create Fixed Amount Discount Code
+POST {{url_dev}}/v1/api/discount/
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "code": "SAVE10",
+    "name": "$10 Off",
+    "description": "Get $10 off on orders over $50",
+    "type": "FIXED_AMOUNT",
+    "value": 10,
+    "start_date": "2025-10-30T00:00:00.000Z",
+    "end_date": "2025-11-30T23:59:59.999Z",
+    "is_active": true,
+    "min_order_value": 50,
+    "max_uses": 200,
+    "max_uses_per_user": 2,
+    "applies_to": "ALL"
+}
+
+### Get All Discount Codes for Shop
+GET {{url_dev}}/v1/api/discount/shop/all?limit=10&page=1&sort=createdAt&is_active=true
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+### Get Discount Code with Products
+GET {{url_dev}}/v1/api/discount/code/SAVE20?limit=10&page=1
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+### Calculate Discount Amount
+POST {{url_dev}}/v1/api/discount/amount/690771febf6dbfe0ac40b634
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "shopId": "69074f5479cbc75d6571e355",
+    "products": [
+        {
+            "productId": "690751d279cbc75d6571e36d",
+            "price": 100,
+            "quantity": 2
+        },
+        {
+            "productId": "690751d579cbc75d6571e375",
+            "price": 50,
+            "quantity": 1
+        }
+    ]
+}
+
+### Update Discount Code
+PATCH {{url_dev}}/v1/api/discount/69045f53318d2ca07659fd69
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "name": "Updated 25% Off Everything",
+    "description": "Get 25% off on all products - extended promotion",
+    "value": 25,
+    "max_value": 75
+}
+
+### Delete Discount Code
+DELETE {{url_dev}}/v1/api/discount/[DISCOUNT_ID_HERE]
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+### Cancel Discount Code Usage
+POST {{url_dev}}/v1/api/discount/cancel/[DISCOUNT_ID_HERE]
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "shopId": "68faf8be0aed27e75e01a594"
+}
+</file>
+
+<file path="src/rest/upload.http">
+@url_dev=http://localhost:3055
+@api_key=niggar-api-key
+@client_id=692d02e7de80c4533cd160d8
+@authorization=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTJkMDJlN2RlODBjNDUzM2NkMTYwZDgiLCJlbWFpbCI6IndlbHRlcmlhbEBnbWFpbC5jb20iLCJuYW1lIjoiVGhhaSBEaW5oIiwiaWF0IjoxNzY0NTU3ODIzLCJleHAiOjE3NjU4NTM4MjN9.Zxg7UwKfAu2cKHHchxC83S3RcLDQcpY7hnOcZ7rOvYo
+@placeholder_api_key=niggar-api-key
+@refresh_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZmMDQyYmY1Mzg4NDJiNmRlZjUyMzciLCJlbWFpbCI6ImNvbmNhY0BnbWFpbC5jb20iLCJuYW1lIjoiY29uY2FjIiwiaWF0IjoxNzYxNTQ4OTM1LCJleHAiOjE3NjIxNTM3MzV9.l_f6PkY_IeSIBuJvtgpiBI-J9qSmf3b68Wul1XTusz8
+
+POST {{url_dev}}/v1/api/upload/product
+Content-Type: application/json
+x-api-key: {{placeholder_api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    
+}
+
+###
+
+POST {{url_dev}}/v1/api/upload/product/thumb
+Content-Type: multipart/form-data; boundary=MyBoundary
+x-api-key: {{placeholder_api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+--MyBoundary
+Content-Disposition: form-data; name="file"; filename="image.png"
+Content-Type: image/png
+
+< ./../../image.png
+
+--MyBoundary--
+
+
+
+###
+
+
+
+POST {{url_dev}}/v1/api/upload/product/multiple
+
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+x-api-key: {{placeholder_api_key}}
+
+x-client-id: {{client_id}}
+
+authorization: {{authorization}}
+
+
+
+--MyBoundary
+
+Content-Disposition: form-data; name="files"; filename="image.png"
+
+Content-Type: image/png
+
+
+
+< ./../../image.png
+
+--MyBoundary
+
+Content-Disposition: form-data; name="files"; filename="image.png"
+
+Content-Type: image/png
+
+
+
+< ./../../image.png
+
+--MyBoundary--
+
+###
+
+POST {{url_dev}}/v1/api/upload/product/bucket
+Content-Type: multipart/form-data; boundary=MyBoundary
+x-api-key: {{placeholder_api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+--MyBoundary
+Content-Disposition: form-data; name="file"; filename="image.png"
+Content-Type: image/png
+
+< ./../../image.png
+
+--MyBoundary--
+</file>
+
+<file path="src/routers/upload/index.ts">
+import express from "express";
+import { asyncHandler } from "../../helpers/asyncHandler";
+import uploadController from "../../controllers/upload-controller";
+import { uploadDisk, uploadMem } from "../../configs/multer-config";
+
+const router = express.Router();
+
+router.post("/product", asyncHandler(uploadController.uploadFile));
+router.post("/product/thumb", uploadDisk.single("file"), asyncHandler(uploadController.vsuploadFileThumb));
+router.post(
+    "/product/multiple",
+    uploadDisk.array("files", 3),
+    asyncHandler(uploadController.uploadImageFromLocalFiles)
+);
+router.post(
+    "/product/bucket",
+    uploadMem.single("file"),
+    asyncHandler(uploadController.uploadImageFromLocalS3)
+);
+
+
+export default router;
+</file>
+
+<file path="src/services/apikey-service.ts">
+import apikeyModel from "../models/apikey-model";
+
+export const findById = async (key: string) => {
+    const objectKey = await apikeyModel.findOne({ key, status: true }).lean();
+    return objectKey;
+};
+</file>
+
+<file path="src/services/redis.ts">
+import { InventoryRepository } from "../models/repositories/inventory-repo";
+import { getRedis } from "../configs/redis-config";
+
+const redisClient = getRedis();
+
+const acquireLock = async (
+    productId: string,
+    quantity: number,
+    cartId: string
+): Promise<string | null> => {
+    const key = `lock_2025_${productId}`;
+    const retryTimes = 10;
+    const expireTime = 3000; // 3 seconds in milliseconds
+
+    for (let i = 0; i < retryTimes; i++) {
+        // Atomic set with expiration and NX (only if not exists)
+        const result = await redisClient.set(
+            key,
+            cartId,
+            "PX",
+            expireTime,
+            "NX"
+        );
+
+        if (result === "OK") {
+            await InventoryRepository.reservationInventory({
+                productId,
+                quantity,
+                cartId,
+            });
+            return key;
+        }
+
+        // Proper delay between retry attempts
+        await new Promise((resolve) => setTimeout(resolve, 50));
+    }
+
+    return null; // Failed to acquire lock
+};
+
+const releaseLock = async (keyLock: string): Promise<number> => {
+    return await redisClient.del(keyLock);
+};
+
+export { acquireLock, releaseLock, redisClient };
+</file>
+
+<file path="src/utils/index.ts">
+import { Types } from "mongoose";
+
+export const getSelectData = (select = []) => {
+    return Object.fromEntries(select.map((el) => [el, 1]));
+};
+
+export const getUnSelectData = (select = []) => {
+    return Object.fromEntries(select.map((el) => [el, 0]));
+};
+
+export const removeUndefinedNull = (obj) => {
+    Object.keys(obj).forEach((k) => {
+        if (obj[k] && typeof obj[k] === "object") {
+            removeUndefinedNull(obj[k]);
+        }
+        if (obj[k] == null) {
+            delete obj[k];
+        }
+    });
+    return obj;
+};
+/**
+   {
+     "product_attributes": {
+       "details": {
+         "material": "Cotton",
+         "brand": "Gemini"
+       }
+     }
+   }
+ */
+export const updateNestedObjectParser = (obj) => {
+    const final = {};
+    Object.keys(obj).forEach((k) => {
+        if (obj[k] && typeof obj[k] === "object" && !Array.isArray(obj[k])) {
+            const response = updateNestedObjectParser(obj[k]);
+            Object.keys(response).forEach((a) => {
+                final[`${k}.${a}`] = response[a];
+            });
+        } else {
+            final[k] = obj[k];
+        }
+    });
+    return final;
+};
+
+export const convertToObjectIdMongodb = (id: string) => new Types.ObjectId(id);
+</file>
+
+<file path="docker-compose.yml">
+version: "3.8"
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+  redis:
+    image: redis:8.4
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  mongodb_data:
+  redis_data:
+</file>
+
+<file path="src/models/key-token-model.ts">
+import { Schema, SchemaType, model } from "mongoose";
+
+const DOCUMENT_NAME = "Key";
+const COLLECTION_NAME = "keys";
+
+const keyTokenSchema = new Schema(
+    {
+        user: {
+            type: Schema.Types.ObjectId,
+            required: true,
+            ref: "Shop",
+        },
+
+        secretKey: {
+            type: String,
+            required: true,
+        },
+
+        refreshTokenUsed: {
+            type: Array,
+            default: [],
+        },
+
+        refreshToken: {
+            type: String,
+            required: true,
+        },
+    },
+    {
+        collection: COLLECTION_NAME,
+        timestamps: true,
+    }
+);
+
+export default model(DOCUMENT_NAME, keyTokenSchema);
+</file>
+
+<file path="src/models/product-model.ts">
+import { Schema, model, Types } from "mongoose";
+import slugify from "slugify";
+
+const DOCUMENT_NAME = "Product";
+const COLLECTION_NAME = "products";
+
+// Base Product Schema - stores common product information
+const productSchema = new Schema(
+    {
+        product_name: {
+            type: String,
+            required: true,
+        },
+        product_thumb: {
+            type: String,
+            required: true,
+        },
+        product_description: {
+            type: String,
+            required: true,
+        },
+        product_slug: {
+            type: String,
+        },
+        product_price: {
+            type: Number,
+            required: true,
+        },
+        product_quantity: {
+            type: Number,
+            required: true,
+        },
+        product_type: {
+            type: String,
+            required: true,
+            enum: ["Electronics", "Clothing", "Books", "Food", "Other"],
+        },
+        product_shop: {
+            type: Schema.Types.ObjectId,
+            ref: "Shop",
+        },
+        product_attributes: {
+            type: Schema.Types.Mixed,
+            required: true,
+        },
+        product_ratingsAverage: {
+            type: Number,
+            default: 4.5,
+            min: [1, "Rating must be above 1.0"],
+            max: [5, "Rating must be below 5.0"],
+            set: (val: number) => Math.round(val * 10) / 10,
+        },
+        product_variations: {
+            type: Array,
+            default: [],
+        },
+        isDraft: {
+            type: Boolean,
+            default: true,
+            index: true,
+            select: false,
+        },
+        isPublished: {
+            type: Boolean,
+            default: false,
+            index: true,
+            select: false,
+        },
+    },
+    {
+        collection: COLLECTION_NAME,
+        timestamps: true,
+    }
+);
+// Create index for search
+productSchema.index({ product_name: "text", product_description: "text" });
+
+// Document middleware: runs before .save() and .create()
+productSchema.pre("save", function (next) {
+    this.product_slug = slugify(this.product_name, { lower: true });
+    next();
+});
+
+export const productModel = model(DOCUMENT_NAME, productSchema);
+
+// Define Clothing Schema and Model - stores type-specific attributes
+const clothingSchema = new Schema(
+    {
+        _id: { type: Schema.Types.ObjectId, auto: false },
+        brand: { type: String, required: true },
+        size: { type: String, enum: ["XS", "S", "M", "L", "XL", "XXL"] },
+        material: { type: String, required: true },
+        color: { type: String },
+        product_shop: {
+            type: Schema.Types.ObjectId,
+            ref: "Shop",
+        },
+    },
+    {
+        collection: "clothes",
+        timestamps: true,
+    }
+);
+
+export const clothingModel = model("Clothing", clothingSchema);
+
+// Define Electronic Schema and Model - stores type-specific attributes
+const electronicSchema = new Schema(
+    {
+        _id: { type: Schema.Types.ObjectId, auto: false },
+        manufacturer: { type: String, required: true },
+        model: { type: String, required: true },
+        warranty: { type: String, default: "1 year" },
+        features: { type: [String] }, // Example of an array field
+        product_shop: {
+            type: Schema.Types.ObjectId,
+            ref: "Shop",
+        },
+    },
+    {
+        collection: "electronics",
+        timestamps: true,
+    }
+);
+
+export const electronicModel = model("Electronic", electronicSchema);
+</file>
+
+<file path="src/routers/product/index.ts">
+import express from "express";
+import productController from "../../controllers/product-controller";
+import { asyncHandler } from "../../helpers/asyncHandler";
+import { authentication, authenticationV2 } from "../../auth/check-auth";
+
+const router = express.Router();
+
+// Public routes
+router.get(
+    "/search/:keySearch",
+    asyncHandler(productController.searchProductByUser)
+);
+router.get("/", asyncHandler(productController.findAllProducts));
+router.get("/:product_id", asyncHandler(productController.findProduct));
+
+// Apply authentication middleware to all product routes
+router.use(authentication);
+
+router.post("/", asyncHandler(productController.createProduct));
+router.patch(
+    "/:productId",
+    asyncHandler(productController.updateProduct)
+);
+router.get("/drafts/all", asyncHandler(productController.findAllDraftForShop));
+router.get(
+    "/published/all",
+    asyncHandler(productController.findAllPublishForShop)
+);
+router.patch(
+    "/publish/:id",
+    asyncHandler(productController.publishProductByShop)
+);
+router.patch(
+    "/unpublish/:id",
+    asyncHandler(productController.unpublishProductByShop)
+);
+
+export default router;
+</file>
+
+<file path="src/services/upload-service.ts">
+import cloudinary from "../configs/cloudinary-config";
+import fs from "fs";
+import { s3, PutObjectCommand } from "../configs/s3-config";
+import { getSignedUrl } from "aws-cloudfront-sign";
+
+const uploadImageFromLocalS3 = async ({ file }) => {
+    try {
+        const imageName = `${Date.now()}-${file.originalname}`;
+        const cloud_front_url = `https://d375ag36hjk2ti.cloudfront.net/${imageName}`;
+        const Bucket = process.env.AWS_BUCKET_NAME;
+
+        const putCommand = new PutObjectCommand({
+            Bucket,
+            Key: imageName,
+            Body: file.buffer,
+            ContentType: file.mimetype || "image/jpeg",
+        });
+
+        await s3.send(putCommand);
+
+        const signedUrl = getSignedUrl(cloud_front_url, {
+            keypairId: "K3PWDMWUR3P3T0",
+            expireTime: Date.now() + 3600 * 1000,
+            privateKeyString: process.env.AWS_BUCKET_PUBLIC_KEY_ID,
+        });
+
+        return {
+            image_url: signedUrl,
+            result: {
+                // Return some relevant details from the put operation if needed, or just the signed URL
+                Bucket,
+                Key: imageName,
+            },
+        };
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+const uploadImageFromUrl = async () => {
+    try {
+        const urlImage =
+            "https://scontent-hkg4-1.cdninstagram.com/v/t51.29350-15/470099763_893139816272550_3555965708903184822_n.jpg?stp=dst-jpg_e15_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6InRocmVhZHMuRkVFRC5pbWFnZV91cmxnZW4uNzIweDUyNC5zZHIuZjI5MzUwLmRlZmF1bHRfaW1hZ2UuYzIifQ&_nc_ht=scontent-hkg4-1.cdninstagram.com&_nc_cat=106&_nc_oc=Q6cZ2QGMzEPyVdVrFwkbWdmIXgcmvCUeb7O-g3U3yHzolfJ-HX23KfadN278gFKm_fUXTSfXXPOjn9e6ACxtusb_PrAH&_nc_ohc=-2ezvuDdpEkQ7kNvwHR-aIJ&_nc_gid=SXf6MZE2o8o_dUA0nAYFwg&edm=APs17CUBAAAA&ccb=7-5&ig_cache_key=MzUyMTg3NTMxMTU4NTY2MTcyNA%3D%3D.3-ccb7-5&oh=00_Afj9BSXJ7R5xrvp0lxu6QK-LJXiuXyeLtWXiQKd7XQgZ1g&oe=6932B86A&_nc_sid=10d13b";
+        const folderName = "product/8409";
+        const newFileName = "testdemo";
+
+        const result = await cloudinary.uploader.upload(urlImage, {
+            public_id: newFileName,
+            folder: folderName,
+        });
+        return result;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+const uploadImageFromLocal = async ({ path, folderName = "product/8409" }) => {
+    try {
+        const result = await cloudinary.uploader.upload(path, {
+            public_id: "thumb",
+            folder: folderName,
+        });
+
+        return {
+            image_url: result.secure_url,
+            shopId: 8409,
+        };
+    } catch (error) {
+        console.error(error);
+    } finally {
+        try {
+            fs.unlinkSync(path);
+        } catch (error) {
+            console.error("Error deleting file", error);
+        }
+    }
+};
+
+const uploadImagesFromLocalFiles = async ({
+    files,
+    folderName = "product/8049",
+}) => {
+    try {
+        console.log(`files`, files, folderName);
+        if (!files.length) return [];
+
+        const uploadPromises = files.map(async (file) => {
+            try {
+                const result = await cloudinary.uploader.upload(file.path, {
+                    folder: folderName,
+                });
+
+                return {
+                    image_url: result.secure_url,
+                    shopId: 8049,
+                    thumb_url: cloudinary.url(result.public_id, {
+                        height: 100,
+                        width: 100,
+                        fetch_format: "auto",
+                        quality: "auto",
+                    }),
+                };
+            } finally {
+                try {
+                    fs.unlinkSync(file.path);
+                } catch (error) {
+                    console.error("Error deleting file", error);
+                }
+            }
+        });
+
+        const uploadedUrls = await Promise.all(uploadPromises);
+        return uploadedUrls;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export {
+    uploadImageFromUrl,
+    uploadImageFromLocal,
+    uploadImagesFromLocalFiles,
+    uploadImageFromLocalS3,
+};
+</file>
+
+<file path="index.html">
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+    <body>
+        <h1>Promise All</h1>
+
+        <script>
+            const cocurrencyRequest = async (urls, maxNum) => {
+                if (urls.length === 0) {
+                    return Promise.resolve([]);
+                }
+
+                return new Promise((resolve) => {
+                    const results = [];
+                    let index = 0;
+                    let count = 0;
+
+                    async function request() {
+                        if (index === urls.length) return;
+
+                        const i = index;
+                        const url = urls[index++];
+
+                        try {
+                            results[i] = await fetch(url);
+                        } finally {
+                            if (++count === urls.length) {
+                                console.log("FINISHED all request");
+                                resolve(results);
+                            }
+                        }
+
+                        setTimeout(request, 1000);
+                    }
+
+                    const times = Math.min(maxNum, urls.length);
+
+                    Array.from({ length: times }, () =>
+                        setTimeout(request, 1000)
+                    );
+                });
+            };
+
+            const urls = [];
+
+            for (let i = 1; i <= 21; i++) {
+                urls.push(`https://jsonplaceholder.typicode.com/todos/${i}`);
+            }
+
+            const result = cocurrencyRequest(urls, 3).then((res) =>
+                console.log(res)
+            );
+
+            URL.parse(`https://jsonplaceholder.typicode.com/todos/1`);
+        </script>
+    </body>
+</html>
+</file>
+
+<file path="tsconfig.json">
+{
+    "compilerOptions": {
+        /* Platform & language */
+        "target": "esnext",
+        "module": "esnext",
+        "moduleResolution": "bundler",
+
+        /* Type checking only (no JS output) */
+        "noEmit": true,
+        "emitDeclarationOnly": false,
+
+        /* Max strictness (Java-like discipline) */
+        "strict": true,
+        // "exactOptionalPropertyTypes": true,
+        // "noUncheckedIndexedAccess": true,
+        // "noImplicitOverride": true,
+        // "noImplicitReturns": true,
+        // "noFallthroughCasesInSwitch": true,
+        // "useUnknownInCatchVariables": true,
+        // "noPropertyAccessFromIndexSignature": true,
+        // "alwaysStrict": true,
+        // "forceConsistentCasingInFileNames": true,
+        // "noImplicitAny": true,
+        // "strictNullChecks": true,
+        // "strictFunctionTypes": true,
+        // "strictBindCallApply": true,
+        // "strictPropertyInitialization": true,
+        // "noImplicitThis": true,
+
+        /* Import/Export hygiene */
+        "verbatimModuleSyntax": true,
+        "esModuleInterop": true,
+        "skipLibCheck": false,
+        "resolveJsonModule": true,
+        "isolatedModules": true
+    },
+    "include": ["src"],
+    "exclude": ["node_modules", "dist", "build"]
+}
+</file>
+
+<file path="src/core/success-respone.ts">
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { ReasonPhrases, StatusCodes } from "http-status-codes";
+import { Response } from "express"; // Import Response type
+
+class SuccessResponse {
+    public message: string;
+    public status: number;
+    public metadata: any;
+    public options: any;
+
+    constructor(
+        message: string = ReasonPhrases.OK,
+        status: number = StatusCodes.OK,
+        metadata: any = {},
+        options: any = {}
+    ) {
+        this.message = message;
+        this.status = status;
+        this.metadata = metadata;
+        this.options = options;
+    }
+
+    // Add a send method to send the response
+    send(res: Response) {
+        return res.status(this.status).json({
+            message: this.message,
+            metadata: this.metadata,
+            // options: this.options, // Optionally include options in the response
+        });
+    }
+}
+
+class OK extends SuccessResponse {
+    constructor(
+        message: string = ReasonPhrases.OK,
+        metadata: any = {},
+        options: any = {}
+    ) {
+        super(message, StatusCodes.OK, metadata, options);
+    }
+}
+
+class Created extends SuccessResponse {
+    constructor(
+        message: string = ReasonPhrases.CREATED,
+        metadata: any = {},
+        options: any = {}
+    ) {
+        super(message, StatusCodes.CREATED, metadata, options);
+    }
+}
+
+export {
+    SuccessResponse,
+    OK,
+    Created
+};
+</file>
+
+<file path="server.ts">
+import "dotenv/config";
+import app from "./src/app";
+import { initReids } from "./src/configs/redis-config";
+const PORT = 3055;
+
+// init db
+require("./src/databases/init_mongoose");
+initReids();
+const server = app.listen(PORT, () => {
+    console.log(`WSV eCommerce start with port ${PORT}`);
+});
+
+process.on("SIGINT", () => {
+    server.close(() => console.log(`Exit Server Express`));
+    process.exit();
+});
+</file>
+
+<file path="src/controllers/product-controller.ts">
+import type { Request, Response } from "express";
+import ProductService from "../services/product-service";
+import { NotFoundError } from "../core/error-respone";
+import { Created, OK } from "../core/success-respone";
+import { Types } from "mongoose";
+
+class ProductController {
+    static async createProduct(req: Request, res: Response) {
+        const { product_type, ...payload } = req.body;
+        const newProduct = await ProductService.createProduct(
+            product_type,
+            payload
+        );
+
+        console.log(newProduct);
+        return new Created("Product created successfully!", newProduct).send(
+            res
+        );
+    }
+
+    /**
+     * @description GET ALL DRAFTS FOR SHOP
+     * @param req
+     * @param res
+     * @returns JSON
+     */
+    static async findAllDraftForShop(req: Request, res: Response) {
+        const { userId } = req.user;
+        const products = await ProductService.findAllDraftForShop({
+            product_shop: new Types.ObjectId(userId),
+        });
+        return new OK("Get all draft products successfully!", products).send(
+            res
+        );
+    }
+
+    static async findAllPublishForShop(req: Request, res: Response) {
+        const { userId } = req.user;
+        const products = await ProductService.findAllPublishForShop({
+            product_shop: new Types.ObjectId(userId),
+        });
+        return new OK("Get all publish products successfully!", products).send(
+            res
+        );
+    }
+
+    static async searchProductByUser(req: Request, res: Response) {
+        const { keySearch } = req.params;
+        const products = await ProductService.searchProductByUser({
+            keySearch,
+        });
+        return new OK("Search products successfully!", products).send(res);
+    }
+
+    static async publishProductByShop(req: Request, res: Response) {
+        const { userId } = req.user;
+        const { id } = req.params;
+        const products = await ProductService.publishProductByShop({
+            product_shop: new Types.ObjectId(userId),
+            product_id: new Types.ObjectId(id),
+        });
+        return new OK("Publish product successfully!", products).send(res);
+    }
+
+    static async unpublishProductByShop(req: Request, res: Response) {
+        const { userId } = req.user;
+        const { id } = req.params;
+        const products = await ProductService.unpublishProductByShop({
+            product_shop: new Types.ObjectId(userId),
+            product_id: new Types.ObjectId(id),
+        });
+        return new OK("Unpublish product successfully!", products).send(res);
+    }
+
+    static async findAllProducts(req: Request, res: Response) {
+        const param = req.params;
+        const products = await ProductService.findAllProducts(param);
+        return new OK("Find all products successfully!", products).send(res);
+    }
+
+    static async findProduct(req: Request, res: Response) {
+        const param = req.params;
+        const product = await ProductService.findProduct({
+            product_id: param.product_id,
+        });
+        if (!product) {
+            throw new NotFoundError("Product not found");
+        }
+        return new OK("GET PRODUCT DATA successfully!", product).send(res);
+    }
+
+    static async updateProduct(req: Request, res: Response) {
+        const { productId } = req.params;
+        const updatedProduct = await ProductService.updateProduct(
+            productId,
+            req.body
+        );
+        return new OK("Product updated successfully!", updatedProduct).send(
+            res
+        );
+    }
+}
+
+export default ProductController;
+</file>
+
+<file path="src/core/error-respone.ts">
+import { ReasonPhrases, StatusCodes } from "http-status-codes";
+
+class ErrorResponse extends Error {
+    public status: number;
+
+    constructor(message: string, status: number) {
+        super(message);
+        this.status = status;
+    }
+}
+
+class ConflictRequestError extends ErrorResponse {
+    constructor(
+        message: string = ReasonPhrases.CONFLICT,
+        statusCode: number = StatusCodes.CONFLICT
+    ) {
+        super(message, statusCode);
+    }
+}
+
+class BadRequestError extends ErrorResponse {
+    constructor(
+        message: string = ReasonPhrases.BAD_REQUEST,
+        statusCode: number = StatusCodes.BAD_REQUEST
+    ) {
+        super(message, statusCode);
+    }
+}
+
+class AuthFailureError extends ErrorResponse {
+    constructor(
+        message: string = ReasonPhrases.UNAUTHORIZED,
+        statusCode: number = StatusCodes.UNAUTHORIZED
+    ) {
+        super(message, statusCode);
+    }
+}
+
+class NotFoundError extends ErrorResponse {
+    constructor(
+        message: string = ReasonPhrases.NOT_FOUND,
+        statusCode: number = StatusCodes.NOT_FOUND
+    ) {
+        super(message, statusCode);
+    }
+}
+
+class ForbiddenError extends ErrorResponse {
+    constructor(
+        message: string = ReasonPhrases.FORBIDDEN,
+        statusCode: number = StatusCodes.FORBIDDEN
+    ) {
+        super(message, statusCode);
+    }
+}
+
+class DatabaseError extends ErrorResponse {
+    constructor(
+        message: string = ReasonPhrases.INTERNAL_SERVER_ERROR,
+        statusCode: number = StatusCodes.INTERNAL_SERVER_ERROR
+    ) {
+        super(message, statusCode);
+    }
+}
+
+export class RedisErrorRespone extends ErrorResponse {
+    constructor(
+        message: string = ReasonPhrases.INTERNAL_SERVER_ERROR,
+        statusCode: number = StatusCodes.INTERNAL_SERVER_ERROR
+    ) {
+        super(message, statusCode);
+    }
+}
+
+export {
+    ErrorResponse,
+    ConflictRequestError,
+    BadRequestError,
+    AuthFailureError,
+    NotFoundError,
+    ForbiddenError,
+    DatabaseError,
+};
+</file>
+
+<file path="src/models/repositories/product.repo.ts">
+import {
+    convertToObjectIdMongodb,
+    getSelectData,
+    getUnSelectData,
+} from "../../utils";
+import { productModel, clothingModel, electronicModel } from "../product-model";
+import { removeUndefinedNull, updateNestedObjectParser } from "../../utils";
+import type { Types } from "mongoose";
+
+class ProductRepository {
+    static async checkProductByServer(products: []) {
+        return await Promise.all(
+            products.map(async (product) => {
+                if (!product.productId) {
+                    throw new Error("Product ID is required");
+                }
+
+                const foundProduct = await this.findProduct(product.productId);
+                if (!foundProduct) {
+                    throw new Error(`Product ${product.productId} not found`);
+                }
+
+                return {
+                    price: foundProduct.product_price,
+                    quantity: product.quantity || 1,
+                    productId: product.productId,
+                    shopId: product.shopId,
+                };
+            })
+        );
+    }
+    static async updateProductById({ productId, payload, model }) {
+        const cleanedPayload = removeUndefinedNull(payload);
+        const updatePayload = updateNestedObjectParser(cleanedPayload);
+        return await model
+            .findByIdAndUpdate(
+                productId,
+                { $set: updatePayload },
+                { new: true }
+            )
+            .lean();
+    }
+    static async findAllDraftForShop({
+        query,
+        limit,
+        skip,
+    }: {
+        query: any;
+        limit: number;
+        skip: number;
+    }) {
+        return await productModel
+            .find(query)
+            .populate("product_shop", "name email")
+            .sort({ updateAt: -1 })
+            .skip(skip)
+            .limit(limit)
+            .lean()
+            .exec();
+    }
+
+    static async findAllPublishForShop({
+        query,
+        limit,
+        skip,
+    }: {
+        query: any;
+        limit: number;
+        skip: number;
+    }) {
+        return await productModel
+            .find(query)
+            .populate("product_shop", "name email")
+            .sort({ updateAt: -1 })
+            .skip(skip)
+            .limit(limit)
+            .lean()
+            .exec();
+    }
+
+    static async searchProductByUser({ keySearch }: { keySearch: string }) {
+        const regexSearch = new RegExp(keySearch, "i");
+        const results = await productModel
+            .find({
+                isPublished: true,
+                $text: { $search: regexSearch.toString() },
+            })
+            .sort({ score: { $meta: "textScore" } })
+            .lean();
+        return results;
+    }
+
+    static async publishProductByShop({
+        product_shop,
+        product_id,
+    }: {
+        product_shop: Types.ObjectId;
+        product_id: Types.ObjectId;
+    }) {
+        const foundShop = await productModel.findOne({
+            product_shop: product_shop,
+            _id: product_id,
+        });
+
+        if (!foundShop) return null;
+
+        foundShop.isDraft = false;
+        foundShop.isPublished = true;
+
+        await foundShop.save();
+        return foundShop;
+    }
+
+    static async unpublishProductByShop({
+        product_shop,
+        product_id,
+    }: {
+        product_shop: Types.ObjectId;
+        product_id: Types.ObjectId;
+    }) {
+        const foundShop = await productModel.findOne({
+            product_shop: product_shop,
+            _id: product_id,
+        });
+
+        if (!foundShop) return null;
+
+        foundShop.isDraft = true;
+        foundShop.isPublished = false;
+
+        await foundShop.save();
+        return foundShop;
+    }
+
+    static findAllProduct = async ({
+        limit,
+        sort,
+        page,
+        filter,
+        select,
+    }: {
+        limit: number;
+        sort: string;
+        page: number;
+        filter: any;
+        select: string[];
+    }) => {
+        const skip = (page - 1) * limit;
+        const sortBy = sort === "ctime" ? { _id: -1 } : { _id: 1 };
+        const products = await productModel
+            .find(filter)
+            .sort(sortBy)
+            .skip(skip)
+            .limit(limit)
+            .select(getSelectData(select))
+            .lean()
+            .exec();
+        return products;
+    };
+
+    static findProduct = async (product_id: string) => {
+        return await productModel.findById(product_id).lean();
+    };
+
+    static async updateProductQuantity(productId: string, quantity: number) {
+        return await productModel.findByIdAndUpdate(
+            productId,
+            { $inc: { product_quantity: quantity } },
+            { new: true }
+        ).lean();
+    }
+}
+
+export default ProductRepository;
+</file>
+
+<file path="src/services/key-token-service.ts">
+import { Types } from "mongoose";
+import keyTokenModel from "../models/key-token-model";
+
+export class KeyTokenService {
+    static createKeyToken = async ({
+        userId,
+        secretKey,
+        refreshToken,
+    }: {
+        userId: string | any;
+        secretKey: string;
+        refreshToken: string;
+    }) => {
+        const filter = { user: userId };
+        const update = { secretKey, refreshTokenUsed: [], refreshToken };
+        const options = { upsert: true, new: true };
+
+        const keyStore = await keyTokenModel.findOneAndUpdate(
+            filter,
+            update,
+            options
+        );
+
+        return keyStore ? keyStore.secretKey : null;
+    };
+
+    static findByUserId = async (userId) => {
+        return await keyTokenModel.findOne({
+            user: new Types.ObjectId(userId),
+        });
+    };
+
+    static removeKeyByUserId = async (userId) => {
+        return await keyTokenModel.deleteOne({ user: userId }).lean();
+    };
+
+    static removeKeyById = async (id: Types.ObjectId) => {
+        return await keyTokenModel.findByIdAndDelete(id).lean();
+    };
+
+    static findByRefreshTokenUsed = async (refreshToken) => {
+        return await keyTokenModel
+            .findOne({ refreshTokenUsed: refreshToken })
+            .lean();
+    };
+
+    static deletekey = async (userId) => {
+        return await keyTokenModel.findByIdAndDelete(userId).lean();
+    };
+
+    static findByRefreshToken = async (refreshToken) => {
+        return await keyTokenModel.findOne({ refreshToken: refreshToken });
+    };
+}
+</file>
+
+<file path="src/controllers/access-controller.ts">
+import type { Request, Response, NextFunction } from "express";
+import AccessService from "../services/access-service";
+import { asyncHandler } from "../helpers/asyncHandler";
+import { sendSuccessResponse } from "../helpers/responseHandler";
+import { BadRequestError } from "../core/error-respone";
+
+class AccessController {
+    handleRefreshToken = asyncHandler(
+        async (req: Request, res: Response, next: NextFunction) => {
+            const response = await AccessService.handleRefreshToken({
+                refreshToken: req.refreshToken,
+                user: req.user,
+                keyStore: req.keyStore,
+            });
+            return sendSuccessResponse(res, response);
+        }
+    );
+    logout = asyncHandler(
+        async (req: Request, res: Response, next: NextFunction) => {
+            const response = await AccessService.logout({
+                keyStore: req.keyStore,
+            });
+            return sendSuccessResponse(res, response);
+        }
+    );
+
+    signUp = asyncHandler(
+        async (req: Request, res: Response, next: NextFunction) => {
+            const response = await AccessService.signUp(req.body);
+            return sendSuccessResponse(res, response);
+        }
+    );
+
+    login = asyncHandler(
+        async (req: Request, res: Response, next: NextFunction) => {
+            const { email } = req.body;
+
+            if (!email) {
+                throw new BadRequestError("email missing", 666);
+            }
+            const response = await AccessService.login(req.body);
+            return sendSuccessResponse(res, response);
+        }
+    );
+}
+
+export default new AccessController();
+</file>
+
+<file path="src/routers/access/index.ts">
+import express from "express";
+import accessController from "../../controllers/access-controller";
+import { asyncHandler } from "../../helpers/asyncHandler";
+import { authentication, authenticationV2 } from "../../auth/check-auth";
+const router = express.Router();
+
+// sign up
+router.post("/shop/signup", asyncHandler(accessController.signUp));
+// login
+router.post("/shop/login", asyncHandler(accessController.login));
+
+// authentication middleware for protected routes
+router.use(authentication);
+
+// profile route
+router.get("/shop/profile", asyncHandler(async (req, res) => {
+    return res.status(200).json({
+        message: "User profile data",
+        user: req.user,
+    });
+}));
+
+// logout
+router.post("/shop/logout", authentication, asyncHandler(accessController.logout));
+router.post(
+    "/shop/refresh-token",
+    authenticationV2, // Apply authenticationV2 directly to this route
+    asyncHandler(accessController.handleRefreshToken)
+);
+
+export default router;
+</file>
+
+<file path="src/auth/auth-util.ts">
+import JWT from "jsonwebtoken";
+
+interface JWTPayload {
+    userId: string;
+    email: string;
+    name: string;
+}
+
+export const createTokenPair = async (
+    payload: JWTPayload,
+    secretKey: string
+) => {
+    const accessToken = JWT.sign(payload, secretKey, {
+        algorithm: "HS256",
+        expiresIn: "15d",
+    });
+
+    const refreshToken = JWT.sign(payload, secretKey, {
+        algorithm: "HS256",
+        expiresIn: "7d",
+    });
+
+    return { accessToken, refreshToken };
+};
+
+export const verifyJWT = (token: string, secretKey: string) => {
+    return JWT.verify(token, secretKey) as JWTPayload;
+};
+</file>
+
+<file path="src/auth/check-auth.ts">
+import type { Request, Response, NextFunction, RequestHandler } from "express";
+import { findById } from "../services/apikey-service";
+import {
+    AuthFailureError,
+    ForbiddenError,
+    NotFoundError,
+} from "../core/error-respone";
+import { asyncHandler } from "../helpers/asyncHandler";
+import { KeyTokenService } from "../services/key-token-service";
+import JWT, { decode } from "jsonwebtoken";
+
+const HEADER = {
+    API_KEY: "x-api-key",
+    AUTHORIZATION: "authorization",
+    CLINET_ID: "x-client-id",
+    REFRESHTOKEN: "refreshtoken",
+};
+
+export const apiKey = asyncHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const key = req.headers[HEADER.API_KEY]?.toString();
+
+            if (!key) {
+                throw new AuthFailureError("Forbidden Error");
+            }
+
+            // check key in db.
+            const objectKey = await findById(key);
+
+            if (!objectKey) {
+                throw new AuthFailureError("Forbidden Error");
+            }
+
+            req["objectKey"] = objectKey;
+            return next();
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
+export const permission = (required: string): RequestHandler => {
+    return asyncHandler(
+        async (req: Request, res: Response, next: NextFunction) => {
+            const permissions: string[] = req.objectKey?.permissions ?? [];
+            if (!permissions.includes(required)) {
+                throw new ForbiddenError("Permission denied");
+            }
+            next();
+        }
+    );
+};
+
+export const authentication = asyncHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+        const userId = req.headers[HEADER.CLINET_ID];
+        if (!userId) throw new AuthFailureError("Invalid request");
+
+        const keyStore = await KeyTokenService.findByUserId(userId);
+        if (!keyStore) throw new NotFoundError("Not found keyStore");
+
+        const accessToken = req.headers[HEADER.AUTHORIZATION];
+
+        const decodeUser = JWT.verify(accessToken, keyStore.secretKey);
+        if (userId !== decodeUser.userId) {
+            throw new AuthFailureError("Invalid UserId ");
+        }
+
+        req.keyStore = keyStore;
+        req.user = decodeUser;
+        return next();
+    }
+);
+
+export const authenticationV2 = asyncHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+        const userId = req.headers[HEADER.CLINET_ID];
+        if (!userId) throw new AuthFailureError("Invalid request");
+
+        const keyStore = await KeyTokenService.findByUserId(userId);
+        if (!keyStore) throw new NotFoundError("Not found keyStore");
+
+        const refreshToken = req.headers[HEADER.REFRESHTOKEN] as string;
+
+        if (!refreshToken) {
+            throw new AuthFailureError("No refreshToken Header!");
+        }
+
+        const decodeUser = JWT.verify(refreshToken, keyStore.secretKey);
+        if (userId != decodeUser.userId)
+            throw new AuthFailureError("Invalid UserId");
+        req.keyStore = keyStore;
+        req.user = decodeUser;
+        req.refreshToken = refreshToken;
+
+        console.log(decodeUser);
+        console.log(keyStore);
+        return next();
+    }
+);
+</file>
+
+<file path="src/rest/product-post.http">
+@url_dev=http://localhost:3055
+@api_key=niggar-api-key
+@clientId=6900378dbddfc4d935b6856b 
+@authorization= eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTAwMzc4ZGJkZGZjNGQ5MzViNjg1NmIiLCJlbWFpbCI6IndlbHRlcmlhbEBnbWFpbC5jb20iLCJuYW1lIjoiVGhhaSBEaW5oIiwiaWF0IjoxNzYzNTM3MDE2LCJleHAiOjE3NjQ4MzMwMTZ9.DaBsU9weSEazPbcvUAI_o5K6KZX9eb_Y8Tyzfky5qqM
+
+
+### Create a new Clothing Product
+POST {{url_dev}}/v1/api/product
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "product_type": "Clothing",
+    "product_name": "Stylish T-Shirt v999",
+    "product_thumb": "http://example.com/tshirt_stylish.jpg",
+    "product_description": "A comfortable and stylish cotton t-shirt.",
+    "product_price": 29.99,
+    "product_quantity": 69,
+    "product_shop": "{{clientId}}",
+    "product_attributes": {
+        "brand": "UrbanWear",
+        "size": "L",
+        "material": "Organic Cotton",
+        "color": "Black"
+    }
+}
+
+### Create a new Electronic Product
+POST {{url_dev}}/v1/api/product
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "product_type": "Electronics",
+    "product_name": "Smartwatch Pro",
+    "product_thumb": "http://example.com/smartwatch_pro.jpg",
+    "product_description": "Advanced smartwatch with health tracking.",
+    "product_price": 249.99,
+    "product_quantity": 75,
+    "product_shop": "{{clientId}}",
+    "product_attributes": {
+        "manufacturer": "FutureTech",
+        "model": "SW-Pro-X",
+        "warranty": "2 years",
+        "features": ["GPS", "Heart Rate Monitor", "Waterproof"]
+    }
+}
+
+###
+GET {{url_dev}}/v1/api/product/drafts/all
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+###
+GET {{url_dev}}/v1/api/product/published/all
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### Publish a Product
+PATCH {{url_dev}}/v1/api/product/publish/690751d579cbc75d6571e375
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### Unpublish a Product
+PATCH {{url_dev}}/v1/api/product/unpublish/68ff8ee44f1bf02bfc88a382
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### Search Products
+GET {{url_dev}}/v1/api/product/search/Smartwatch
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### FIND ALL PRODUCTS
+GET {{url_dev}}/v1/api/product/
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### Find a product
+GET {{url_dev}}/v1/api/product/690751d579cbc75d6571e375
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### Update a Product
+PATCH {{url_dev}}/v1/api/product/69003a15b67a52859b72fef0
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "product_name": "Updated Stylish T-Shirt",
+    "product_price": 39.99,
+    "product_attributes": {
+        "size": "XL",
+        "color": "SEX ROBLOX",
+        "brand": "NIGGAR"
+    }
+}
+</file>
+
+<file path="src/services/product-service.ts">
+import {
+    productModel,
+    clothingModel,
+    electronicModel,
+} from "../models/product-model";
+import { BadRequestError, NotFoundError } from "../core/error-respone";
+import { Created } from "../core/success-respone";
+import { Types } from "mongoose"; // Import Types for ObjectId
+import ProductRepository from "../models/repositories/product.repo";
+import { InventoryRepository } from "../models/repositories/inventory-repo";
+import { NotificationService } from "./notification-service";
+
+// --- Base Product Class (Abstract) ---
+abstract class Product {
+    constructor(
+        protected commonPayload?: {
+            _id: Types.ObjectId;
+            product_name: string;
+            product_thumb: string;
+            product_description: string;
+            product_price: number;
+            product_quantity: number;
+            product_type: string;
+            product_shop: Types.ObjectId;
+        },
+        protected productAttributes?: any
+    ) {}
+
+    abstract createTypeSpecificProduct(): Promise<any>;
+
+    async updateProduct(productId: string, payload: any) {
+        return await ProductRepository.updateProductById({
+            productId,
+            payload,
+            model: productModel,
+        });
+    }
+}
+
+// --- Concrete Product Implementations ---
+class ClothingProduct extends Product {
+    async createTypeSpecificProduct(): Promise<any> {
+        const newClothing = await clothingModel.create({
+            _id: this.commonPayload._id,
+            product_shop: this.commonPayload.product_shop,
+            ...this.productAttributes,
+        });
+        if (!newClothing)
+            throw new BadRequestError("Create new Clothing error");
+        return newClothing;
+    }
+
+    async updateProduct(productId: string, payload: any): Promise<any> {
+        const { product_attributes, ...commonPayload } = payload;
+
+        if (product_attributes && Object.keys(product_attributes).length > 0) {
+            await ProductRepository.updateProductById({
+                productId,
+                payload: product_attributes,
+                model: clothingModel,
+            });
+        }
+
+        return await super.updateProduct(productId, payload);
+    }
+}
+
+class ElectronicProduct extends Product {
+    async createTypeSpecificProduct(): Promise<any> {
+        const newElectronic = await electronicModel.create({
+            _id: this.commonPayload._id,
+            product_shop: this.commonPayload.product_shop,
+            ...this.productAttributes,
+        });
+        if (!newElectronic)
+            throw new BadRequestError("Create new Electronic error");
+        return newElectronic;
+    }
+
+    async updateProduct(productId: string, payload: any): Promise<any> {
+        const { product_attributes, ...commonPayload } = payload;
+
+        if (product_attributes && Object.keys(product_attributes).length > 0) {
+            await ProductRepository.updateProductById({
+                productId,
+                payload: product_attributes,
+                model: electronicModel,
+            });
+        }
+
+        return await super.updateProduct(productId, payload);
+    }
+}
+
+// --- Product Factory ---
+class ProductFactory {
+    private static productRegistry: { [key: string]: typeof Product } = {};
+
+    static registerProductType(type: string, productClass: typeof Product) {
+        ProductFactory.productRegistry[type] = productClass;
+    }
+
+    static createProductInstance(
+        type: string,
+        commonPayload?: any,
+        productAttributes?: any
+    ): Product {
+        const ProductClass = ProductFactory.productRegistry[type];
+        if (!ProductClass) {
+            throw new BadRequestError("Invalid Product Type");
+        }
+        return new ProductClass(commonPayload, productAttributes);
+    }
+}
+
+ProductFactory.registerProductType("Clothing", ClothingProduct);
+ProductFactory.registerProductType("Electronics", ElectronicProduct);
+
+// --- Main Product Service ---
+class ProductService {
+    static async createProduct(product_type: string, payload: any) {
+        const { product_attributes, ...commonPayload } = payload;
+
+        const newProduct = await productModel.create({
+            ...commonPayload,
+            product_attributes,
+            product_type: product_type,
+        });
+        if (!newProduct) throw new BadRequestError("Create new Product error");
+
+        const productInstance = ProductFactory.createProductInstance(
+            product_type,
+            { ...commonPayload, _id: newProduct._id },
+            product_attributes
+        );
+        await productInstance.createTypeSpecificProduct();
+
+        if (newProduct) {
+            InventoryRepository.insertInventory({
+                productId: newProduct._id,
+                shopId: newProduct.product_shop,
+                stock: newProduct.product_quantity,
+            });
+        }
+
+        // Send notification asynchronously (fire and forget)
+        NotificationService.pushNotiToSystemAsync({
+            type: 'SHOP-001',
+            receivedId: 1,
+            senderId: newProduct.product_shop,
+            options: {
+                productName: newProduct.product_name,
+                shopName: `Shop ${newProduct.product_shop}`
+            }
+        })
+
+        
+        return newProduct;
+    }
+
+    static async updateProduct(product_id: string, payload: any): Promise<any> {
+        const product = await productModel.findById(product_id).lean();
+        if (!product) {
+            throw new NotFoundError("Product not found");
+        }
+
+        const productInstance = ProductFactory.createProductInstance(
+            product.product_type
+        );
+
+        return await productInstance.updateProduct(product_id, payload);
+    }
+
+    // ... (rest of the service remains the same)
+    static async getProductById(productId: string) {
+        return null;
+    }
+
+    static async getAllProducts() {
+        return [];
+    }
+
+    static async deleteProduct(productId: string) {
+        return null;
+    }
+
+    static async findAllDraftForShop({
+        product_shop,
+        limit = 50,
+        skip = 0,
+    }: {
+        product_shop: Types.ObjectId;
+        limit?: number;
+        skip?: number;
+    }) {
+        const query = { product_shop, isDraft: true };
+        return await ProductRepository.findAllDraftForShop({
+            query,
+            limit,
+            skip,
+        });
+    }
+
+    static async findAllPublishForShop({
+        product_shop,
+        limit = 50,
+        skip = 0,
+    }: {
+        product_shop: Types.ObjectId;
+        limit?: number;
+        skip?: number;
+    }) {
+        const query = { product_shop, isPublished: true };
+        return await ProductRepository.findAllPublishForShop({
+            query,
+            limit,
+            skip,
+        });
+    }
+
+    static async unpublishProductByShop({
+        product_shop,
+        product_id,
+    }: {
+        product_shop: Types.ObjectId;
+        product_id: Types.ObjectId;
+    }) {
+        return await ProductRepository.unpublishProductByShop({
+            product_shop,
+            product_id,
+        });
+    }
+
+    static async publishProductByShop({
+        product_shop,
+        product_id,
+    }: {
+        product_shop: Types.ObjectId;
+        product_id: Types.ObjectId;
+    }) {
+        return await ProductRepository.publishProductByShop({
+            product_shop,
+            product_id,
+        });
+    }
+
+    static async searchProductByUser({ keySearch }: { keySearch: string }) {
+        return await ProductRepository.searchProductByUser({ keySearch });
+    }
+
+    static async findAllProducts({
+        limit = 50,
+        sort = "ctime",
+        page = 1,
+        filter = { isPublished: true },
+    }) {
+        return await ProductRepository.findAllProduct({
+            limit,
+            sort,
+            filter,
+            page,
+            select: ["product_name", "product_price", "product_thumb"],
+        });
+    }
+
+    static async findProduct({ product_id }) {
+        return await ProductRepository.findProduct({
+            product_id,
+        });
+    }
+}
+
+export default ProductService;
+</file>
+
+<file path="src/services/access-service.ts">
+import { shopModel } from "../models/shop-model";
+import bcrypt from "bcrypt";
+import crypto from "node:crypto";
+import { KeyTokenService } from "./key-token-service";
+import { createTokenPair } from "../auth/auth-util";
+import { getInfoData } from "../utils/object-utils";
+import {
+    AuthFailureError,
+    BadRequestError,
+    ConflictRequestError,
+    DatabaseError,
+    ForbiddenError,
+} from "../core/error-respone";
+import { Created } from "../core/success-respone";
+import { findByEmail } from "./shop-service";
+
+enum RoleShop {
+    SHOP = "SHOP",
+    WRITER = "WRITER",
+    EDITOR = "EDITOR",
+    ADMIN = "ADMIN",
+}
+
+class AccessService {
+    static handleRefreshToken = async ({ refreshToken, user, keyStore }) => {
+        const { userId, email } = user;
+
+        if (keyStore.refreshTokenUsed.includes(refreshToken)) {
+            await KeyTokenService.deletekey(keyStore._id);
+            throw new ForbiddenError(
+                " Something went wrong happend !!!. Please relogin"
+            );
+        }
+
+        if (keyStore.refreshToken != refreshToken) {
+            throw new AuthFailureError("Shop is not registerd 1");
+        }
+
+        const foundShop = await findByEmail({ email });
+        if (!foundShop) throw new AuthFailureError("Shop is not registered 2");
+
+        // create another token pair
+        const tokens = await createTokenPair(
+            { userId, email, name: foundShop.name },
+            keyStore.secretKey
+        );
+
+        // update token
+        await keyStore.updateOne({
+            $set: {
+                refreshToken: tokens.refreshToken,
+            },
+            $addToSet: {
+                refreshTokenUsed: refreshToken,
+            },
+        });
+
+        return new Created("Get token successfully!", {
+            user: { userId, email },
+            tokens,
+        });
+    };
+
+    /**
+     * 1. Find shop in the database by email.
+     *      - If the shop doesn't exist, throw a `BadRequestError`.
+     * 2. Verify the password.
+     *      - Use `bcrypt.compare` to match the incoming password with the stored hash.
+     *      - If they don't match, throw an `AuthFailureError`.
+     * 3. Generate new cryptographic keys.
+     *      - Create a new `secretKey` using `crypto.randomBytes`.
+     * 4. Create new access and refresh tokens.
+     *      - Use the `createTokenPair` utility.
+     * 5. Store the new keys.
+     *      - Use `KeyTokenService.createKeyToken` to save the `userId` and the new `secretKey`.
+     * 6. Return the login response.
+     *      - Include basic shop info and the generated tokens.
+     */
+    static login = async ({
+        email,
+        password,
+        refreshToken = null,
+    }: {
+        email: string;
+        password: string;
+        refreshToken?: string | null;
+    }) => {
+        const holderShop = await shopModel.findOne({ email }).lean();
+
+        if (!holderShop) throw new BadRequestError("Shop is not existed");
+
+        const shopId = holderShop._id.toString();
+
+        const match = await bcrypt.compare(password, holderShop.password);
+        if (!match) throw new AuthFailureError("The password is not correct!");
+
+        const secretKey = crypto.randomBytes(64).toString("hex");
+
+        const tokens = await createTokenPair(
+            { userId: shopId, email, name: holderShop.name },
+            secretKey
+        );
+
+        const keyStore = await KeyTokenService.createKeyToken({
+            userId: shopId,
+            secretKey,
+            refreshToken: tokens.refreshToken,
+        });
+
+        if (!keyStore)
+            throw new DatabaseError("Database Failed Internal server error!");
+
+        return new Created("Shop login successfully!", {
+            shop: getInfoData({
+                fields: ["_id", "name", "email"],
+                object: holderShop,
+            }),
+            tokens,
+        });
+    };
+
+    static logout = async ({ keyStore }: { keyStore: IKeyToken }) => {
+        const delKey = await KeyTokenService.removeKeyById(keyStore._id);
+        return new Created("logout successfully", delKey);
+    };
+
+    static signUp = async ({
+        name,
+        email,
+        password,
+    }: {
+        name: string;
+        email: string;
+        password: string;
+    }) => {
+        // Step 1: check email exists??
+        const holderShop = await findByEmail({ email });
+
+        if (holderShop) {
+            throw new ConflictRequestError("Shop already registered!");
+        }
+
+        const passwordHash = await bcrypt.hash(password, 10);
+        const newShop = await shopModel.create({
+            name,
+            email,
+            password: passwordHash,
+            roles: RoleShop.SHOP,
+        });
+
+        if (!newShop) {
+            throw new BadRequestError("Shop creation failed");
+        }
+
+        const secretKey = crypto.randomBytes(64).toString("hex");
+
+        const token = await createTokenPair(
+            { userId: newShop._id.toString(), email },
+            secretKey
+        );
+
+        const keyStore = await KeyTokenService.createKeyToken({
+            userId: newShop._id,
+            secretKey,
+            refreshToken: token.refreshToken,
+        });
+
+        if (!keyStore) {
+            throw new BadRequestError("keyStore error");
+        }
+
+        return new Created("Shop registered successfully!", {
+            shop: getInfoData({
+                fields: ["_id", "name", "email"],
+                object: newShop,
+            }),
+            token,
+        });
+    };
+}
+
+export default AccessService;
+</file>
+
+<file path="src/app.ts">
+import express from "express";
+import morgan from "morgan";
+import helmet from "helmet";
+import compression from "compression";
+import cors from "cors";
+import router from "./routers";
+import { NotFoundError } from "./core/error-respone";
+import crypto from "node:crypto";
+import mylogger from "./loggers/mylogger";
+
+const app = express();
+
+app.use(cors());
+// init middlewares
+app.use(morgan("dev"));
+app.use(helmet());
+app.use(compression());
+app.use(express.json());
+app.use(
+    express.urlencoded({
+        extended: true,
+    })
+);
+
+app.use((req, res, next) => {
+    const requestId = req.headers["x-request-id"];
+    req.requestId = requestId ? requestId : crypto.randomUUID();
+    mylogger.log("input params", {
+        context: req.path,
+        requestId: req.requestId,
+        metadata: {
+            method: req.method,
+            query: req.query,
+            body: req.body
+        },
+    });
+
+    next();
+});
+
+// init routes
+app.use("/", router);
+
+// init error handling
+app.use((req, res, next) => {
+    next(new NotFoundError("Not Found"));
+});
+
+app.use((error, req, res, next) => {
+    const statusCode = error.status || 500;
+    // REPLACE console.log with mylogger.error
+    mylogger.error(error.message, {
+        context: req.path,
+        requestId: req.requestId,
+        metadata: {
+            stack: error.stack,
+            error: error
+        }
+    });
+    return res.status(statusCode).json({
+        status: "error",
+        code: statusCode,
+        message: error.message || "Internal Server Error",
+    });
+});
+
+export default app;
+</file>
+
+<file path="src/rest/access-post.http">
+@url_dev=http://localhost:3055
+@api_key=niggar-api-key
+@client_id=68faf8be0aed27e75e01a594
+@authorization=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZhZjhiZTBhZWQyN2U3NWUwMWE1OTQiLCJlbWFpbCI6IndlbHRlcmlhbDIxOEBnbWFpbC5jb20iLCJpYXQiOjE3NjEyNzg4NjYsImV4cCI6MTc2MTQ1MTY2Nn0.v3ypgyhkLNMgfr0TyWiYywA-jWqI9oT7IO6TnpH1oX0
+@placeholder_api_key=niggar-api-key
+@refresh_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZmMDQyYmY1Mzg4NDJiNmRlZjUyMzciLCJlbWFpbCI6ImNvbmNhY0BnbWFpbC5jb20iLCJuYW1lIjoiY29uY2FjIiwiaWF0IjoxNzYxNTQ4OTM1LCJleHAiOjE3NjIxNTM3MzV9.l_f6PkY_IeSIBuJvtgpiBI-J9qSmf3b68Wul1XTusz8
+
+### sign up
+POST {{url_dev}}/v1/api/shop/signup
+Content-Type: application/json
+x-api-key: {{placeholder_api_key}}
+
+{
+    "name": "Thai Dinh",
+    "email": "welterial@gmail.com",
+    "password": "Thaihbvn218"
+}
+
+### login
+POST {{url_dev}}/v1/api/shop/login
+Content-Type: application/json
+x-api-key: {{placeholder_api_key}}
+
+{
+    # "email": "welterial@gmail.com",
+    "password": "Thaihbvn218"
+}
+
+### logout
+
+POST {{url_dev}}/v1/api/shop/logout
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+### refresh token
+POST {{url_dev}}/v1/api/shop/refresh-token
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: 68ff042bf538842b6def5237
+refreshtoken: {{refresh_token}}
+</file>
+
+<file path="src/routers/index.ts">
+import express from "express";
+import accessRouter from "./access";
+import productRouter from "./product"; // Import product router
+import discountRouter from "./discount"; // Import discount router
+import cartRouter from "./cart"; // Import cart router
+import checkoutRouter from "./checkout"; // Import checkout router
+import inventoryRouter from "./inventory";
+import commentRouter from "./comment"; // Import comment router
+import notificationRouter from "./notification"; // Import notification router
+import uploadRouter from "./upload";
+import profileRouter from "./profile";
+import rbacRouter from "./rbac";
+import emailRouter from "./email";
+import userRouter from "./user";
+import { apiKey, permission } from "../auth/check-auth";
+
+const router = express.Router();
+router.use("/v1/api/user", userRouter);
+router.use("/v1/api/email", emailRouter);
+router.use("/v1/api/upload", uploadRouter);
+router.use("/v1/api/profile", profileRouter);
+router.use("/v1/api/rbac", rbacRouter);
+// check ApiKey
+router.use(apiKey);
+router.use(permission("0000"));
+
+router.use("/v1/api", accessRouter);
+router.use("/v1/api/product", productRouter); // Mount product router
+router.use("/v1/api/discount", discountRouter); // Mount discount router
+router.use("/v1/api/inventory", inventoryRouter);
+router.use("/v1/api/cart", cartRouter); // Mount cart router
+router.use("/v1/api/checkout", checkoutRouter); // Mount checkout router
+router.use("/v1/api/comment", commentRouter); // Mount comment router
+router.use("/v1/api/notification", notificationRouter); // Mount notification router
+
+export default router;
+</file>
+
+<file path="package.json">
+{
+  "name": "javascript-ecommerce-backend",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev": "docker compose up -d && tsx server.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@anthropic-ai/claude-code": "^2.0.53",
+    "@aws-sdk/client-s3": "^3.940.0",
+    "@aws-sdk/s3-request-presigner": "^3.940.0",
+    "accesscontrol": "^2.2.1",
+    "amqplib": "^0.10.9",
+    "aws-cloudfront-sign": "^3.0.2",
+    "cloudinary": "^2.8.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "http-status-codes": "^2.3.0",
+    "ioredis": "^5.8.2",
+    "kafkajs": "^2.2.4",
+    "multer": "^2.0.2",
+    "nodemailer": "^7.0.11",
+    "slugify": "^1.6.6",
+    "winston": "^3.19.0",
+    "winston-daily-rotate-file": "^5.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.38.0",
+    "@types/amqplib": "^0.10.8",
+    "@types/bcrypt": "^6.0.0",
+    "@types/compression": "^1.8.1",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/lodash": "^4.17.20",
+    "@types/morgan": "^1.9.10",
+    "@types/multer": "^2.0.0",
+    "@types/nodemailer": "^7.0.4",
+    "bcrypt": "^6.0.0",
+    "compression": "^1.8.1",
+    "crypto": "^1.0.1",
+    "dotenv": "^17.2.3",
+    "eslint": "^9.38.0",
+    "globals": "^16.4.0",
+    "helmet": "^8.1.0",
+    "jiti": "^2.6.1",
+    "jsonwebtoken": "^9.0.2",
+    "lodash": "^4.17.21",
+    "mongoose": "^8.19.0",
+    "morgan": "^1.10.1",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.2"
+  }
+}
+</file>
+
+</files>
+````
+
+## File: src/controllers/user-controller.ts
+````typescript
+import { SuccessResponse } from "../core/success-respone";
+import { checkLoginEmailTokenService, newUser } from "../services/user-service";
+
+class UserController {
+    newUser = async (req, res, next) => {
+        const response = await newUser(req.body);
+        new SuccessResponse(
+            "otp email for user sucessfuly",
+            201,
+            response
+        ).send(res);
+    };
+
+    checkRegisterEmailToken = async (req, res, next) => {
+        const { token } = req.query;
+        console.log("===============", token, "===================");
+        const response = await checkLoginEmailTokenService({ token });
+        new SuccessResponse("User registered successfully", 201, response).send(
+            res
+        );
+    };
+}
+
+export default new UserController();
+````
+
+## File: src/helpers/responseHandler.ts
+````typescript
+import type { Response } from "express";
+import { SuccessResponse } from "../core/success-respone";
+
+const sendSuccessResponse = (res: Response, response: SuccessResponse) => {
+    return res.status(response.status).json({
+        message: response.message,
+        metadata: response.metadata,
+        options: response.options,
+    });
+};
+
+export { sendSuccessResponse };
+````
+
+## File: src/loggers/winston_log.ts
+````typescript
+import winston from "winston";
+const { combine, timestamp, json, align, printf } = winston.format;
+const logger = winston.createLogger({
+    level: process.env.LOG_LEVEL || "debug",
+    format: winston.format.combine(
+        timestamp({
+            format: "YYYY-MM-DD hh:mm:ss.SSS A",
+        }),
+        align(),
+        printf((info) => `[${info.timestamp}] ${info.level}: ${info.message}`)
+    ),
+    transports: [
+        new winston.transports.Console(),
+        new winston.transports.File({
+            dirname: "logs",
+            filename: "test.log",
+        }),
+    ],
+});
+
+export default logger;
+````
+
+## File: src/middleware/access-control.ts
+````typescript
+import { AccessControl } from "accesscontrol";
+
+// const grantList = [
+//     {
+//         role: "admin",
+//         resource: "profile",
+//         action: "read:any",
+//         attributes: "*, !views",
+//     },
+//     {
+//         role: "admin",
+//         resource: "profile",
+//         action: "create:any",
+//         attributes: "*",
+//     },
+//     {
+//         role: "admin",
+//         resource: "profile",
+//         action: "update:any",
+//         attributes: "*",
+//     },
+//     {
+//         role: "admin",
+//         resource: "profile",
+//         action: "delete:any",
+//         attributes: "*",
+//     },
+//     { role: "shop", resource: "profile", action: "read:own", attributes: "*" },
+//     {
+//         role: "admin",
+//         resource: "balance",
+//         action: "read:any",
+//         attributes: "*",
+//     },
+//     {
+//         role: "shop",
+//         resource: "balance",
+//         action: "read:own",
+//         attributes: "*",
+//     },
+// ];
+
+
+
+
+export default new AccessControl();
+````
+
+## File: src/models/repositories/inventory-repo.ts
+````typescript
+import inventory from "../inventory-model";
+
+export class InventoryRepository {
+    static insertInventory = async ({
+        productId,
+        shopId,
+        stock,
+        location = "unknown",
+    }) => {
+        return await inventory.create({
+            inven_productId: productId,
+            inven_shopId: shopId,
+            inven_stock: stock,
+            inven_location: location,
+        });
+    };
+
+    static reservationInventory = async ({ productId, quantity, cartId }) => {
+        return inventory.updateOne(
+            { inven_productId: productId, inven_stock: { $gte: quantity } },
+            {
+                $inc: {
+                    inven_stock: -quantity,
+                },
+                $push: {
+                    inven_reservations: {
+                        quantity,
+                        cartId,
+                    },
+                },
+            },
+            { upsert: true }
+        );
+    };
+}
+````
+
+## File: src/models/apikey-model.ts
+````typescript
+import { model, Schema } from "mongoose";
+
+const DOCUMENT_NAME = "Apikey";
+const COLLECTION_NAME = "apikeys";
+
+// Declare the Schema of the Mongo model
+const userSchema = new Schema(
+    {
+        key: { type: String, required: true, unique: true },
+        status: { type: Boolean, default: false },
+        permissions: {
+            type: [String],
+            required: true,
+            enum: ["0000", "1111", "2222"],
+        },
+    },
+    {
+        timestamps: true,
+        collection: COLLECTION_NAME,
+    }
+);
+
+model(DOCUMENT_NAME, userSchema)
+    .findOneAndUpdate(
+        {
+            key: "niggar-api-key",
+        },
+        { permissions: ["0000", "1111", "2222"], status: true },
+        {
+            upsert: true,
+            new: true,
+            setDefaultsOnInsert: true,
+        }
+    )
+    .then((result) => {
+        console.log("ApiKey Upsert Result:", result);
+    })
+    .catch((err) => {
+        console.error("ApiKey Upsert Error:", err);
+    });
+
+export default model(DOCUMENT_NAME, userSchema);
+````
+
+## File: src/models/discount-model.ts
+````typescript
+import { Schema, model, Types } from "mongoose";
+
+const DOCUMENT_NAME = "Discount";
+const COLLECTION_NAME = "discounts";
+
+// Discount type enum for better type safety
+export enum DiscountType {
+    PERCENTAGE = "percentage",
+    FIXED_AMOUNT = "fixed_amount",
+    BOGO = "bogo",
+    FREE_SHIPPING = "free_shipping",
+}
+
+// Discount applicability enum
+export enum DiscountAppliesTo {
+    ALL = "all",
+    SPECIFIC = "specific",
+    CATEGORY = "category",
+}
+
+const discountSchema = new Schema(
+    {
+        // Basic Information
+        discount_name: {
+            type: String,
+            required: true,
+            trim: true,
+            maxlength: 100,
+        },
+        discount_description: {
+            type: String,
+            required: true,
+            maxlength: 500,
+        },
+
+        // Discount Configuration
+        discount_type: {
+            type: String,
+            required: true,
+            enum: Object.values(DiscountType),
+        },
+        discount_value: {
+            type: Number,
+            required: true,
+            min: 0,
+            validate: {
+                validator: function (this: any, value: number) {
+                    if (this.discount_type === DiscountType.PERCENTAGE) {
+                        return value <= 100;
+                    }
+                    return value >= 0;
+                },
+                message: "Percentage discount cannot exceed 100%",
+            },
+        },
+        discount_code: {
+            type: String,
+            required: true,
+            unique: true,
+            uppercase: true,
+            trim: true,
+            minlength: 3,
+            maxlength: 20,
+            match: /^[A-Z0-9]+$/, // Only alphanumeric codes
+        },
+
+        // Timing Controls
+        discount_start_date: {
+            type: Date,
+            required: true,
+            validate: {
+                validator: function (value: Date) {
+                    return value >= new Date();
+                },
+                message: "Start date cannot be in the past",
+            },
+        },
+        discount_end_date: {
+            type: Date,
+            required: true,
+            validate: {
+                validator: function (this: any, value: Date) {
+                    return value > this.discount_start_date;
+                },
+                message: "End date must be after start date",
+            },
+        },
+
+        // Usage Controls
+        discount_max_uses: {
+            type: Number,
+            default: null, // null = unlimited
+            min: 1,
+        },
+        discount_uses_count: {
+            type: Number,
+            default: 0,
+            min: 0,
+        },
+        discount_users_used: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: "Shop",
+            },
+        ],
+        discount_max_uses_per_user: {
+            type: Number,
+            default: 1,
+            min: 1,
+        },
+
+        // Order Requirements
+        discount_min_order_value: {
+            type: Number,
+            default: 0,
+            min: 0,
+        },
+        discount_max_discount_amount: {
+            type: Number,
+            default: null, // null = no cap
+            min: 0,
+        },
+
+        // Multi-tenancy (following existing pattern)
+        discount_shopId: {
+            type: Schema.Types.ObjectId,
+            ref: "Shop",
+            required: true,
+        },
+
+        // Status Management
+        discount_is_active: {
+            type: Boolean,
+            default: true,
+            index: true,
+        },
+
+        // Applicability Rules
+        discount_applies_to: {
+            type: String,
+            enum: Object.values(DiscountAppliesTo),
+            default: DiscountAppliesTo.ALL,
+        },
+        discount_product_ids: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: "Product",
+            },
+        ],
+        // discount_category_ids: [{
+        //   type: Schema.Types.ObjectId,
+        //   ref: "Category" // Future category model
+        // }],
+
+        // // Advanced Features
+        // discount_is_stackable: {
+        //   type: Boolean,
+        //   default: false
+        // },
+        // discount_priority: {
+        //   type: Number,
+        //   default: 0, // Higher = higher priority
+        //   min: 0
+        // },
+
+        // // Additional metadata
+        // discount_tags: [{
+        //   type: String,
+        //   trim: true,
+        //   maxlength: 50
+        // }],
+        // discount_conditions: {
+        //   type: Schema.Types.Mixed,
+        //   default: {}
+        // }
+    },
+    {
+        collection: COLLECTION_NAME,
+        timestamps: true,
+        toJSON: { virtuals: true },
+        toObject: { virtuals: true },
+    }
+);
+
+// Virtual for checking if discount is currently valid
+discountSchema.virtual("isCurrentlyValid").get(function () {
+    const now = new Date();
+    return (
+        this.discount_is_active &&
+        now >= this.discount_start_date &&
+        now <= this.discount_end_date &&
+        (this.discount_max_uses === null ||
+            this.discount_uses_count < this.discount_max_uses)
+    );
+});
+
+// Virtual for remaining uses
+discountSchema.virtual("remainingUses").get(function () {
+    if (this.discount_max_uses === null) return null;
+    return Math.max(0, this.discount_max_uses - this.discount_uses_count);
+});
+
+// Indexes for Performance
+discountSchema.index({ discount_shop: 1, discount_code: 1 });
+discountSchema.index({ discount_start_date: 1, discount_end_date: 1 });
+discountSchema.index({ discount_is_active: 1, discount_end_date: 1 });
+discountSchema.index({ discount_shop: 1, discount_is_active: 1 });
+discountSchema.index({
+    discount_code: "text",
+    discount_name: "text",
+    discount_description: "text",
+});
+discountSchema.index({ discount_applies_to: 1, discount_product_ids: 1 });
+discountSchema.index({ discount_priority: -1 });
+
+// Validation Middleware
+discountSchema.pre("save", function (next) {
+    // Validate end date is after start date
+    if (this.discount_end_date <= this.discount_start_date) {
+        return next(new Error("End date must be after start date"));
+    }
+
+    // Validate percentage discounts
+    if (
+        this.discount_type === DiscountType.PERCENTAGE &&
+        this.discount_value > 100
+    ) {
+        return next(new Error("Percentage discount cannot exceed 100%"));
+    }
+
+    // Validate fixed amount has minimum order value requirement if needed
+    if (
+        this.discount_type === DiscountType.FIXED_AMOUNT &&
+        this.discount_min_order_value < this.discount_value
+    ) {
+        return next(
+            new Error(
+                "Minimum order value should be at least equal to fixed discount amount"
+            )
+        );
+    }
+
+    next();
+});
+
+// Static methods for common queries
+discountSchema.statics.findActiveDiscounts = function (shopId: Types.ObjectId) {
+    const now = new Date();
+    return this.find({
+        discount_shop: shopId,
+        discount_is_active: true,
+        discount_start_date: { $lte: now },
+        discount_end_date: { $gte: now },
+    });
+};
+
+discountSchema.statics.findByCode = function (
+    code: string,
+    shopId: Types.ObjectId
+) {
+    return this.findOne({
+        discount_code: code.toUpperCase(),
+        discount_shop: shopId,
+        discount_is_active: true,
+    });
+};
+
+// Instance methods
+discountSchema.methods.canBeUsedBy = function (userId: Types.ObjectId) {
+    // Check if user has already used this discount
+    const userUsageCount = this.discount_users_used.filter((id) =>
+        id.equals(userId)
+    ).length;
+    return userUsageCount < this.discount_max_uses_per_user;
+};
+
+discountSchema.methods.recordUsage = function (userId: Types.ObjectId) {
+    this.discount_uses_count += 1;
+    if (!this.discount_users_used.some((id) => id.equals(userId))) {
+        this.discount_users_used.push(userId);
+    }
+};
+
+export const discountModel = model(DOCUMENT_NAME, discountSchema);
+export type DiscountDocument = typeof discountModel.prototype;
+````
+
+## File: src/models/key-token.ts
+````typescript
+
+````
+
+## File: src/models/shop-model.ts
+````typescript
+import { Schema, model } from "mongoose"; // Erase if already required
+
+const DOCUMENT_NAME = "Shop";
+const COLLECTION_NAME = "shops";
+
+// Declare the Schema of the Mongo model
+const userSchema = new Schema(
+    {
+        name: {
+            type: String,
+            required: true,
+            unique: true,
+            index: true,
+        },
+        email: {
+            type: String,
+            required: true,
+            unique: true,
+            trim: true,
+        },
+        password: {
+            type: String,
+            required: true,
+        },
+
+        status: {
+            type: String,
+            enum: ["active", "inactive"],
+            default: "inactive",
+        },
+
+        verify: {
+            type: Schema.Types.Boolean,
+            default: false,
+        },
+
+        roles: {
+            type: Array,
+            default: [],
+        },
+    },
+    {
+        collection: COLLECTION_NAME,
+    }
+);
+
+//Export the model
+export const shopModel = model(DOCUMENT_NAME, userSchema);
+````
+
+## File: src/rest/checkout-post.http
+````
+@url_dev=http://localhost:3055
+@api_key=niggar-api-key
+@client_id=6900378dbddfc4d935b6856b 
+@authorization= eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTAwMzc4ZGJkZGZjNGQ5MzViNjg1NmIiLCJlbWFpbCI6IndlbHRlcmlhbEBnbWFpbC5jb20iLCJuYW1lIjoiVGhhaSBEaW5oIiwiaWF0IjoxNzYzNTM3MDE2LCJleHAiOjE3NjQ4MzMwMTZ9.DaBsU9weSEazPbcvUAI_o5K6KZX9eb_Y8Tyzfky5qqM
+
+### Add products to cart first for checkout testing
+POST {{url_dev}}/v1/api/cart
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "productId": "690751d279cbc75d6571e36d",
+    "quantity": 2,
+    "shopId": "69074f5479cbc75d6571e355",
+    "name": "Sample Product",
+    "price": 29.99
+}
+
+### Get cart to see cart ID
+GET {{url_dev}}/v1/api/cart
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+### Review checkout with single shop and no discount
+POST {{url_dev}}/v1/api/checkout/review
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "cartId": "690752a9e6e96615de89904b",
+    "shop_order_ids": [
+        {
+            "shopId": "69074f5479cbc75d6571e355",
+            "shop_discounts": [],
+            "item_products": [
+                {
+                    "productId": "690751d279cbc75d6571e36d",
+                    "quantity": 2,
+                    "price": 29.99
+                }
+            ]
+        }
+    ]
+}
+
+### Review checkout with multiple shops
+POST {{url_dev}}/v1/api/checkout/review
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "cartId": "690752a9e6e96615de89904b",
+    "shop_order_ids": [
+        {
+            "shopId": "69074f5479cbc75d6571e355",
+            "shop_discounts": [
+                {
+                    "shopId": "69074f5479cbc75d6571e355",
+                    "discountId": "690771febf6dbfe0ac40b634",
+                    "codeId": "SAVESPECIFIC"
+                }
+            ],
+            "item_products": [
+                {
+                    "productId": "690751d279cbc75d6571e36d",
+                    "quantity": 2,
+                    "price": 29.99
+                },
+                {
+                    "productId": "690751d579cbc75d6571e375",
+                    "quantity": 1,
+                    "price": 49.99
+                }
+            ]
+        },
+        {
+            "shopId": "69074f5479cbc75d6571e355",
+            "shop_discounts": [],
+            "item_products": [
+               {
+                    "productId": "690751d279cbc75d6571e36d",
+                    "quantity": 2,
+                    "price": 29.99
+                },
+                {
+                    "productId": "690751d579cbc75d6571e375",
+                    "quantity": 1,
+                    "price": 49.99
+                }
+            ]
+        }
+    ]
+}
+
+### Execute checkout order (create actual orders)
+POST {{url_dev}}/v1/api/checkout/order
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "cartId": "YOUR_CART_ID_HERE",
+    "shop_order_ids": [
+        {
+            "shopId": "69074f5479cbc75d6571e355",
+            "shop_discounts": [],
+            "item_products": [
+                {
+                    "productId": "690751d279cbc75d6571e36d",
+                    "quantity": 2,
+                    "price": 29.99
+                }
+            ]
+        }
+    ]
+}
+
+### Get order history
+GET {{url_dev}}/v1/api/checkout/history?page=1&limit=10
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+### Get order history with status filter
+GET {{url_dev}}/v1/api/checkout/history?page=1&limit=5&status=pending
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+### Get specific order details
+GET {{url_dev}}/v1/api/checkout/ORDER_ID_HERE
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+### Test checkout with invalid cart ID (should fail)
+POST {{url_dev}}/v1/api/checkout/review
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "cartId": "INVALID_CART_ID",
+    "shop_order_ids": [
+        {
+            "shopId": "69074f5479cbc75d6571e355",
+            "shop_discounts": [],
+            "item_products": [
+                {
+                    "productId": "690751d279cbc75d6571e36d",
+                    "quantity": 2,
+                    "price": 29.99
+                }
+            ]
+        }
+    ]
+}
+
+### Test checkout with empty shop orders (should fail)
+POST {{url_dev}}/v1/api/checkout/review
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "cartId": "YOUR_CART_ID_HERE",
+    "shop_order_ids": []
+}
+
+### Test checkout without authentication (should fail)
+POST {{url_dev}}/v1/api/checkout/review
+Content-Type: application/json
+x-api-key: {{api_key}}
+
+{
+    "cartId": "YOUR_CART_ID_HERE",
+    "shop_order_ids": [
+        {
+            "shopId": "69074f5479cbc75d6571e355",
+            "shop_discounts": [],
+            "item_products": [
+                {
+                    "productId": "690751d279cbc75d6571e36d",
+                    "quantity": 2,
+                    "price": 29.99
+                }
+            ]
+        }
+    ]
+}
+````
+
+## File: src/routers/profile/index.ts
+````typescript
+import express from "express";
+import profileController from "../../controllers/profile-controller";
+import { grantAccess } from "../../middleware/rbac";
+
+const router = express.Router();
+
+router.get(
+    "/viewAny",
+    grantAccess("readAny", "profile"),
+    profileController.profiles
+);
+
+router.get(
+    "viewOwn",
+    grantAccess("readOwn", "profile"),
+    profileController.profile
+);
+
+export default router;
+````
+
+## File: src/routers/user/index.ts
+````typescript
+import express from "express";
+import { asyncHandler } from "../../helpers/asyncHandler";
+import userController from "../../controllers/user-controller";
+
+const router = express.Router();
+
+router.post("/new_user", asyncHandler(userController.newUser));
+router.get("/verify", asyncHandler(userController.checkRegisterEmailToken));
+
+export default router;
+````
+
+## File: src/services/cart-service.ts
+````typescript
+/**
+ * Cart Service - Manages user shopping cart operations
+ *
+ * Key features:
+ * - Add product to cart [user]
+ * - Update product quantity in cart [user]
+ * - Remove product from cart [user]
+ * - Get user cart [user]
+ * - Clear cart [user]
+ * - Delete cart item [user]
+ */
+
+import { Types } from "mongoose";
+import { NotFoundError } from "../core/error-respone";
+import cartModel from "../models/cart-model";
+import ProductRepository from "../models/repositories/product.repo";
+import { convertToObjectIdMongodb } from "../utils";
+
+// Define cart product interface for better type safety
+export interface CartProduct {
+    productId: Types.ObjectId;
+    quantity: number;
+    shopId?: Types.ObjectId;
+    name?: string;
+    price?: number;
+}
+
+// Define cart service interface
+export interface CartServiceInterface {
+    productId: Types.ObjectId;
+    quantity: number;
+    old_quantity?: number;
+    shopId?: Types.ObjectId;
+}
+
+export class CartService {
+    /**
+     * Create a new cart for user or add product to existing cart
+     * @param param - Object containing userId and product
+     * @param param.userId - User ID
+     * @param param.product - Product object to add to cart
+     * @returns Updated cart document
+     */
+    static async createUserCart({
+        userId,
+        product,
+    }: {
+        userId: number;
+        product: CartProduct;
+    }) {
+        return await cartModel.findOneAndUpdate(
+            { cart_userId: userId, cart_state: "active" },
+            {
+                $addToSet: {
+                    cart_products: product,
+                },
+                $inc: {
+                    cart_count_product: product.quantity || 1,
+                },
+            },
+            {
+                upsert: true,
+                new: true,
+            }
+        );
+    }
+
+    /**
+     * Update product quantity in user's cart (sets to exact value)
+     * @param param - Object containing userId and product details
+     * @param param.userId - User ID
+     * @param param.product - Product object with productId and target quantity
+     * @returns Updated cart document
+     */
+    static async updateUserCartQuantity({
+        userId,
+        product,
+    }: {
+        userId: number;
+        product: { productId: Types.ObjectId; quantity: number };
+    }) {
+        const { productId, quantity: targetQuantity } = product;
+
+        // First, get current cart to find existing product quantity
+        const currentCart = await cartModel.findOne({
+            cart_userId: userId,
+            cart_state: "active",
+        });
+
+        if (!currentCart) {
+            throw new NotFoundError("Cart not found");
+        }
+
+        const existingProduct = currentCart.cart_products.find(
+            (p) => p.productId.toString() === productId.toString()
+        );
+
+        if (!existingProduct) {
+            throw new NotFoundError("Product not found in cart");
+        }
+
+        const currentQuantity = existingProduct.quantity;
+        const quantityDiff = targetQuantity - currentQuantity;
+
+        if (quantityDiff === 0) {
+            // No change needed, return current cart
+            return currentCart;
+        }
+
+        if (targetQuantity <= 0) {
+            // Remove product if quantity is 0 or negative
+            return await CartService.deleteUserCart({
+                userId,
+                productId,
+            });
+        }
+
+        // Update with calculated difference
+        const updatedCart = await cartModel.findOneAndUpdate(
+            {
+                cart_userId: userId,
+                "cart_products.productId": convertToObjectIdMongodb(productId),
+                cart_state: "active",
+            },
+            {
+                $set: {
+                    "cart_products.$.quantity": targetQuantity,
+                },
+                $inc: {
+                    cart_count_product: quantityDiff,
+                },
+            },
+            { new: true }
+        );
+
+        return updatedCart;
+    }
+
+    /**
+     * Add product to user cart (basic version)
+     * @param param - Object containing userId and product
+     * @param param.userId - User ID
+     * @param param.product - Product object to add
+     * @returns Updated cart document
+     */
+    static async addToCart({
+        userId,
+        product = {} as CartProduct,
+    }: {
+        userId: number;
+        product?: CartProduct;
+    }) {
+        const userCart = await cartModel.findOne({
+            cart_userId: userId,
+            cart_state: "active",
+        });
+
+        // If no cart exists for user, create a new one
+        if (!userCart) {
+            return await CartService.createUserCart({ userId, product });
+        }
+
+        // If cart exists, check if the product is already in it.
+        const existingProduct = userCart.cart_products.find(
+            (p) => p.productId.toString() === product.productId.toString()
+        );
+
+        if (existingProduct) {
+            // Product exists, update quantity.
+            return await CartService.updateUserCartQuantity({
+                userId,
+                product: {
+                    productId: product.productId,
+                    quantity: product.quantity || 1,
+                },
+            });
+        }
+
+        // Product does not exist in cart, add it to the array atomically
+        return await cartModel.findOneAndUpdate(
+            { cart_userId: userId },
+            {
+                $push: { cart_products: product },
+                $inc: {
+                    cart_count_product: product.quantity || 1,
+                },
+            },
+            { new: true }
+        );
+    }
+
+    /**
+     * Add products to cart with shop validation (advanced version)
+     * @param param - Object containing userId and product details
+     * @param param.userId - User ID
+     * @param param.product - Product details with shop validation
+     * @param param.shopOrderIds - Shop order details
+     * @returns Updated cart document
+     */
+    static async addToCartV2({
+        userId,
+        product = {} as CartServiceInterface,
+        shopOrderIds,
+    }: {
+        userId: number;
+        product?: CartServiceInterface;
+        shopOrderIds?: Array<{
+            shopId: Types.ObjectId;
+            item_product: Array<{
+                productId: Types.ObjectId;
+                quantity: number;
+                old_quantity?: number;
+            }>;
+        }>;
+    }) {
+        if (!shopOrderIds || shopOrderIds.length === 0) {
+            throw new NotFoundError("Shop order information is required");
+        }
+
+        const { productId, quantity, old_quantity } =
+            shopOrderIds[0]?.item_product[0];
+
+        if (!productId) {
+            throw new NotFoundError("Product ID is required");
+        }
+
+        // Check if product exists
+        const foundProduct = await ProductRepository.findProduct(productId);
+        if (!foundProduct) throw new NotFoundError("Product not found");
+
+        // Validate product belongs to the specified shop
+        if (
+            foundProduct.product_shop?.toString() !==
+            shopOrderIds[0]?.shopId.toString()
+        ) {
+            throw new NotFoundError(
+                "Product does not belong to the specified shop"
+            );
+        }
+
+        // If quantity is 0, remove product from cart
+        if (quantity === 0) {
+            return await CartService.deleteUserCart({
+                userId,
+                productId: productId,
+            });
+        }
+
+        // Calculate the quantity difference
+        // const quantityDiff = quantity - (old_quantity || 0);
+
+        return await CartService.updateUserCartQuantity({
+            userId,
+            product: {
+                productId,
+                quantity: quantity,
+            },
+        });
+    }
+
+    /**
+     * Remove product from user's cart
+     * @param param - Object containing userId and productId
+     * @param param.userId - User ID
+     * @param param.productId - Product ID to remove
+     * @returns Update operation result
+     */
+    static async deleteUserCart({
+        userId,
+        productId,
+    }: {
+        userId: number;
+        productId: Types.ObjectId;
+    }) {
+        const cart = await cartModel.findOne({
+            cart_userId: userId,
+            cart_state: "active",
+        });
+
+        if (!cart) {
+            throw new NotFoundError("Cart not found");
+        }
+
+        const productToRemove = cart.cart_products.find(
+            (p) => p.productId.toString() === productId.toString()
+        );
+
+        const deleteResult = await cartModel.updateOne(
+            { cart_userId: userId, cart_state: "active" },
+            {
+                $pull: {
+                    cart_products: {
+                        productId: productId,
+                    },
+                },
+                $inc: {
+                    cart_count_product: -(productToRemove?.quantity || 0),
+                },
+            }
+        );
+
+        return deleteResult;
+    }
+
+    /**
+     * Get user's cart with product details
+     * @param param - Object containing userId
+     * @param param.userId - User ID
+     * @returns User's cart document
+     */
+    static async getListUserCart({ userId }: { userId: number }) {
+        const cart = await cartModel
+            .findOne({
+                cart_userId: userId,
+                cart_state: "active",
+            })
+            .lean();
+
+        if (!cart) {
+            throw new NotFoundError("Cart not found");
+        }
+
+        return cart;
+    }
+
+    /**
+     * Clear entire cart for user
+     * @param param - Object containing userId
+     * @param param.userId - User ID
+     * @returns Update operation result
+     */
+    static async clearUserCart({ userId }: { userId: number }) {
+        const deleteResult = await cartModel.updateOne(
+            { cart_userId: userId, cart_state: "active" },
+            {
+                $set: {
+                    cart_products: [],
+                    cart_count_product: 0,
+                },
+            }
+        );
+
+        return deleteResult;
+    }
+
+    /**
+     * Update cart state (e.g., from active to completed)
+     * @param param - Object containing userId and newState
+     * @param param.userId - User ID
+     * @param param.newState - New cart state
+     * @returns Update operation result
+     */
+    static async updateCartState({
+        userId,
+        newState,
+    }: {
+        userId: number;
+        newState: "active" | "completed" | "failed" | "pending";
+    }) {
+        const updateResult = await cartModel.updateOne(
+            { cart_userId: userId, cart_state: "active" },
+            {
+                $set: {
+                    cart_state: newState,
+                },
+            }
+        );
+
+        return updateResult;
+    }
+}
+````
+
+## File: src/services/checkout-service.ts
+````typescript
+import { BadRequestError } from "../core/error-respone";
+import orderSchema from "../models/order-schema";
+import { CartRepository } from "../models/repositories/cart-rep";
+import ProductRepository from "../models/repositories/product.repo";
+import { DiscountService } from "./discount-service";
+import { acquireLock, releaseLock } from "./redis";
+
+export class CheckoutService {
+    /**
+    payload:
+    {
+        cartId,
+        userId,
+        shop_orders_ids: [
+            {
+                shopId,
+                shop_discountss: [
+                    {
+                        shopId,
+                        discountId,
+                        codeId,
+                    }
+                ]
+                item_products: [
+                    {price, 
+                    quantity
+                    productId}
+                ]
+            }
+        ]
+    }  
+     
+     */
+
+    static async checkOutReview({ cartId, userId, shop_order_ids = [] }) {
+        // check cartId
+        const foundCart = await CartRepository.findCartById(cartId);
+        if (!foundCart) throw new BadRequestError("Cart doest not exist!");
+
+        const checkout_order = {
+                totalPrice: 0,
+                feeShip: 0,
+                totalDiscount: 0,
+                totalCheckout: 0,
+            },
+            shop_order_ids_new = [];
+
+        for (let i = 0; i < shop_order_ids.length; i++) {
+            const {
+                shopId,
+                shop_discounts = [],
+                item_products = [],
+            } = shop_order_ids[i];
+            if (!item_products || item_products.length === 0) {
+                throw new BadRequestError("No products provided for checkout!");
+            }
+
+            const checkProductServer =
+                await ProductRepository.checkProductByServer(item_products);
+
+            if (!checkProductServer || checkProductServer.length === 0) {
+                throw new BadRequestError(
+                    "No valid products found for checkout!"
+                );
+            }
+
+            // Check if any product validation failed
+            const invalidProducts = checkProductServer.filter(
+                (product) => !product
+            );
+            if (invalidProducts.length > 0) {
+                throw new BadRequestError(
+                    "Some products are invalid or not available!"
+                );
+            }
+
+            const checkOutPrice = checkProductServer.reduce((acc, product) => {
+                return acc + product?.quantity * product?.price;
+            }, 0);
+
+            checkout_order.totalPrice += checkOutPrice;
+
+            const itemCheckOut = {
+                shopId,
+                shop_discounts,
+                priceRaw: checkOutPrice,
+                priceApplyDiscount: checkOutPrice,
+                item_products: checkProductServer,
+            };
+
+            if (shop_discounts.length > 0) {
+                const { discountAmount = 0 } =
+                    await DiscountService.getDiscountAmount({
+                        codeId: shop_discounts[0].codeId,
+                        userId,
+                        shopId,
+                        products: checkProductServer,
+                    });
+
+                checkout_order.totalDiscount += discountAmount;
+                itemCheckOut.priceApplyDiscount =
+                    checkOutPrice - discountAmount;
+            }
+
+            shop_order_ids_new.push(itemCheckOut);
+        }
+
+        // Calculate final checkout total
+        checkout_order.totalCheckout =
+            checkout_order.totalPrice +
+            checkout_order.feeShip -
+            checkout_order.totalDiscount;
+
+        return {
+            shop_order_ids,
+            shop_order_ids_new,
+            checkout_order,
+        };
+    }
+
+    /**
+     * Execute the checkout order by creating orders and updating inventory
+     * @param {Object} params - Checkout parameters
+     * @param {string} params.userId - User ID
+     * @param {string} params.cartId - Cart ID
+     * @param {Array} params.shop_order_ids - Shop order IDs from checkout review
+     * @returns {Promise<Object>} Created order information
+     */
+    static async checkOutOrder({ userId, cartId, shop_order_ids = [] }) {
+        const { shop_order_ids: shopOrderIds, ...checkoutOrder } =
+            await this.checkOutReview({
+                cartId,
+                userId,
+                shop_order_ids,
+            });
+
+        const orders = [];
+
+        for (const shopOrder of shopOrderIds) {
+            const { shopId, item_products = [] } = shopOrder;
+
+            // Create order for each shop
+            const order = {
+                userId,
+                shopId,
+                status: "pending",
+                items: item_products.map((product) => ({
+                    productId: product.productId,
+                    quantity: product.quantity,
+                    price: product.price,
+                    shopId,
+                })),
+                totalAmount: shopOrder.priceApplyDiscount,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            };
+
+            orders.push(order);
+
+            // Update product inventory
+            for (const product of item_products) {
+                await ProductRepository.updateProductQuantity(
+                    product.productId,
+                    -product.quantity
+                );
+            }
+        }
+
+        // Clear cart after successful checkout
+        await CartRepository.deleteUserCart(userId);
+
+        return {
+            orders,
+            checkoutOrder,
+        };
+    }
+
+    static async orderByUser({
+        shop_order_ids,
+        cartId,
+        userId,
+        user_address = {},
+        user_paymenet = {},
+    }) {
+        const { shop_order_ids_new, checkout_order } =
+            await CheckoutService.checkOutReview({
+                cartId,
+                userId,
+                shop_order_ids,
+            });
+
+        // check lai mot lan nua xem vuot ton kho hay ko
+        // get new array products
+        const products = shop_order_ids_new.flatMap(
+            (order) => order.item_products
+        );
+
+        console.log(`[1]:`, products);
+        const aquireProduct = [];
+        for (let i = 0; i < products.length; i++) {
+            const { productId, quantity } = products[i];
+            const keyLock = await acquireLock(productId, quantity, cartId);
+            aquireProduct.push(keyLock ? true : false);
+
+            if (keyLock) {
+                await releaseLock(keyLock);
+            }
+        }
+
+        if (aquireProduct.includes(false)) {
+            throw new BadRequestError("Mot so san phan da dc update");
+        }
+
+        const newOrder = await orderSchema.create({
+            order_userId: userId,
+            order_checkout: checkout_order,
+            order_shipping: user_address,
+            order_payment: user_paymenet,
+            order_products: shop_order_ids_new
+        });
+
+        // if (newOrder) {
+
+        // }
+
+        return newOrder
+    }
+
+    static async getOrderByUser() {
+
+    }
+
+    
+    
+}
+````
+
+## File: src/services/discount-service.ts
+````typescript
+/**
+ * Discount Services
+ * 1. Generator Discount Code (shop/ admin),
+ * 2. Get discount amount (user)
+ * 3. Get all discount codes [User/shop]
+ * 4. Verify Discount Code
+ * 5. Delete discount Code [admin/ shop],
+ * 6. Cancel discount code [user],
+ *
+ */
+
+import { BadRequestError } from "../core/error-respone";
+import {
+    discountModel,
+    DiscountType,
+    DiscountAppliesTo,
+} from "../models/discount-model";
+import { convertToObjectIdMongodb } from "../utils";
+import ProductRepository from "../models/repositories/product.repo";
+import DiscountRepository from "../models/repositories/discount.repo";
+
+export class DiscountService {
+    static async createDiscountCode(payload: {
+        code: string;
+        name: string;
+        description: string;
+        type: DiscountType;
+        value: number;
+        start_date: string;
+        end_date: string;
+        shopId: string;
+        is_active?: boolean;
+        min_order_value?: number;
+        max_uses?: number;
+        max_uses_per_user?: number;
+        product_ids?: string[];
+        applies_to?: DiscountAppliesTo;
+        max_value?: number;
+    }) {
+        const {
+            code,
+            name,
+            description,
+            type,
+            value,
+            start_date,
+            end_date,
+            shopId,
+            is_active = true,
+            min_order_value = 0,
+            max_uses,
+            max_uses_per_user = 1,
+            product_ids = [],
+            applies_to = DiscountAppliesTo.ALL,
+            max_value,
+        } = payload;
+
+        // Validate dates
+        const startDate = new Date(start_date);
+        const endDate = new Date(end_date);
+        const now = new Date();
+
+        if (startDate >= endDate) {
+            throw new BadRequestError("Start date must be before end date");
+        }
+
+        if (startDate < now && !is_active) {
+            throw new BadRequestError(
+                "Cannot create inactive discount with past start date"
+            );
+        }
+
+        // Check if discount code already exists for this shop
+        const foundDiscount =
+            await DiscountRepository.findDiscountByCodeAndShop(
+                code,
+                convertToObjectIdMongodb(shopId)
+            );
+
+        if (foundDiscount) {
+            throw new BadRequestError(
+                "Discount code already exists for this shop"
+            );
+        }
+
+        // Validate discount type and value
+        if (type === DiscountType.PERCENTAGE && value > 100) {
+            throw new BadRequestError("Percentage discount cannot exceed 100%");
+        }
+
+        if (type === DiscountType.FIXED_AMOUNT && min_order_value < value) {
+            throw new BadRequestError(
+                "Minimum order value should be at least equal to fixed discount amount"
+            );
+        }
+
+        const newDiscount = await discountModel.create({
+            discount_name: name,
+            discount_description: description,
+            discount_type: type,
+            discount_value: value,
+            discount_code: code.toUpperCase(),
+            discount_start_date: startDate,
+            discount_end_date: endDate,
+            discount_shopId: convertToObjectIdMongodb(shopId),
+            discount_is_active: is_active,
+            discount_min_order_value: min_order_value,
+            discount_max_uses: max_uses || null,
+            discount_max_uses_per_user: max_uses_per_user,
+            discount_max_discount_amount: max_value || null,
+            discount_applies_to: applies_to,
+            discount_product_ids: product_ids.map((id) =>
+                convertToObjectIdMongodb(id)
+            ),
+        });
+
+        return newDiscount;
+    }
+
+    static async updateDiscountCode({
+        discountId,
+        shopId,
+        updateData,
+    }: {
+        discountId: string;
+        shopId: string;
+        updateData: Partial<{
+            name: string;
+            description: string;
+            type: DiscountType;
+            value: number;
+            start_date: string;
+            end_date: string;
+            is_active: boolean;
+            min_order_value: number;
+            max_uses: number;
+            max_uses_per_user: number;
+            product_ids: string[];
+            applies_to: DiscountAppliesTo;
+            max_value: number;
+        }>;
+    }) {
+        const discountObjId = convertToObjectIdMongodb(discountId);
+        const shopObjId = convertToObjectIdMongodb(shopId);
+
+        // Check if discount exists and belongs to the shop
+        const existingDiscount = await discountModel.findOne({
+            _id: discountObjId,
+            discount_shopId: shopObjId,
+        });
+
+        if (!existingDiscount) {
+            throw new BadRequestError(
+                "Discount not found or doesn't belong to this shop"
+            );
+        }
+
+        // Field mapping configuration
+        const fieldMapping = {
+            name: "discount_name",
+            description: "discount_description",
+            type: "discount_type",
+            value: "discount_value",
+            is_active: "discount_is_active",
+            min_order_value: "discount_min_order_value",
+            max_uses: "discount_max_uses",
+            max_uses_per_user: "discount_max_uses_per_user",
+            applies_to: "discount_applies_to",
+            max_value: "discount_max_discount_amount",
+        };
+
+        // Prepare update object using field mapping
+        const updateFields: any = {};
+
+        // Map simple fields using the configuration
+        Object.entries(fieldMapping).forEach(([payloadField, dbField]) => {
+            if (
+                updateData[payloadField as keyof typeof updateData] !==
+                undefined
+            ) {
+                updateFields[dbField] =
+                    updateData[payloadField as keyof typeof updateData];
+            }
+        });
+
+        // Handle special fields with transformations
+        if (updateData.start_date !== undefined) {
+            updateFields.discount_start_date = new Date(updateData.start_date);
+        }
+        if (updateData.end_date !== undefined) {
+            updateFields.discount_end_date = new Date(updateData.end_date);
+        }
+        if (updateData.product_ids !== undefined) {
+            updateFields.discount_product_ids = updateData.product_ids.map(
+                (id) => convertToObjectIdMongodb(id)
+            );
+        }
+
+        // Validate date changes
+        if (
+            updateFields.discount_start_date &&
+            updateFields.discount_end_date
+        ) {
+            if (
+                updateFields.discount_start_date >=
+                updateFields.discount_end_date
+            ) {
+                throw new BadRequestError("Start date must be before end date");
+            }
+        }
+
+        // Validate percentage discount
+        if (
+            updateFields.discount_type === DiscountType.PERCENTAGE &&
+            updateFields.discount_value > 100
+        ) {
+            throw new BadRequestError("Percentage discount cannot exceed 100%");
+        }
+
+        // Validate fixed amount discount
+        if (
+            updateFields.discount_type === DiscountType.FIXED_AMOUNT &&
+            updateFields.discount_min_order_value &&
+            updateFields.discount_value &&
+            updateFields.discount_min_order_value < updateFields.discount_value
+        ) {
+            throw new BadRequestError(
+                "Minimum order value should be at least equal to fixed discount amount"
+            );
+        }
+
+        const updatedDiscount = await discountModel.findByIdAndUpdate(
+            discountObjId,
+            updateFields,
+            { new: true, runValidators: true }
+        );
+
+        return updatedDiscount;
+    }
+
+    static async getAllDiscountCodeWithProduct({
+        code,
+        shopId,
+        limit = 50,
+        page = 1,
+    }: {
+        code: string;
+        shopId: string;
+        limit?: number;
+        page?: number;
+    }) {
+        const shopObjId = convertToObjectIdMongodb(shopId);
+
+        // Find the discount by code and shop
+        const discount = await DiscountRepository.findDiscountByCodeAndShop(
+            code,
+            shopObjId
+        );
+
+        if (!discount) {
+            throw new BadRequestError("Discount code not found");
+        }
+
+        let products = [];
+
+        // If discount applies to specific products, fetch those products
+        if (
+            discount.discount_applies_to === DiscountAppliesTo.SPECIFIC &&
+            discount.discount_product_ids.length > 0
+        ) {
+            // Build filter for specific product IDs
+            const productFilter = {
+                _id: { $in: discount.discount_product_ids },
+                product_shop: shopObjId,
+                isPublished: true,
+            };
+
+            products = await ProductRepository.findAllProduct({
+                limit,
+                sort: "ctime",
+                page,
+                filter: productFilter,
+                select: [
+                    "product_name",
+                    "product_price",
+                    "product_thumb",
+                    "product_description",
+                    "_id",
+                ],
+            });
+        }
+        // If discount applies to all products, fetch all shop products
+        else if (discount.discount_applies_to === DiscountAppliesTo.ALL) {
+            const allProductsFilter = {
+                product_shop: shopObjId,
+                isPublished: true,
+            };
+
+            products = await ProductRepository.findAllProduct({
+                limit,
+                sort: "ctime",
+                page,
+                filter: allProductsFilter,
+                select: [
+                    "product_name",
+                    "product_price",
+                    "product_thumb",
+                    "product_description",
+                    "_id",
+                ],
+            });
+        }
+
+        return {
+            discount: {
+                _id: discount._id,
+                code: discount.discount_code,
+                name: discount.discount_name,
+                description: discount.discount_description,
+                type: discount.discount_type,
+                value: discount.discount_value,
+                appliesTo: discount.discount_applies_to,
+                startDate: discount.discount_start_date,
+                endDate: discount.discount_end_date,
+                minOrderValue: discount.discount_min_order_value,
+                isActive: discount.discount_is_active,
+            },
+            products,
+            pagination: {
+                page,
+                limit,
+                total: products.length,
+            },
+        };
+    }
+
+    static async getDiscountCodesByShopId({
+        shopId,
+        limit = 50,
+        page = 1,
+        sort = "createdAt",
+        is_active = true,
+        unSelect = ["__v"],
+    }: {
+        shopId: string;
+        limit?: number;
+        page?: number;
+        sort?: "createdAt" | "name" | "value" | "endDate";
+        is_active?: boolean;
+        unSelect?: string[];
+    }) {
+        const shopObjId = convertToObjectIdMongodb(shopId);
+
+        // Build filter for shop and active status
+        const filter = {
+            discount_shopId: shopObjId,
+            discount_is_active: is_active,
+        };
+
+        // Use repository pattern to get discounts with unselect
+        const discounts = await DiscountRepository.findAllDiscountUnselect({
+            limit,
+            sort: sort === "createdAt" ? "ctime" : sort,
+            page,
+            filter,
+            unSelect,
+        });
+
+        // Get total count for pagination
+        const totalDiscounts = await DiscountRepository.countDiscounts(filter);
+
+        // Transform the data for better API response
+        const transformedDiscounts = discounts.map((discount) => ({
+            _id: discount._id,
+            code: discount.discount_code,
+            name: discount.discount_name,
+            description: discount.discount_description,
+            type: discount.discount_type,
+            value: discount.discount_value,
+            startDate: discount.discount_start_date,
+            endDate: discount.discount_end_date,
+            isActive: discount.discount_is_active,
+            minOrderValue: discount.discount_min_order_value,
+            maxUses: discount.discount_max_uses,
+            usesCount: discount.discount_uses_count,
+            maxUsesPerUser: discount.discount_max_uses_per_user,
+            appliesTo: discount.discount_applies_to,
+            maxDiscountAmount: discount.discount_max_discount_amount,
+            productIdsCount: discount.discount_product_ids?.length || 0,
+            remainingUses:
+                discount.discount_max_uses === null
+                    ? null
+                    : Math.max(
+                          0,
+                          discount.discount_max_uses -
+                              discount.discount_uses_count
+                      ),
+            isCurrentlyValid:
+                discount.discount_is_active &&
+                new Date() >= discount.discount_start_date &&
+                new Date() <= discount.discount_end_date &&
+                (discount.discount_max_uses === null ||
+                    discount.discount_uses_count < discount.discount_max_uses),
+            createdAt: discount.createdAt,
+            updatedAt: discount.updatedAt,
+        }));
+
+        return {
+            discounts: transformedDiscounts,
+            pagination: {
+                page,
+                limit,
+                total: totalDiscounts,
+                totalPages: Math.ceil(totalDiscounts / limit),
+                hasNext: page * limit < totalDiscounts,
+                hasPrev: page > 1,
+            },
+        };
+    }
+
+    static async getDiscountAmount({
+        codeId,
+        userId,
+        shopId,
+        products,
+    }: {
+        codeId: string;
+        userId: string;
+        shopId: string;
+        products: Array<{
+            productId: string;
+            price: number;
+            quantity: number;
+        }>;
+    }) {
+        const discount = await DiscountRepository.validateDiscountByCode({
+            code: codeId, // Use codeId as discount code
+            shopId: convertToObjectIdMongodb(shopId),
+            userId: convertToObjectIdMongodb(userId),
+        });
+
+        const totalOrderValue = products.reduce(
+            (total, product) => total + product.price * product.quantity,
+            0
+        );
+
+        if (totalOrderValue < discount.discount_min_order_value) {
+            throw new BadRequestError(
+                `Minimum order value of ${discount.discount_min_order_value} required`
+            );
+        }
+
+        let applicableProducts = products;
+        let discountAmount = 0;
+
+        if (discount.discount_applies_to === DiscountAppliesTo.SPECIFIC) {
+            const discountProductIds = discount.discount_product_ids.map((id) =>
+                id.toString()
+            );
+            applicableProducts = products.filter((product) =>
+                discountProductIds.includes(product.productId)
+            );
+
+            if (applicableProducts.length === 0) {
+                throw new BadRequestError(
+                    "No products in your order are eligible for this discount"
+                );
+            }
+        }
+
+        switch (discount.discount_type) {
+            case DiscountType.PERCENTAGE:
+                const applicableTotal = applicableProducts.reduce(
+                    (total, product) =>
+                        total + product.price * product.quantity,
+                    0
+                );
+                discountAmount =
+                    applicableTotal * (discount.discount_value / 100);
+                break;
+
+            case DiscountType.FIXED_AMOUNT:
+                discountAmount = discount.discount_value;
+                break;
+
+            case DiscountType.FREE_SHIPPING:
+                discountAmount = 0;
+                break;
+
+            case DiscountType.BOGO:
+                const sortedProducts = applicableProducts.sort(
+                    (a, b) => a.price - b.price
+                );
+                discountAmount =
+                    sortedProducts.length >= 2 ? sortedProducts[0].price : 0;
+                break;
+
+            default:
+                throw new BadRequestError("Invalid discount type");
+        }
+
+        if (
+            discount.discount_max_discount_amount !== null &&
+            discountAmount > discount.discount_max_discount_amount
+        ) {
+            discountAmount = discount.discount_max_discount_amount;
+        }
+
+        return {
+            discountCode: discount.discount_code,
+            discountName: discount.discount_name,
+            discountType: discount.discount_type,
+            discountValue: discount.discount_value,
+            discountAmount,
+            totalOrderValue,
+            finalAmount: totalOrderValue - discountAmount,
+            applicableProducts: applicableProducts.map((product) => ({
+                productId: product.productId,
+                price: product.price,
+                quantity: product.quantity,
+                subtotal: product.price * product.quantity,
+            })),
+            minOrderValue: discount.discount_min_order_value,
+            maxDiscountAmount: discount.discount_max_discount_amount,
+            remainingUses:
+                discount.discount_max_uses === null
+                    ? null
+                    : Math.max(
+                          0,
+                          discount.discount_max_uses -
+                              discount.discount_uses_count -
+                              1
+                      ),
+            canUse: true,
+        };
+    }
+
+    static async deleteDiscountCode({
+        discountId,
+        shopId,
+    }: {
+        discountId: string;
+        shopId: string;
+    }) {
+        const discount = await DiscountRepository.findDiscountByCodeAndShop(
+            discountId,
+            convertToObjectIdMongodb(shopId)
+        );
+
+        if (!discount) {
+            throw new BadRequestError("Discount not found or doesn't belong to this shop");
+        }
+
+        const deletedDiscount = await discountModel.findByIdAndDelete(discount._id);
+
+        if (!deletedDiscount) {
+            throw new BadRequestError("Failed to delete discount");
+        }
+
+        return {
+            message: "Discount deleted successfully",
+            deletedDiscount: {
+                _id: deletedDiscount._id,
+                code: deletedDiscount.discount_code,
+                name: deletedDiscount.discount_name,
+            },
+        };
+    }
+
+    static async cancelDiscountCode({
+        codeId,
+        userId,
+        shopId,
+    }: {
+        codeId: string;
+        userId: string;
+        shopId: string;
+    }) {
+        const discount = await DiscountRepository.validateDiscount({
+            discountId: convertToObjectIdMongodb(codeId),
+            shopId: convertToObjectIdMongodb(shopId),
+            userId: convertToObjectIdMongodb(userId),
+        });
+
+        const userObjId = convertToObjectIdMongodb(userId);
+
+        const hasUsedDiscount = discount.discount_users_used.some((id: any) =>
+            id.equals(userObjId)
+        );
+
+        if (!hasUsedDiscount) {
+            throw new BadRequestError("You have not used this discount yet");
+        }
+
+        const updatedDiscount = await discountModel.findByIdAndUpdate(
+            discount._id,
+            {
+                $pull: { discount_users_used: userObjId },
+                $inc: { discount_uses_count: -1 }
+            },
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedDiscount) {
+            throw new BadRequestError("Failed to cancel discount usage");
+        }
+
+        return {
+            message: "Discount usage cancelled successfully",
+            discount: {
+                _id: updatedDiscount._id,
+                code: updatedDiscount.discount_code,
+                name: updatedDiscount.discount_name,
+                remainingUses: updatedDiscount.discount_max_uses === null
+                    ? null
+                    : Math.max(0, updatedDiscount.discount_max_uses - updatedDiscount.discount_uses_count),
+            },
+        };
+    }
+}
+````
+
+## File: src/services/email-service.ts
+````typescript
+import type Mail from "nodemailer/lib/mailer";
+import { newOtp } from "./otp-service";
+import { getTemplate } from "./template-service";
+import { transport } from "../configs/nodemailer-config";
+
+const sendEmailLinkVerify = async ({
+    html,
+    toEmail,
+    subject = "Verify Registration Email",
+    text = "VERIFY",
+}) => {
+    const mailOptions: Mail.Options = {
+        from: '"ShopDEV" <anonystick@gmail.com>',
+        to: toEmail,
+        subject,
+        text,
+        html,
+    };
+
+    try {
+        const info = await transport.sendMail(mailOptions);
+        console.log("Message sent", info.messageId);
+        return info;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+};
+
+export const sendEmailToken = async ({
+    email = null,
+    userName = "User", // Default name if not provided
+    shopName = "ShopDEV", // Default shop name
+}) => {
+    try {
+        //1. get a token
+        const token = await newOtp({
+            email,
+        });
+
+        //2. Get template
+        const template = await getTemplate({
+            tem_name: "HTML EMAIL OTP",
+        });
+
+        if (!template) {
+            return console.log("Template not found");
+        }
+
+        //3. Replace placeholder
+        // Construct the verification link
+        // Ideally, the base URL should come from an environment variable (e.g., process.env.FRONTEND_URL)
+        const verifyLink = `http://localhost:3055/v1/api/user/verify?token=${token.otp_token}&email=${email}`;
+
+        const content = template.tem_html
+            .replace("{{verify_link}}", verifyLink) // Replace in Button
+            .replace("{{verify_link}}", verifyLink) // Replace in plain text backup
+            .replace("{{user_name}}", userName)
+            .replace("{{shop_name}}", shopName);
+
+        //4. Send email
+        await sendEmailLinkVerify({
+            html: content,
+            toEmail: email,
+            subject: `Welcome to ${shopName} - Please Verify Your Email`,
+        });
+
+        return 1;
+    } catch (error) {
+        console.error(error);
+    }
+};
+````
+
+## File: src/services/otp-service.ts
+````typescript
+import crypto from "node:crypto";
+import otpModel from "../models/otp-model";
+
+const generatorTokenRandom = () => {
+    // Generate a random integer between 100000 and 999999 (inclusive)
+    const token = crypto.randomInt(100000, 1000000);
+    return token.toString();
+};
+
+export const newOtp = async ({ email }) => {
+    const token = generatorTokenRandom();
+    const newToken = await otpModel.create({
+        otp_token: token,
+        otp_email: email,
+    });
+    return newToken;
+};
+
+export const checkEmailToken = async ({ token }) => {
+    const foundToken = await otpModel.findOne({
+        otp_token: token,
+    });
+
+    if (!foundToken) throw new Error("Token not found");
+
+    otpModel.deleteOne({ otp_token: token }).then();
+
+    return foundToken;
+};
+````
+
+## File: src/services/user-service.ts
+````typescript
+import { ErrorResponse } from "../core/error-respone";
+import userModel from "../models/user-model";
+import { sendEmailToken } from "./email-service";
+import { checkEmailToken } from "./otp-service";
+import crypto from "node:crypto";
+import { KeyTokenService } from "./key-token-service";
+import { createTokenPair } from "../auth/auth-util";
+import { getInfoData } from "../utils/object-utils";
+
+export const newUser = async ({ email = null, captcha = null }) => {
+    //1. Check email exists in dbs
+    const user = await userModel.findOne({ usr_email: email }).lean();
+
+    //2. If exists
+    if (user) {
+        return new ErrorResponse("Email already exists", 111);
+    }
+
+    //3. Send token via email user
+    const result = await sendEmailToken({
+        email,
+    });
+
+    return {
+        message: "Verify email user",
+        metadata: {
+            token: result,
+        },
+    };
+};
+
+export const checkLoginEmailTokenService = async ({ token }) => {
+    //1. Check token in mode otp
+    const { otp_email } = await checkEmailToken({ token });
+    if (!otp_email) throw new ErrorResponse(`Token not found`, 404);
+
+    //2. check email exists in user model.
+    const hasUser = await findUserByEmailWithLogin({
+        email: otp_email,
+    });
+    if (hasUser) throw new ErrorResponse(`Email already exists`, 404);
+
+    //3. new user
+    const passwordHash = crypto.randomBytes(10).toString("hex");
+    const newUserId = Date.now();
+    const newUser = await userModel.create({
+        usr_id: newUserId,
+        usr_slug: otp_email,
+        usr_email: otp_email,
+        usr_name: otp_email,
+        usr_password: passwordHash,
+    });
+
+    if (!newUser) throw new ErrorResponse("User creation failed", 500);
+
+    //4. Generate tokens
+    const secretKey = crypto.randomBytes(64).toString("hex");
+    const tokens = await createTokenPair(
+        {
+            userId: newUser._id.toString(),
+            email: otp_email,
+            name: newUser.usr_name,
+        },
+        secretKey
+    );
+
+    const keyStore = await KeyTokenService.createKeyToken({
+        userId: newUser._id,
+        secretKey,
+        refreshToken: tokens.refreshToken,
+    });
+
+    if (!keyStore) {
+        throw new ErrorResponse("keyStore error", 500);
+    }
+
+    return {
+        message: "User registered successfully!",
+        metadata: {
+            user: getInfoData({
+                fields: ["usr_id", "usr_name", "usr_email"],
+                object: newUser,
+            }),
+            tokens,
+        },
+    };
+};
+
+const findUserByEmailWithLogin = async ({ email }) => {
+    const user = await userModel.findOne({ usr_email: email }).lean();
+    return user;
+};
+````
+
+## File: src/test/message_queue/rabbitmq/producerDLX.ts
+````typescript
+import amqplib from "amqplib";
+
+const runProducer = async () => {
+    try {
+        const connection = await amqplib.connect("amqp://localhost:5672");
+        const channel = await connection.createChannel();
+
+        const notificationExchange = "notificationEx";
+        const notificationQueue = "notificationQueueProcess";
+        const notificationExchangeDLX = "notificationExDLX";
+        const notificationRoutingKeyDLX = "notificationRoutingKeyDLX";
+
+        await channel.assertExchange(notificationExchange, "direct", {
+            durable: true,
+        });
+
+        const queueResult = await channel.assertQueue(notificationQueue, {
+            exclusive: false,
+            deadLetterExchange: notificationExchangeDLX,
+            deadLetterRoutingKey: notificationRoutingKeyDLX,
+        });
+
+        await channel.bindQueue(queueResult.queue, notificationExchange, "");
+
+        const msg = "a new product";
+        console.log(`product msg:: `, msg);
+
+        setInterval(() => {
+            channel.sendToQueue(queueResult.queue, Buffer.from(msg), {
+                expiration: 5000, // Set to 5 seconds to ensure expiration before consumer starts
+            });
+            console.log(`product msg:: `, msg);
+        }, 1000);
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+runProducer().catch(console.error);
+````
+
+## File: .gitignore
+````
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Diagnostic reports (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Directory for instrumented libs generated by jscoverage/JSCover
+lib-cov
+
+# Coverage directory used by tools like istanbul
+coverage
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# Grunt intermediate storage (https://gruntjs.com/creating-plugins#storing-task-files)
+.grunt
+
+# Bower dependency directory (https://bower.io/)
+bower_components
+
+# node-waf configuration
+.lock-wscript
+
+# Compiled binary addons (https://nodejs.org/api/addons.html)
+build/Release
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Snowpack dependency directory (https://snowpack.dev/)
+web_modules/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variable files
+.env
+.env.*
+!.env.example
+
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
+
+# Next.js build output
+.next
+out
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+.output
+
+# Gatsby files
+.cache/
+# Comment in the public line in if your project uses Gatsby and not Next.js
+# https://nextjs.org/blog/next-9-1#public-directory-support
+# public
+
+# vuepress build output
+.vuepress/dist
+
+# vuepress v2.x temp and cache directory
+.temp
+.cache
+
+# Sveltekit cache directory
+.svelte-kit/
+
+# vitepress build output
+**/.vitepress/dist
+
+# vitepress cache directory
+**/.vitepress/cache
+
+# Docusaurus cache and generated files
+.docusaurus
+
+# Serverless directories
+.serverless/
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# Firebase cache directory
+.firebase/
+
+# TernJS port file
+.tern-port
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# yarn v3
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Vite files
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+.vite/
+.claude
+````
+
+## File: CLAUDE.md
+````markdown
+# CLAUDE.md - Enhanced System Instructions
+
+**Project**: E-commerce Backend (Node.js/TypeScript)
+**Architecture**: Enterprise-level with Factory/Repository/Service patterns
+**Validation**: Enhanced CAGEERF methodology with 4-phase checkpoints
+
+## Core Principles & Rules
+
+- **Principles**: **YAGNI** (You Aren't Gonna Need It) - **KISS** (Keep It Simple, Stupid) - **DRY** (Don't Repeat Yourself)
+- **Primary Reference**: Follow strict workflows in `.claude/workflows/`:
+    - `development-rules.md`: Coding standards, file naming, and constraints.
+    - `primary-workflow.md`: The 5-step process (Implementation -> Testing -> Quality -> Integration -> Debugging).
+    - `documentation-management.md`: Rules for plans, roadmaps, and changelogs.
+    - `orchestration-protocol.md`: Agent coordination guidelines.
+
+## Development Workflow
+
+### 1. Preparation & Planning
+- **Skills/Commands**: Run `python .claude/scripts/generate_catalogs.py --skills` and `--commands` to activate relevant tools.
+- **Planning**: Use `planner` agent to create detailed plans in `plans/` directory (see `documentation-management.md`).
+    - Use `researcher` agents for exploring technical topics.
+    - Format plans with timestamp: `plans/YYMMDD-HHMM-slug/`.
+
+### 2. Implementation Loop (Primary Workflow)
+1.  **Code**: Implement features using clean, maintainable code.
+    - **No Simulation**: Always implement real code, no mocks unless strictly necessary for tests.
+    - **File Naming**: Descriptive `kebab-case` (self-documenting for LLMs).
+    - **File Size**: Keep under 200 lines; modularize using composition and service classes.
+    - **Compile Check**: Always check for compile errors after changes.
+2.  **Test**: Delegate to `tester` agent.
+    - **Strictness**: DO NOT ignore failing tests. Fix them before proceeding.
+    - **Coverage**: Maintain high coverage (> 80%).
+3.  **Review**: Delegate to `code-reviewer` agent after implementation.
+4.  **Integration**: Delegate to `docs-manager` to update `docs/` (Roadmap, Changelog, Standards).
+
+### 3. Debugging & Maintenance
+- **Bug Reports**: Delegate to `debugger` agent to analyze, then fix, then `tester` to verify.
+- **Tools**:
+    - `npx tsx watch server.ts` (Dev)
+    - `npx eslint .` (Lint)
+    - `docker-compose up` (DB)
+
+## CAGEERF Validation Checkpoints
+
+**CHECKPOINT 1: Context & Plan**
+- Verify architectural alignment (Factory/Repository/Service).
+- Confirm plan exists in `plans/` with clear steps.
+
+**CHECKPOINT 2: Implementation & Quality**
+- **Strict Mode**: No disabled TypeScript rules.
+- **Security**: Validate auth flows, no hardcoded secrets.
+- **Agent Review**: Pass `code-reviewer` checks.
+
+**CHECKPOINT 3: Integration & Testing**
+- **Tests**: Service logic unit tests, API integration tests.
+- **Performance**: < 200ms API response, connection pooling.
+
+**CHECKPOINT 4: Completion & Docs**
+- **Docs**: `docs-manager` updated Roadmap, Changelog, and Architecture.
+- **Final Polish**: `tester` confirms all green.
+
+## Technology Stack & Constraints
+
+### Approved Technologies
+- **Runtime**: Node.js with TypeScript strict mode
+- **Framework**: Express.js 5.x with helmet middleware
+- **Database**: MongoDB with Mongoose ODM
+- **Auth**: JWT with bcrypt password hashing
+- **Security**: CORS, compression, helmet security headers
+
+### Architectural Standards (Strict Enforcement)
+```
+Controllers (src/controllers/) → Services (src/services/) → Repositories (src/models/repositories/) → Models (src/models/)
+```
+- **Factory Pattern**: Required for Product types.
+- **Repository Pattern**: Required for data access.
+- **Service Layer**: Static business logic methods.
+- **Middleware Pattern**: Authentication and validation.
+
+### Code Quality Standards
+- **Cyclomatic Complexity**: < 10 per function
+- **Function Length**: < 50 lines
+- **File Length**: < 200 lines (preferred) / < 300 (max)
+- **Naming**: `kebab-case` files, `PascalCase` classes, `camelCase` functions.
+
+## Security Requirements
+
+### Authentication (Multi-Layer System)
+1. **API Key Validation**: `x-api-key` header
+2. **Permission System**: Role-based access control
+3. **JWT Authentication**: Access tokens with refresh rotation
+4. **Token Security**: Per-user secret keys
+
+### Best Practices
+- **Headers**: `x-api-key`, `x-client-id`, `authorization`, `refreshtoken`
+- **Sanitization**: Input validation, parameterized queries.
+- **No Logs**: Never log sensitive data.
+
+## Documentation Requirements
+
+### Source of Truth: `docs/`
+- **Roadmap**: `docs/development-roadmap.md`
+- **Changelog**: `docs/project-changelog.md`
+- **Architecture**: `docs/system-architecture.md`
+- **Standards**: `docs/code-standards.md`
+
+### Updates
+- **Automatic**: `project-manager` / `docs-manager` MUST update these on status changes.
+- **Plan Location**: `plans/` with detailed phase files (see `documentation-management.md`).
+
+## Git Workflow
+
+### Branch Strategy
+- `main`: Production
+- `develop`: Integration
+- `feature/*`: Features
+- `hotfix/*`: Emergency fixes
+
+### Commit Standards
+- **Pre-commit**: Linting must pass.
+- **Pre-push**: Tests must pass.
+- **Message**: Conventional commits (`type(scope): description`). No AI references.
+- **Privacy**: NO secrets in commits.
+
+## Project-Specific Rules
+
+### E-commerce Domain
+- **Products**: Factory pattern for extensible types.
+- **Inventory**: Real-time management.
+- **Shops**: Data isolation per shop.
+
+### Emergency Protocols
+- **Critical**: Immediate fix, hotfix branch.
+- **High/Medium**: Prioritized release.
+````
+
+## File: GEMINI.md
+````markdown
+# GEMINI.md
+
+## Project Overview
+
+This project is a Node.js e-commerce backend application built with Express.js and TypeScript. It uses MongoDB as its database and provides a RESTful API for managing shops and authentication. The authentication system is based on JSON Web Tokens (JWT) with a refresh token mechanism.
+
+**Key Technologies:**
+
+*   **Backend:** Node.js, Express.js, TypeScript
+*   **Database:** MongoDB
+*   **Authentication:** JSON Web Tokens (JWT)
+*   **Linting:** ESLint
+
+## Building and Running
+
+**1. Installation:**
+
+```bash
+npm install
+```
+
+**2. Running the Application:**
+
+```bash
+npm start
+```
+
+The application will start on port 3055 by default.
+
+**3. Running in Development:**
+
+The `package.json` does not have a `dev` script. You can run the application in development mode with `tsx` for automatic restarts on file changes:
+
+```bash
+npx tsx watch server.ts
+```
+
+**4. Testing:**
+
+The `package.json` does not have a `test` script.
+
+```json
+"scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+},
+```
+
+## Development Conventions
+
+*   **Coding Style:** The project uses ESLint for code linting. The configuration can be found in the `eslint.config.mts` file.
+*   **Branching:** The project is in a Git repository, but there are no specific branching conventions mentioned.
+*   **Committing:** There are no specific commit message conventions mentioned.
+*   **Testing:** There are no tests in the project.
+
+```
+````
+
+## File: src/controllers/upload-controller.ts
+````typescript
+import { BadRequestError } from "../core/error-respone";
+import { SuccessResponse } from "../core/success-respone";
+import {
+    uploadImageFromLocal,
+    uploadImageFromUrl,
+    uploadImagesFromLocalFiles,
+    uploadImageFromLocalS3,
+} from "../services/upload-service";
+
+class UploadController {
+    uploadFile = async (req, res, next) => {
+        new SuccessResponse(
+            "Upload sucessfully",
+            200,
+            await uploadImageFromUrl()
+        ).send(res);
+    };
+    vsuploadFileThumb = async (req, res, next) => {
+        const { file } = req;
+
+        if (!file) {
+            throw new BadRequestError("FIle missing");
+        }
+
+        new SuccessResponse(
+            "Upload sucessfully",
+            200,
+            await uploadImageFromLocal({ path: file.path })
+        ).send(res);
+    };
+    uploadImageFromLocalFiles = async (req, res, next) => {
+        const { files } = req;
+
+        if (!files) {
+            throw new BadRequestError("FIle missing");
+        }
+
+        new SuccessResponse(
+            "Upload sucessfully",
+            200,
+            await uploadImagesFromLocalFiles({
+                files,
+            })
+        ).send(res);
+    };
+    uploadImageFromLocalS3 = async (req, res, next) => {
+        const { file } = req;
+
+        if (!file) {
+            throw new BadRequestError("File missing");
+        }
+
+        new SuccessResponse(
+            "Upload successfully",
+            200,
+            await uploadImageFromLocalS3({ file })
+        ).send(res);
+    };
+}
+
+export default new UploadController();
+````
+
+## File: src/databases/init_mongoose.ts
+````typescript
+import mongoose from "mongoose";
+import { countConnect, checkOverload } from "../helpers/check-connect";
+import dbconfig from "../configs/config-mongodb";
+
+const connectString = `mongodb://${dbconfig.db.host}:${dbconfig.db.port}/${dbconfig.db.name}`;
+
+console.log(`connectionString:: `, connectString);
+
+class Database {
+    static instance: any;
+    constructor() {
+        this.connect();
+    }
+
+    connect(type = "mongodb") {
+        if (1 === 1) {
+            mongoose.set("debug", true);
+            mongoose.set("debug", { color: true });
+        }
+        mongoose
+            .connect(connectString, {
+                maxPoolSize: 50,
+            })
+            .then((_) =>
+                console.log(
+                    `Connected success, number of connections ${countConnect()}`
+                )
+            )
+            .catch((err) => {
+                throw err;
+            });
+    }
+    static getInstance() {
+        if (!Database.instance) {
+            Database.instance = new Database();
+        }
+        return Database.instance;
+    }
+}
+
+const instanceMongodb = Database.getInstance();
+
+export default instanceMongodb;
+````
+
+## File: src/rest/discount-post.http
+````
+@url_dev=http://localhost:3055
+@api_key=niggar-api-key
+@client_id=69074f5479cbc75d6571e355
+@authorization=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTA3NGY1NDc5Y2JjNzVkNjU3MWUzNTUiLCJlbWFpbCI6IndlbHRlcmlhbEBnbWFpbC5jb20iLCJuYW1lIjoiVGhhaSBEaW5oIiwiaWF0IjoxNzYyMDg3MzM1LCJleHAiOjE3NjMzODMzMzV9.pZk63-gb0HXC5DOqyhmJTTFP2PN4in8zuVg83Jn16CA
+
+### Create Discount Code
+POST {{url_dev}}/v1/api/discount/
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "code": "SAVESpecific",
+    "name": "20% Off Everything",
+    "description": "Get 20% off on all products",
+    "type": "percentage",
+    "value": 20,
+    "start_date": "2025-11-30T00:00:00.000Z",
+    "end_date": "2025-12-30T23:59:59.999Z",
+    "is_active": true,
+    "min_order_value": 100,
+    "max_uses": 100,
+    "max_uses_per_user": 1,
+    "applies_to": "specific",
+    "max_value": 50,
+    "product_ids": ["690751d279cbc75d6571e36d", "690751d579cbc75d6571e375"]
+}
+
+### Create Fixed Amount Discount Code
+POST {{url_dev}}/v1/api/discount/
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "code": "SAVE10",
+    "name": "$10 Off",
+    "description": "Get $10 off on orders over $50",
+    "type": "FIXED_AMOUNT",
+    "value": 10,
+    "start_date": "2025-10-30T00:00:00.000Z",
+    "end_date": "2025-11-30T23:59:59.999Z",
+    "is_active": true,
+    "min_order_value": 50,
+    "max_uses": 200,
+    "max_uses_per_user": 2,
+    "applies_to": "ALL"
+}
+
+### Get All Discount Codes for Shop
+GET {{url_dev}}/v1/api/discount/shop/all?limit=10&page=1&sort=createdAt&is_active=true
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+### Get Discount Code with Products
+GET {{url_dev}}/v1/api/discount/code/SAVE20?limit=10&page=1
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+### Calculate Discount Amount
+POST {{url_dev}}/v1/api/discount/amount/690771febf6dbfe0ac40b634
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "shopId": "69074f5479cbc75d6571e355",
+    "products": [
+        {
+            "productId": "690751d279cbc75d6571e36d",
+            "price": 100,
+            "quantity": 2
+        },
+        {
+            "productId": "690751d579cbc75d6571e375",
+            "price": 50,
+            "quantity": 1
+        }
+    ]
+}
+
+### Update Discount Code
+PATCH {{url_dev}}/v1/api/discount/69045f53318d2ca07659fd69
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "name": "Updated 25% Off Everything",
+    "description": "Get 25% off on all products - extended promotion",
+    "value": 25,
+    "max_value": 75
+}
+
+### Delete Discount Code
+DELETE {{url_dev}}/v1/api/discount/[DISCOUNT_ID_HERE]
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+### Cancel Discount Code Usage
+POST {{url_dev}}/v1/api/discount/cancel/[DISCOUNT_ID_HERE]
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    "shopId": "68faf8be0aed27e75e01a594"
+}
+````
+
+## File: src/rest/upload.http
+````
+@url_dev=http://localhost:3055
+@api_key=niggar-api-key
+@client_id=692d02e7de80c4533cd160d8
+@authorization=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTJkMDJlN2RlODBjNDUzM2NkMTYwZDgiLCJlbWFpbCI6IndlbHRlcmlhbEBnbWFpbC5jb20iLCJuYW1lIjoiVGhhaSBEaW5oIiwiaWF0IjoxNzY0NTU3ODIzLCJleHAiOjE3NjU4NTM4MjN9.Zxg7UwKfAu2cKHHchxC83S3RcLDQcpY7hnOcZ7rOvYo
+@placeholder_api_key=niggar-api-key
+@refresh_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZmMDQyYmY1Mzg4NDJiNmRlZjUyMzciLCJlbWFpbCI6ImNvbmNhY0BnbWFpbC5jb20iLCJuYW1lIjoiY29uY2FjIiwiaWF0IjoxNzYxNTQ4OTM1LCJleHAiOjE3NjIxNTM3MzV9.l_f6PkY_IeSIBuJvtgpiBI-J9qSmf3b68Wul1XTusz8
+
+POST {{url_dev}}/v1/api/upload/product
+Content-Type: application/json
+x-api-key: {{placeholder_api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+{
+    
+}
+
+###
+
+POST {{url_dev}}/v1/api/upload/product/thumb
+Content-Type: multipart/form-data; boundary=MyBoundary
+x-api-key: {{placeholder_api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+--MyBoundary
+Content-Disposition: form-data; name="file"; filename="image.png"
+Content-Type: image/png
+
+< ./../../image.png
+
+--MyBoundary--
+
+
+
+###
+
+
+
+POST {{url_dev}}/v1/api/upload/product/multiple
+
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+x-api-key: {{placeholder_api_key}}
+
+x-client-id: {{client_id}}
+
+authorization: {{authorization}}
+
+
+
+--MyBoundary
+
+Content-Disposition: form-data; name="files"; filename="image.png"
+
+Content-Type: image/png
+
+
+
+< ./../../image.png
+
+--MyBoundary
+
+Content-Disposition: form-data; name="files"; filename="image.png"
+
+Content-Type: image/png
+
+
+
+< ./../../image.png
+
+--MyBoundary--
+
+###
+
+POST {{url_dev}}/v1/api/upload/product/bucket
+Content-Type: multipart/form-data; boundary=MyBoundary
+x-api-key: {{placeholder_api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+--MyBoundary
+Content-Disposition: form-data; name="file"; filename="image.png"
+Content-Type: image/png
+
+< ./../../image.png
+
+--MyBoundary--
+````
+
+## File: src/routers/upload/index.ts
+````typescript
+import express from "express";
+import { asyncHandler } from "../../helpers/asyncHandler";
+import uploadController from "../../controllers/upload-controller";
+import { uploadDisk, uploadMem } from "../../configs/multer-config";
+
+const router = express.Router();
+
+router.post("/product", asyncHandler(uploadController.uploadFile));
+router.post("/product/thumb", uploadDisk.single("file"), asyncHandler(uploadController.vsuploadFileThumb));
+router.post(
+    "/product/multiple",
+    uploadDisk.array("files", 3),
+    asyncHandler(uploadController.uploadImageFromLocalFiles)
+);
+router.post(
+    "/product/bucket",
+    uploadMem.single("file"),
+    asyncHandler(uploadController.uploadImageFromLocalS3)
+);
+
+
+export default router;
+````
+
+## File: src/services/apikey-service.ts
+````typescript
+import apikeyModel from "../models/apikey-model";
+
+export const findById = async (key: string) => {
+    const objectKey = await apikeyModel.findOne({ key, status: true }).lean();
+    return objectKey;
+};
+````
+
+## File: src/services/redis.ts
+````typescript
+import { InventoryRepository } from "../models/repositories/inventory-repo";
+import { getRedis } from "../configs/redis-config";
+
+const redisClient = getRedis();
+
+const acquireLock = async (
+    productId: string,
+    quantity: number,
+    cartId: string
+): Promise<string | null> => {
+    const key = `lock_2025_${productId}`;
+    const retryTimes = 10;
+    const expireTime = 3000; // 3 seconds in milliseconds
+
+    for (let i = 0; i < retryTimes; i++) {
+        // Atomic set with expiration and NX (only if not exists)
+        const result = await redisClient.set(
+            key,
+            cartId,
+            "PX",
+            expireTime,
+            "NX"
+        );
+
+        if (result === "OK") {
+            await InventoryRepository.reservationInventory({
+                productId,
+                quantity,
+                cartId,
+            });
+            return key;
+        }
+
+        // Proper delay between retry attempts
+        await new Promise((resolve) => setTimeout(resolve, 50));
+    }
+
+    return null; // Failed to acquire lock
+};
+
+const releaseLock = async (keyLock: string): Promise<number> => {
+    return await redisClient.del(keyLock);
+};
+
+export { acquireLock, releaseLock, redisClient };
+````
+
+## File: src/utils/index.ts
+````typescript
+import { Types } from "mongoose";
+
+export const getSelectData = (select = []) => {
+    return Object.fromEntries(select.map((el) => [el, 1]));
+};
+
+export const getUnSelectData = (select = []) => {
+    return Object.fromEntries(select.map((el) => [el, 0]));
+};
+
+export const removeUndefinedNull = (obj) => {
+    Object.keys(obj).forEach((k) => {
+        if (obj[k] && typeof obj[k] === "object") {
+            removeUndefinedNull(obj[k]);
+        }
+        if (obj[k] == null) {
+            delete obj[k];
+        }
+    });
+    return obj;
+};
+/**
+   {
+     "product_attributes": {
+       "details": {
+         "material": "Cotton",
+         "brand": "Gemini"
+       }
+     }
+   }
+ */
+export const updateNestedObjectParser = (obj) => {
+    const final = {};
+    Object.keys(obj).forEach((k) => {
+        if (obj[k] && typeof obj[k] === "object" && !Array.isArray(obj[k])) {
+            const response = updateNestedObjectParser(obj[k]);
+            Object.keys(response).forEach((a) => {
+                final[`${k}.${a}`] = response[a];
+            });
+        } else {
+            final[k] = obj[k];
+        }
+    });
+    return final;
+};
+
+export const convertToObjectIdMongodb = (id: string) => new Types.ObjectId(id);
+````
+
+## File: docker-compose.yml
+````yaml
+version: "3.8"
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+  redis:
+    image: redis:8.4
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  mongodb_data:
+  redis_data:
+````
+
+## File: src/models/key-token-model.ts
+````typescript
+import { Schema, SchemaType, model } from "mongoose";
+
+const DOCUMENT_NAME = "Key";
+const COLLECTION_NAME = "keys";
+
+const keyTokenSchema = new Schema(
+    {
+        user: {
+            type: Schema.Types.ObjectId,
+            required: true,
+            ref: "Shop",
+        },
+
+        secretKey: {
+            type: String,
+            required: true,
+        },
+
+        refreshTokenUsed: {
+            type: Array,
+            default: [],
+        },
+
+        refreshToken: {
+            type: String,
+            required: true,
+        },
+    },
+    {
+        collection: COLLECTION_NAME,
+        timestamps: true,
+    }
+);
+
+export default model(DOCUMENT_NAME, keyTokenSchema);
+````
+
+## File: src/models/product-model.ts
+````typescript
+import { Schema, model, Types } from "mongoose";
+import slugify from "slugify";
+
+const DOCUMENT_NAME = "Product";
+const COLLECTION_NAME = "products";
+
+// Base Product Schema - stores common product information
+const productSchema = new Schema(
+    {
+        product_name: {
+            type: String,
+            required: true,
+        },
+        product_thumb: {
+            type: String,
+            required: true,
+        },
+        product_description: {
+            type: String,
+            required: true,
+        },
+        product_slug: {
+            type: String,
+        },
+        product_price: {
+            type: Number,
+            required: true,
+        },
+        product_quantity: {
+            type: Number,
+            required: true,
+        },
+        product_type: {
+            type: String,
+            required: true,
+            enum: ["Electronics", "Clothing", "Books", "Food", "Other"],
+        },
+        product_shop: {
+            type: Schema.Types.ObjectId,
+            ref: "Shop",
+        },
+        product_attributes: {
+            type: Schema.Types.Mixed,
+            required: true,
+        },
+        product_ratingsAverage: {
+            type: Number,
+            default: 4.5,
+            min: [1, "Rating must be above 1.0"],
+            max: [5, "Rating must be below 5.0"],
+            set: (val: number) => Math.round(val * 10) / 10,
+        },
+        product_variations: {
+            type: Array,
+            default: [],
+        },
+        isDraft: {
+            type: Boolean,
+            default: true,
+            index: true,
+            select: false,
+        },
+        isPublished: {
+            type: Boolean,
+            default: false,
+            index: true,
+            select: false,
+        },
+    },
+    {
+        collection: COLLECTION_NAME,
+        timestamps: true,
+    }
+);
+// Create index for search
+productSchema.index({ product_name: "text", product_description: "text" });
+
+// Document middleware: runs before .save() and .create()
+productSchema.pre("save", function (next) {
+    this.product_slug = slugify(this.product_name, { lower: true });
+    next();
+});
+
+export const productModel = model(DOCUMENT_NAME, productSchema);
+
+// Define Clothing Schema and Model - stores type-specific attributes
+const clothingSchema = new Schema(
+    {
+        _id: { type: Schema.Types.ObjectId, auto: false },
+        brand: { type: String, required: true },
+        size: { type: String, enum: ["XS", "S", "M", "L", "XL", "XXL"] },
+        material: { type: String, required: true },
+        color: { type: String },
+        product_shop: {
+            type: Schema.Types.ObjectId,
+            ref: "Shop",
+        },
+    },
+    {
+        collection: "clothes",
+        timestamps: true,
+    }
+);
+
+export const clothingModel = model("Clothing", clothingSchema);
+
+// Define Electronic Schema and Model - stores type-specific attributes
+const electronicSchema = new Schema(
+    {
+        _id: { type: Schema.Types.ObjectId, auto: false },
+        manufacturer: { type: String, required: true },
+        model: { type: String, required: true },
+        warranty: { type: String, default: "1 year" },
+        features: { type: [String] }, // Example of an array field
+        product_shop: {
+            type: Schema.Types.ObjectId,
+            ref: "Shop",
+        },
+    },
+    {
+        collection: "electronics",
+        timestamps: true,
+    }
+);
+
+export const electronicModel = model("Electronic", electronicSchema);
+````
+
+## File: src/routers/product/index.ts
+````typescript
+import express from "express";
+import productController from "../../controllers/product-controller";
+import { asyncHandler } from "../../helpers/asyncHandler";
+import { authentication, authenticationV2 } from "../../auth/check-auth";
+
+const router = express.Router();
+
+// Public routes
+router.get(
+    "/search/:keySearch",
+    asyncHandler(productController.searchProductByUser)
+);
+router.get("/", asyncHandler(productController.findAllProducts));
+router.get("/:product_id", asyncHandler(productController.findProduct));
+
+// Apply authentication middleware to all product routes
+router.use(authentication);
+
+router.post("/", asyncHandler(productController.createProduct));
+router.patch(
+    "/:productId",
+    asyncHandler(productController.updateProduct)
+);
+router.get("/drafts/all", asyncHandler(productController.findAllDraftForShop));
+router.get(
+    "/published/all",
+    asyncHandler(productController.findAllPublishForShop)
+);
+router.patch(
+    "/publish/:id",
+    asyncHandler(productController.publishProductByShop)
+);
+router.patch(
+    "/unpublish/:id",
+    asyncHandler(productController.unpublishProductByShop)
+);
+
+export default router;
+````
+
+## File: src/services/upload-service.ts
+````typescript
+import cloudinary from "../configs/cloudinary-config";
+import fs from "fs";
+import { s3, PutObjectCommand } from "../configs/s3-config";
+import { getSignedUrl } from "aws-cloudfront-sign";
+
+const uploadImageFromLocalS3 = async ({ file }) => {
+    try {
+        const imageName = `${Date.now()}-${file.originalname}`;
+        const cloud_front_url = `https://d375ag36hjk2ti.cloudfront.net/${imageName}`;
+        const Bucket = process.env.AWS_BUCKET_NAME;
+
+        const putCommand = new PutObjectCommand({
+            Bucket,
+            Key: imageName,
+            Body: file.buffer,
+            ContentType: file.mimetype || "image/jpeg",
+        });
+
+        await s3.send(putCommand);
+
+        const signedUrl = getSignedUrl(cloud_front_url, {
+            keypairId: "K3PWDMWUR3P3T0",
+            expireTime: Date.now() + 3600 * 1000,
+            privateKeyString: process.env.AWS_BUCKET_PUBLIC_KEY_ID,
+        });
+
+        return {
+            image_url: signedUrl,
+            result: {
+                // Return some relevant details from the put operation if needed, or just the signed URL
+                Bucket,
+                Key: imageName,
+            },
+        };
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+const uploadImageFromUrl = async () => {
+    try {
+        const urlImage =
+            "https://scontent-hkg4-1.cdninstagram.com/v/t51.29350-15/470099763_893139816272550_3555965708903184822_n.jpg?stp=dst-jpg_e15_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6InRocmVhZHMuRkVFRC5pbWFnZV91cmxnZW4uNzIweDUyNC5zZHIuZjI5MzUwLmRlZmF1bHRfaW1hZ2UuYzIifQ&_nc_ht=scontent-hkg4-1.cdninstagram.com&_nc_cat=106&_nc_oc=Q6cZ2QGMzEPyVdVrFwkbWdmIXgcmvCUeb7O-g3U3yHzolfJ-HX23KfadN278gFKm_fUXTSfXXPOjn9e6ACxtusb_PrAH&_nc_ohc=-2ezvuDdpEkQ7kNvwHR-aIJ&_nc_gid=SXf6MZE2o8o_dUA0nAYFwg&edm=APs17CUBAAAA&ccb=7-5&ig_cache_key=MzUyMTg3NTMxMTU4NTY2MTcyNA%3D%3D.3-ccb7-5&oh=00_Afj9BSXJ7R5xrvp0lxu6QK-LJXiuXyeLtWXiQKd7XQgZ1g&oe=6932B86A&_nc_sid=10d13b";
+        const folderName = "product/8409";
+        const newFileName = "testdemo";
+
+        const result = await cloudinary.uploader.upload(urlImage, {
+            public_id: newFileName,
+            folder: folderName,
+        });
+        return result;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+const uploadImageFromLocal = async ({ path, folderName = "product/8409" }) => {
+    try {
+        const result = await cloudinary.uploader.upload(path, {
+            public_id: "thumb",
+            folder: folderName,
+        });
+
+        return {
+            image_url: result.secure_url,
+            shopId: 8409,
+        };
+    } catch (error) {
+        console.error(error);
+    } finally {
+        try {
+            fs.unlinkSync(path);
+        } catch (error) {
+            console.error("Error deleting file", error);
+        }
+    }
+};
+
+const uploadImagesFromLocalFiles = async ({
+    files,
+    folderName = "product/8049",
+}) => {
+    try {
+        console.log(`files`, files, folderName);
+        if (!files.length) return [];
+
+        const uploadPromises = files.map(async (file) => {
+            try {
+                const result = await cloudinary.uploader.upload(file.path, {
+                    folder: folderName,
+                });
+
+                return {
+                    image_url: result.secure_url,
+                    shopId: 8049,
+                    thumb_url: cloudinary.url(result.public_id, {
+                        height: 100,
+                        width: 100,
+                        fetch_format: "auto",
+                        quality: "auto",
+                    }),
+                };
+            } finally {
+                try {
+                    fs.unlinkSync(file.path);
+                } catch (error) {
+                    console.error("Error deleting file", error);
+                }
+            }
+        });
+
+        const uploadedUrls = await Promise.all(uploadPromises);
+        return uploadedUrls;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export {
+    uploadImageFromUrl,
+    uploadImageFromLocal,
+    uploadImagesFromLocalFiles,
+    uploadImageFromLocalS3,
+};
+````
+
+## File: index.html
+````html
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+    <body>
+        <h1>Promise All</h1>
+
+        <script>
+            const cocurrencyRequest = async (urls, maxNum) => {
+                if (urls.length === 0) {
+                    return Promise.resolve([]);
+                }
+
+                return new Promise((resolve) => {
+                    const results = [];
+                    let index = 0;
+                    let count = 0;
+
+                    async function request() {
+                        if (index === urls.length) return;
+
+                        const i = index;
+                        const url = urls[index++];
+
+                        try {
+                            results[i] = await fetch(url);
+                        } finally {
+                            if (++count === urls.length) {
+                                console.log("FINISHED all request");
+                                resolve(results);
+                            }
+                        }
+
+                        setTimeout(request, 1000);
+                    }
+
+                    const times = Math.min(maxNum, urls.length);
+
+                    Array.from({ length: times }, () =>
+                        setTimeout(request, 1000)
+                    );
+                });
+            };
+
+            const urls = [];
+
+            for (let i = 1; i <= 21; i++) {
+                urls.push(`https://jsonplaceholder.typicode.com/todos/${i}`);
+            }
+
+            const result = cocurrencyRequest(urls, 3).then((res) =>
+                console.log(res)
+            );
+
+            URL.parse(`https://jsonplaceholder.typicode.com/todos/1`);
+        </script>
+    </body>
+</html>
+````
+
+## File: tsconfig.json
+````json
+{
+    "compilerOptions": {
+        /* Platform & language */
+        "target": "esnext",
+        "module": "esnext",
+        "moduleResolution": "bundler",
+
+        /* Type checking only (no JS output) */
+        "noEmit": true,
+        "emitDeclarationOnly": false,
+
+        /* Max strictness (Java-like discipline) */
+        "strict": true,
+        // "exactOptionalPropertyTypes": true,
+        // "noUncheckedIndexedAccess": true,
+        // "noImplicitOverride": true,
+        // "noImplicitReturns": true,
+        // "noFallthroughCasesInSwitch": true,
+        // "useUnknownInCatchVariables": true,
+        // "noPropertyAccessFromIndexSignature": true,
+        // "alwaysStrict": true,
+        // "forceConsistentCasingInFileNames": true,
+        // "noImplicitAny": true,
+        // "strictNullChecks": true,
+        // "strictFunctionTypes": true,
+        // "strictBindCallApply": true,
+        // "strictPropertyInitialization": true,
+        // "noImplicitThis": true,
+
+        /* Import/Export hygiene */
+        "verbatimModuleSyntax": true,
+        "esModuleInterop": true,
+        "skipLibCheck": false,
+        "resolveJsonModule": true,
+        "isolatedModules": true
+    },
+    "include": ["src"],
+    "exclude": ["node_modules", "dist", "build"]
+}
+````
+
+## File: src/core/success-respone.ts
+````typescript
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { ReasonPhrases, StatusCodes } from "http-status-codes";
+import { Response } from "express"; // Import Response type
+
+class SuccessResponse {
+    public message: string;
+    public status: number;
+    public metadata: any;
+    public options: any;
+
+    constructor(
+        message: string = ReasonPhrases.OK,
+        status: number = StatusCodes.OK,
+        metadata: any = {},
+        options: any = {}
+    ) {
+        this.message = message;
+        this.status = status;
+        this.metadata = metadata;
+        this.options = options;
+    }
+
+    // Add a send method to send the response
+    send(res: Response) {
+        return res.status(this.status).json({
+            message: this.message,
+            metadata: this.metadata,
+            // options: this.options, // Optionally include options in the response
+        });
+    }
+}
+
+class OK extends SuccessResponse {
+    constructor(
+        message: string = ReasonPhrases.OK,
+        metadata: any = {},
+        options: any = {}
+    ) {
+        super(message, StatusCodes.OK, metadata, options);
+    }
+}
+
+class Created extends SuccessResponse {
+    constructor(
+        message: string = ReasonPhrases.CREATED,
+        metadata: any = {},
+        options: any = {}
+    ) {
+        super(message, StatusCodes.CREATED, metadata, options);
+    }
+}
+
+export {
+    SuccessResponse,
+    OK,
+    Created
+};
+````
+
+## File: server.ts
+````typescript
+import "dotenv/config";
+import app from "./src/app";
+import { initReids } from "./src/configs/redis-config";
+const PORT = 3055;
+
+// init db
+require("./src/databases/init_mongoose");
+initReids();
+const server = app.listen(PORT, () => {
+    console.log(`WSV eCommerce start with port ${PORT}`);
+});
+
+process.on("SIGINT", () => {
+    server.close(() => console.log(`Exit Server Express`));
+    process.exit();
+});
+````
+
+## File: src/controllers/product-controller.ts
+````typescript
+import type { Request, Response } from "express";
+import ProductService from "../services/product-service";
+import { NotFoundError } from "../core/error-respone";
+import { Created, OK } from "../core/success-respone";
+import { Types } from "mongoose";
+
+class ProductController {
+    static async createProduct(req: Request, res: Response) {
+        const { product_type, ...payload } = req.body;
+        const newProduct = await ProductService.createProduct(
+            product_type,
+            payload
+        );
+
+        console.log(newProduct);
+        return new Created("Product created successfully!", newProduct).send(
+            res
+        );
+    }
+
+    /**
+     * @description GET ALL DRAFTS FOR SHOP
+     * @param req
+     * @param res
+     * @returns JSON
+     */
+    static async findAllDraftForShop(req: Request, res: Response) {
+        const { userId } = req.user;
+        const products = await ProductService.findAllDraftForShop({
+            product_shop: new Types.ObjectId(userId),
+        });
+        return new OK("Get all draft products successfully!", products).send(
+            res
+        );
+    }
+
+    static async findAllPublishForShop(req: Request, res: Response) {
+        const { userId } = req.user;
+        const products = await ProductService.findAllPublishForShop({
+            product_shop: new Types.ObjectId(userId),
+        });
+        return new OK("Get all publish products successfully!", products).send(
+            res
+        );
+    }
+
+    static async searchProductByUser(req: Request, res: Response) {
+        const { keySearch } = req.params;
+        const products = await ProductService.searchProductByUser({
+            keySearch,
+        });
+        return new OK("Search products successfully!", products).send(res);
+    }
+
+    static async publishProductByShop(req: Request, res: Response) {
+        const { userId } = req.user;
+        const { id } = req.params;
+        const products = await ProductService.publishProductByShop({
+            product_shop: new Types.ObjectId(userId),
+            product_id: new Types.ObjectId(id),
+        });
+        return new OK("Publish product successfully!", products).send(res);
+    }
+
+    static async unpublishProductByShop(req: Request, res: Response) {
+        const { userId } = req.user;
+        const { id } = req.params;
+        const products = await ProductService.unpublishProductByShop({
+            product_shop: new Types.ObjectId(userId),
+            product_id: new Types.ObjectId(id),
+        });
+        return new OK("Unpublish product successfully!", products).send(res);
+    }
+
+    static async findAllProducts(req: Request, res: Response) {
+        const param = req.params;
+        const products = await ProductService.findAllProducts(param);
+        return new OK("Find all products successfully!", products).send(res);
+    }
+
+    static async findProduct(req: Request, res: Response) {
+        const param = req.params;
+        const product = await ProductService.findProduct({
+            product_id: param.product_id,
+        });
+        if (!product) {
+            throw new NotFoundError("Product not found");
+        }
+        return new OK("GET PRODUCT DATA successfully!", product).send(res);
+    }
+
+    static async updateProduct(req: Request, res: Response) {
+        const { productId } = req.params;
+        const updatedProduct = await ProductService.updateProduct(
+            productId,
+            req.body
+        );
+        return new OK("Product updated successfully!", updatedProduct).send(
+            res
+        );
+    }
+}
+
+export default ProductController;
+````
+
+## File: src/core/error-respone.ts
+````typescript
+import { ReasonPhrases, StatusCodes } from "http-status-codes";
+
+class ErrorResponse extends Error {
+    public status: number;
+
+    constructor(message: string, status: number) {
+        super(message);
+        this.status = status;
+    }
+}
+
+class ConflictRequestError extends ErrorResponse {
+    constructor(
+        message: string = ReasonPhrases.CONFLICT,
+        statusCode: number = StatusCodes.CONFLICT
+    ) {
+        super(message, statusCode);
+    }
+}
+
+class BadRequestError extends ErrorResponse {
+    constructor(
+        message: string = ReasonPhrases.BAD_REQUEST,
+        statusCode: number = StatusCodes.BAD_REQUEST
+    ) {
+        super(message, statusCode);
+    }
+}
+
+class AuthFailureError extends ErrorResponse {
+    constructor(
+        message: string = ReasonPhrases.UNAUTHORIZED,
+        statusCode: number = StatusCodes.UNAUTHORIZED
+    ) {
+        super(message, statusCode);
+    }
+}
+
+class NotFoundError extends ErrorResponse {
+    constructor(
+        message: string = ReasonPhrases.NOT_FOUND,
+        statusCode: number = StatusCodes.NOT_FOUND
+    ) {
+        super(message, statusCode);
+    }
+}
+
+class ForbiddenError extends ErrorResponse {
+    constructor(
+        message: string = ReasonPhrases.FORBIDDEN,
+        statusCode: number = StatusCodes.FORBIDDEN
+    ) {
+        super(message, statusCode);
+    }
+}
+
+class DatabaseError extends ErrorResponse {
+    constructor(
+        message: string = ReasonPhrases.INTERNAL_SERVER_ERROR,
+        statusCode: number = StatusCodes.INTERNAL_SERVER_ERROR
+    ) {
+        super(message, statusCode);
+    }
+}
+
+export class RedisErrorRespone extends ErrorResponse {
+    constructor(
+        message: string = ReasonPhrases.INTERNAL_SERVER_ERROR,
+        statusCode: number = StatusCodes.INTERNAL_SERVER_ERROR
+    ) {
+        super(message, statusCode);
+    }
+}
+
+export {
+    ErrorResponse,
+    ConflictRequestError,
+    BadRequestError,
+    AuthFailureError,
+    NotFoundError,
+    ForbiddenError,
+    DatabaseError,
+};
+````
+
+## File: src/models/repositories/product.repo.ts
+````typescript
+import {
+    convertToObjectIdMongodb,
+    getSelectData,
+    getUnSelectData,
+} from "../../utils";
+import { productModel, clothingModel, electronicModel } from "../product-model";
+import { removeUndefinedNull, updateNestedObjectParser } from "../../utils";
+import type { Types } from "mongoose";
+
+class ProductRepository {
+    static async checkProductByServer(products: []) {
+        return await Promise.all(
+            products.map(async (product) => {
+                if (!product.productId) {
+                    throw new Error("Product ID is required");
+                }
+
+                const foundProduct = await this.findProduct(product.productId);
+                if (!foundProduct) {
+                    throw new Error(`Product ${product.productId} not found`);
+                }
+
+                return {
+                    price: foundProduct.product_price,
+                    quantity: product.quantity || 1,
+                    productId: product.productId,
+                    shopId: product.shopId,
+                };
+            })
+        );
+    }
+    static async updateProductById({ productId, payload, model }) {
+        const cleanedPayload = removeUndefinedNull(payload);
+        const updatePayload = updateNestedObjectParser(cleanedPayload);
+        return await model
+            .findByIdAndUpdate(
+                productId,
+                { $set: updatePayload },
+                { new: true }
+            )
+            .lean();
+    }
+    static async findAllDraftForShop({
+        query,
+        limit,
+        skip,
+    }: {
+        query: any;
+        limit: number;
+        skip: number;
+    }) {
+        return await productModel
+            .find(query)
+            .populate("product_shop", "name email")
+            .sort({ updateAt: -1 })
+            .skip(skip)
+            .limit(limit)
+            .lean()
+            .exec();
+    }
+
+    static async findAllPublishForShop({
+        query,
+        limit,
+        skip,
+    }: {
+        query: any;
+        limit: number;
+        skip: number;
+    }) {
+        return await productModel
+            .find(query)
+            .populate("product_shop", "name email")
+            .sort({ updateAt: -1 })
+            .skip(skip)
+            .limit(limit)
+            .lean()
+            .exec();
+    }
+
+    static async searchProductByUser({ keySearch }: { keySearch: string }) {
+        const regexSearch = new RegExp(keySearch, "i");
+        const results = await productModel
+            .find({
+                isPublished: true,
+                $text: { $search: regexSearch.toString() },
+            })
+            .sort({ score: { $meta: "textScore" } })
+            .lean();
+        return results;
+    }
+
+    static async publishProductByShop({
+        product_shop,
+        product_id,
+    }: {
+        product_shop: Types.ObjectId;
+        product_id: Types.ObjectId;
+    }) {
+        const foundShop = await productModel.findOne({
+            product_shop: product_shop,
+            _id: product_id,
+        });
+
+        if (!foundShop) return null;
+
+        foundShop.isDraft = false;
+        foundShop.isPublished = true;
+
+        await foundShop.save();
+        return foundShop;
+    }
+
+    static async unpublishProductByShop({
+        product_shop,
+        product_id,
+    }: {
+        product_shop: Types.ObjectId;
+        product_id: Types.ObjectId;
+    }) {
+        const foundShop = await productModel.findOne({
+            product_shop: product_shop,
+            _id: product_id,
+        });
+
+        if (!foundShop) return null;
+
+        foundShop.isDraft = true;
+        foundShop.isPublished = false;
+
+        await foundShop.save();
+        return foundShop;
+    }
+
+    static findAllProduct = async ({
+        limit,
+        sort,
+        page,
+        filter,
+        select,
+    }: {
+        limit: number;
+        sort: string;
+        page: number;
+        filter: any;
+        select: string[];
+    }) => {
+        const skip = (page - 1) * limit;
+        const sortBy = sort === "ctime" ? { _id: -1 } : { _id: 1 };
+        const products = await productModel
+            .find(filter)
+            .sort(sortBy)
+            .skip(skip)
+            .limit(limit)
+            .select(getSelectData(select))
+            .lean()
+            .exec();
+        return products;
+    };
+
+    static findProduct = async (product_id: string) => {
+        return await productModel.findById(product_id).lean();
+    };
+
+    static async updateProductQuantity(productId: string, quantity: number) {
+        return await productModel.findByIdAndUpdate(
+            productId,
+            { $inc: { product_quantity: quantity } },
+            { new: true }
+        ).lean();
+    }
+}
+
+export default ProductRepository;
+````
+
+## File: src/services/key-token-service.ts
+````typescript
+import { Types } from "mongoose";
+import keyTokenModel from "../models/key-token-model";
+
+export class KeyTokenService {
+    static createKeyToken = async ({
+        userId,
+        secretKey,
+        refreshToken,
+    }: {
+        userId: string | any;
+        secretKey: string;
+        refreshToken: string;
+    }) => {
+        const filter = { user: userId };
+        const update = { secretKey, refreshTokenUsed: [], refreshToken };
+        const options = { upsert: true, new: true };
+
+        const keyStore = await keyTokenModel.findOneAndUpdate(
+            filter,
+            update,
+            options
+        );
+
+        return keyStore ? keyStore.secretKey : null;
+    };
+
+    static findByUserId = async (userId) => {
+        return await keyTokenModel.findOne({
+            user: new Types.ObjectId(userId),
+        });
+    };
+
+    static removeKeyByUserId = async (userId) => {
+        return await keyTokenModel.deleteOne({ user: userId }).lean();
+    };
+
+    static removeKeyById = async (id: Types.ObjectId) => {
+        return await keyTokenModel.findByIdAndDelete(id).lean();
+    };
+
+    static findByRefreshTokenUsed = async (refreshToken) => {
+        return await keyTokenModel
+            .findOne({ refreshTokenUsed: refreshToken })
+            .lean();
+    };
+
+    static deletekey = async (userId) => {
+        return await keyTokenModel.findByIdAndDelete(userId).lean();
+    };
+
+    static findByRefreshToken = async (refreshToken) => {
+        return await keyTokenModel.findOne({ refreshToken: refreshToken });
+    };
+}
+````
+
+## File: src/controllers/access-controller.ts
+````typescript
+import type { Request, Response, NextFunction } from "express";
+import AccessService from "../services/access-service";
+import { asyncHandler } from "../helpers/asyncHandler";
+import { sendSuccessResponse } from "../helpers/responseHandler";
+import { BadRequestError } from "../core/error-respone";
+
+class AccessController {
+    handleRefreshToken = asyncHandler(
+        async (req: Request, res: Response, next: NextFunction) => {
+            const response = await AccessService.handleRefreshToken({
+                refreshToken: req.refreshToken,
+                user: req.user,
+                keyStore: req.keyStore,
+            });
+            return sendSuccessResponse(res, response);
+        }
+    );
+    logout = asyncHandler(
+        async (req: Request, res: Response, next: NextFunction) => {
+            const response = await AccessService.logout({
+                keyStore: req.keyStore,
+            });
+            return sendSuccessResponse(res, response);
+        }
+    );
+
+    signUp = asyncHandler(
+        async (req: Request, res: Response, next: NextFunction) => {
+            const response = await AccessService.signUp(req.body);
+            return sendSuccessResponse(res, response);
+        }
+    );
+
+    login = asyncHandler(
+        async (req: Request, res: Response, next: NextFunction) => {
+            const { email } = req.body;
+
+            if (!email) {
+                throw new BadRequestError("email missing", 666);
+            }
+            const response = await AccessService.login(req.body);
+            return sendSuccessResponse(res, response);
+        }
+    );
+}
+
+export default new AccessController();
+````
+
+## File: src/routers/access/index.ts
+````typescript
+import express from "express";
+import accessController from "../../controllers/access-controller";
+import { asyncHandler } from "../../helpers/asyncHandler";
+import { authentication, authenticationV2 } from "../../auth/check-auth";
+const router = express.Router();
+
+// sign up
+router.post("/shop/signup", asyncHandler(accessController.signUp));
+// login
+router.post("/shop/login", asyncHandler(accessController.login));
+
+// authentication middleware for protected routes
+router.use(authentication);
+
+// profile route
+router.get("/shop/profile", asyncHandler(async (req, res) => {
+    return res.status(200).json({
+        message: "User profile data",
+        user: req.user,
+    });
+}));
+
+// logout
+router.post("/shop/logout", authentication, asyncHandler(accessController.logout));
+router.post(
+    "/shop/refresh-token",
+    authenticationV2, // Apply authenticationV2 directly to this route
+    asyncHandler(accessController.handleRefreshToken)
+);
+
+export default router;
+````
+
+## File: src/auth/auth-util.ts
+````typescript
+import JWT from "jsonwebtoken";
+
+interface JWTPayload {
+    userId: string;
+    email: string;
+    name: string;
+}
+
+export const createTokenPair = async (
+    payload: JWTPayload,
+    secretKey: string
+) => {
+    const accessToken = JWT.sign(payload, secretKey, {
+        algorithm: "HS256",
+        expiresIn: "15d",
+    });
+
+    const refreshToken = JWT.sign(payload, secretKey, {
+        algorithm: "HS256",
+        expiresIn: "7d",
+    });
+
+    return { accessToken, refreshToken };
+};
+
+export const verifyJWT = (token: string, secretKey: string) => {
+    return JWT.verify(token, secretKey) as JWTPayload;
+};
+````
+
+## File: src/auth/check-auth.ts
+````typescript
+import type { Request, Response, NextFunction, RequestHandler } from "express";
+import { findById } from "../services/apikey-service";
+import {
+    AuthFailureError,
+    ForbiddenError,
+    NotFoundError,
+} from "../core/error-respone";
+import { asyncHandler } from "../helpers/asyncHandler";
+import { KeyTokenService } from "../services/key-token-service";
+import JWT, { decode } from "jsonwebtoken";
+
+const HEADER = {
+    API_KEY: "x-api-key",
+    AUTHORIZATION: "authorization",
+    CLINET_ID: "x-client-id",
+    REFRESHTOKEN: "refreshtoken",
+};
+
+export const apiKey = asyncHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const key = req.headers[HEADER.API_KEY]?.toString();
+
+            if (!key) {
+                throw new AuthFailureError("Forbidden Error");
+            }
+
+            // check key in db.
+            const objectKey = await findById(key);
+
+            if (!objectKey) {
+                throw new AuthFailureError("Forbidden Error");
+            }
+
+            req["objectKey"] = objectKey;
+            return next();
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
+export const permission = (required: string): RequestHandler => {
+    return asyncHandler(
+        async (req: Request, res: Response, next: NextFunction) => {
+            const permissions: string[] = req.objectKey?.permissions ?? [];
+            if (!permissions.includes(required)) {
+                throw new ForbiddenError("Permission denied");
+            }
+            next();
+        }
+    );
+};
+
+export const authentication = asyncHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+        const userId = req.headers[HEADER.CLINET_ID];
+        if (!userId) throw new AuthFailureError("Invalid request");
+
+        const keyStore = await KeyTokenService.findByUserId(userId);
+        if (!keyStore) throw new NotFoundError("Not found keyStore");
+
+        const accessToken = req.headers[HEADER.AUTHORIZATION];
+
+        const decodeUser = JWT.verify(accessToken, keyStore.secretKey);
+        if (userId !== decodeUser.userId) {
+            throw new AuthFailureError("Invalid UserId ");
+        }
+
+        req.keyStore = keyStore;
+        req.user = decodeUser;
+        return next();
+    }
+);
+
+export const authenticationV2 = asyncHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+        const userId = req.headers[HEADER.CLINET_ID];
+        if (!userId) throw new AuthFailureError("Invalid request");
+
+        const keyStore = await KeyTokenService.findByUserId(userId);
+        if (!keyStore) throw new NotFoundError("Not found keyStore");
+
+        const refreshToken = req.headers[HEADER.REFRESHTOKEN] as string;
+
+        if (!refreshToken) {
+            throw new AuthFailureError("No refreshToken Header!");
+        }
+
+        const decodeUser = JWT.verify(refreshToken, keyStore.secretKey);
+        if (userId != decodeUser.userId)
+            throw new AuthFailureError("Invalid UserId");
+        req.keyStore = keyStore;
+        req.user = decodeUser;
+        req.refreshToken = refreshToken;
+
+        console.log(decodeUser);
+        console.log(keyStore);
+        return next();
+    }
+);
+````
+
+## File: src/rest/product-post.http
+````
+@url_dev=http://localhost:3055
+@api_key=niggar-api-key
+@clientId=6900378dbddfc4d935b6856b 
+@authorization= eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTAwMzc4ZGJkZGZjNGQ5MzViNjg1NmIiLCJlbWFpbCI6IndlbHRlcmlhbEBnbWFpbC5jb20iLCJuYW1lIjoiVGhhaSBEaW5oIiwiaWF0IjoxNzYzNTM3MDE2LCJleHAiOjE3NjQ4MzMwMTZ9.DaBsU9weSEazPbcvUAI_o5K6KZX9eb_Y8Tyzfky5qqM
+
+
+### Create a new Clothing Product
+POST {{url_dev}}/v1/api/product
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "product_type": "Clothing",
+    "product_name": "Stylish T-Shirt v999",
+    "product_thumb": "http://example.com/tshirt_stylish.jpg",
+    "product_description": "A comfortable and stylish cotton t-shirt.",
+    "product_price": 29.99,
+    "product_quantity": 69,
+    "product_shop": "{{clientId}}",
+    "product_attributes": {
+        "brand": "UrbanWear",
+        "size": "L",
+        "material": "Organic Cotton",
+        "color": "Black"
+    }
+}
+
+### Create a new Electronic Product
+POST {{url_dev}}/v1/api/product
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "product_type": "Electronics",
+    "product_name": "Smartwatch Pro",
+    "product_thumb": "http://example.com/smartwatch_pro.jpg",
+    "product_description": "Advanced smartwatch with health tracking.",
+    "product_price": 249.99,
+    "product_quantity": 75,
+    "product_shop": "{{clientId}}",
+    "product_attributes": {
+        "manufacturer": "FutureTech",
+        "model": "SW-Pro-X",
+        "warranty": "2 years",
+        "features": ["GPS", "Heart Rate Monitor", "Waterproof"]
+    }
+}
+
+###
+GET {{url_dev}}/v1/api/product/drafts/all
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+###
+GET {{url_dev}}/v1/api/product/published/all
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### Publish a Product
+PATCH {{url_dev}}/v1/api/product/publish/690751d579cbc75d6571e375
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### Unpublish a Product
+PATCH {{url_dev}}/v1/api/product/unpublish/68ff8ee44f1bf02bfc88a382
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### Search Products
+GET {{url_dev}}/v1/api/product/search/Smartwatch
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### FIND ALL PRODUCTS
+GET {{url_dev}}/v1/api/product/
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### Find a product
+GET {{url_dev}}/v1/api/product/690751d579cbc75d6571e375
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+### Update a Product
+PATCH {{url_dev}}/v1/api/product/69003a15b67a52859b72fef0
+x-api-key: {{api_key}}
+authorization: {{authorization}}
+x-client-id: {{clientId}}
+Content-Type: application/json
+
+{
+    "product_name": "Updated Stylish T-Shirt",
+    "product_price": 39.99,
+    "product_attributes": {
+        "size": "XL",
+        "color": "SEX ROBLOX",
+        "brand": "NIGGAR"
+    }
+}
+````
+
+## File: src/services/product-service.ts
+````typescript
+import {
+    productModel,
+    clothingModel,
+    electronicModel,
+} from "../models/product-model";
+import { BadRequestError, NotFoundError } from "../core/error-respone";
+import { Created } from "../core/success-respone";
+import { Types } from "mongoose"; // Import Types for ObjectId
+import ProductRepository from "../models/repositories/product.repo";
+import { InventoryRepository } from "../models/repositories/inventory-repo";
+import { NotificationService } from "./notification-service";
+
+// --- Base Product Class (Abstract) ---
+abstract class Product {
+    constructor(
+        protected commonPayload?: {
+            _id: Types.ObjectId;
+            product_name: string;
+            product_thumb: string;
+            product_description: string;
+            product_price: number;
+            product_quantity: number;
+            product_type: string;
+            product_shop: Types.ObjectId;
+        },
+        protected productAttributes?: any
+    ) {}
+
+    abstract createTypeSpecificProduct(): Promise<any>;
+
+    async updateProduct(productId: string, payload: any) {
+        return await ProductRepository.updateProductById({
+            productId,
+            payload,
+            model: productModel,
+        });
+    }
+}
+
+// --- Concrete Product Implementations ---
+class ClothingProduct extends Product {
+    async createTypeSpecificProduct(): Promise<any> {
+        const newClothing = await clothingModel.create({
+            _id: this.commonPayload._id,
+            product_shop: this.commonPayload.product_shop,
+            ...this.productAttributes,
+        });
+        if (!newClothing)
+            throw new BadRequestError("Create new Clothing error");
+        return newClothing;
+    }
+
+    async updateProduct(productId: string, payload: any): Promise<any> {
+        const { product_attributes, ...commonPayload } = payload;
+
+        if (product_attributes && Object.keys(product_attributes).length > 0) {
+            await ProductRepository.updateProductById({
+                productId,
+                payload: product_attributes,
+                model: clothingModel,
+            });
+        }
+
+        return await super.updateProduct(productId, payload);
+    }
+}
+
+class ElectronicProduct extends Product {
+    async createTypeSpecificProduct(): Promise<any> {
+        const newElectronic = await electronicModel.create({
+            _id: this.commonPayload._id,
+            product_shop: this.commonPayload.product_shop,
+            ...this.productAttributes,
+        });
+        if (!newElectronic)
+            throw new BadRequestError("Create new Electronic error");
+        return newElectronic;
+    }
+
+    async updateProduct(productId: string, payload: any): Promise<any> {
+        const { product_attributes, ...commonPayload } = payload;
+
+        if (product_attributes && Object.keys(product_attributes).length > 0) {
+            await ProductRepository.updateProductById({
+                productId,
+                payload: product_attributes,
+                model: electronicModel,
+            });
+        }
+
+        return await super.updateProduct(productId, payload);
+    }
+}
+
+// --- Product Factory ---
+class ProductFactory {
+    private static productRegistry: { [key: string]: typeof Product } = {};
+
+    static registerProductType(type: string, productClass: typeof Product) {
+        ProductFactory.productRegistry[type] = productClass;
+    }
+
+    static createProductInstance(
+        type: string,
+        commonPayload?: any,
+        productAttributes?: any
+    ): Product {
+        const ProductClass = ProductFactory.productRegistry[type];
+        if (!ProductClass) {
+            throw new BadRequestError("Invalid Product Type");
+        }
+        return new ProductClass(commonPayload, productAttributes);
+    }
+}
+
+ProductFactory.registerProductType("Clothing", ClothingProduct);
+ProductFactory.registerProductType("Electronics", ElectronicProduct);
+
+// --- Main Product Service ---
+class ProductService {
+    static async createProduct(product_type: string, payload: any) {
+        const { product_attributes, ...commonPayload } = payload;
+
+        const newProduct = await productModel.create({
+            ...commonPayload,
+            product_attributes,
+            product_type: product_type,
+        });
+        if (!newProduct) throw new BadRequestError("Create new Product error");
+
+        const productInstance = ProductFactory.createProductInstance(
+            product_type,
+            { ...commonPayload, _id: newProduct._id },
+            product_attributes
+        );
+        await productInstance.createTypeSpecificProduct();
+
+        if (newProduct) {
+            InventoryRepository.insertInventory({
+                productId: newProduct._id,
+                shopId: newProduct.product_shop,
+                stock: newProduct.product_quantity,
+            });
+        }
+
+        // Send notification asynchronously (fire and forget)
+        NotificationService.pushNotiToSystemAsync({
+            type: 'SHOP-001',
+            receivedId: 1,
+            senderId: newProduct.product_shop,
+            options: {
+                productName: newProduct.product_name,
+                shopName: `Shop ${newProduct.product_shop}`
+            }
+        })
+
+        
+        return newProduct;
+    }
+
+    static async updateProduct(product_id: string, payload: any): Promise<any> {
+        const product = await productModel.findById(product_id).lean();
+        if (!product) {
+            throw new NotFoundError("Product not found");
+        }
+
+        const productInstance = ProductFactory.createProductInstance(
+            product.product_type
+        );
+
+        return await productInstance.updateProduct(product_id, payload);
+    }
+
+    // ... (rest of the service remains the same)
+    static async getProductById(productId: string) {
+        return null;
+    }
+
+    static async getAllProducts() {
+        return [];
+    }
+
+    static async deleteProduct(productId: string) {
+        return null;
+    }
+
+    static async findAllDraftForShop({
+        product_shop,
+        limit = 50,
+        skip = 0,
+    }: {
+        product_shop: Types.ObjectId;
+        limit?: number;
+        skip?: number;
+    }) {
+        const query = { product_shop, isDraft: true };
+        return await ProductRepository.findAllDraftForShop({
+            query,
+            limit,
+            skip,
+        });
+    }
+
+    static async findAllPublishForShop({
+        product_shop,
+        limit = 50,
+        skip = 0,
+    }: {
+        product_shop: Types.ObjectId;
+        limit?: number;
+        skip?: number;
+    }) {
+        const query = { product_shop, isPublished: true };
+        return await ProductRepository.findAllPublishForShop({
+            query,
+            limit,
+            skip,
+        });
+    }
+
+    static async unpublishProductByShop({
+        product_shop,
+        product_id,
+    }: {
+        product_shop: Types.ObjectId;
+        product_id: Types.ObjectId;
+    }) {
+        return await ProductRepository.unpublishProductByShop({
+            product_shop,
+            product_id,
+        });
+    }
+
+    static async publishProductByShop({
+        product_shop,
+        product_id,
+    }: {
+        product_shop: Types.ObjectId;
+        product_id: Types.ObjectId;
+    }) {
+        return await ProductRepository.publishProductByShop({
+            product_shop,
+            product_id,
+        });
+    }
+
+    static async searchProductByUser({ keySearch }: { keySearch: string }) {
+        return await ProductRepository.searchProductByUser({ keySearch });
+    }
+
+    static async findAllProducts({
+        limit = 50,
+        sort = "ctime",
+        page = 1,
+        filter = { isPublished: true },
+    }) {
+        return await ProductRepository.findAllProduct({
+            limit,
+            sort,
+            filter,
+            page,
+            select: ["product_name", "product_price", "product_thumb"],
+        });
+    }
+
+    static async findProduct({ product_id }) {
+        return await ProductRepository.findProduct({
+            product_id,
+        });
+    }
+}
+
+export default ProductService;
+````
+
+## File: src/services/access-service.ts
+````typescript
+import { shopModel } from "../models/shop-model";
+import bcrypt from "bcrypt";
+import crypto from "node:crypto";
+import { KeyTokenService } from "./key-token-service";
+import { createTokenPair } from "../auth/auth-util";
+import { getInfoData } from "../utils/object-utils";
+import {
+    AuthFailureError,
+    BadRequestError,
+    ConflictRequestError,
+    DatabaseError,
+    ForbiddenError,
+} from "../core/error-respone";
+import { Created } from "../core/success-respone";
+import { findByEmail } from "./shop-service";
+
+enum RoleShop {
+    SHOP = "SHOP",
+    WRITER = "WRITER",
+    EDITOR = "EDITOR",
+    ADMIN = "ADMIN",
+}
+
+class AccessService {
+    static handleRefreshToken = async ({ refreshToken, user, keyStore }) => {
+        const { userId, email } = user;
+
+        if (keyStore.refreshTokenUsed.includes(refreshToken)) {
+            await KeyTokenService.deletekey(keyStore._id);
+            throw new ForbiddenError(
+                " Something went wrong happend !!!. Please relogin"
+            );
+        }
+
+        if (keyStore.refreshToken != refreshToken) {
+            throw new AuthFailureError("Shop is not registerd 1");
+        }
+
+        const foundShop = await findByEmail({ email });
+        if (!foundShop) throw new AuthFailureError("Shop is not registered 2");
+
+        // create another token pair
+        const tokens = await createTokenPair(
+            { userId, email, name: foundShop.name },
+            keyStore.secretKey
+        );
+
+        // update token
+        await keyStore.updateOne({
+            $set: {
+                refreshToken: tokens.refreshToken,
+            },
+            $addToSet: {
+                refreshTokenUsed: refreshToken,
+            },
+        });
+
+        return new Created("Get token successfully!", {
+            user: { userId, email },
+            tokens,
+        });
+    };
+
+    /**
+     * 1. Find shop in the database by email.
+     *      - If the shop doesn't exist, throw a `BadRequestError`.
+     * 2. Verify the password.
+     *      - Use `bcrypt.compare` to match the incoming password with the stored hash.
+     *      - If they don't match, throw an `AuthFailureError`.
+     * 3. Generate new cryptographic keys.
+     *      - Create a new `secretKey` using `crypto.randomBytes`.
+     * 4. Create new access and refresh tokens.
+     *      - Use the `createTokenPair` utility.
+     * 5. Store the new keys.
+     *      - Use `KeyTokenService.createKeyToken` to save the `userId` and the new `secretKey`.
+     * 6. Return the login response.
+     *      - Include basic shop info and the generated tokens.
+     */
+    static login = async ({
+        email,
+        password,
+        refreshToken = null,
+    }: {
+        email: string;
+        password: string;
+        refreshToken?: string | null;
+    }) => {
+        const holderShop = await shopModel.findOne({ email }).lean();
+
+        if (!holderShop) throw new BadRequestError("Shop is not existed");
+
+        const shopId = holderShop._id.toString();
+
+        const match = await bcrypt.compare(password, holderShop.password);
+        if (!match) throw new AuthFailureError("The password is not correct!");
+
+        const secretKey = crypto.randomBytes(64).toString("hex");
+
+        const tokens = await createTokenPair(
+            { userId: shopId, email, name: holderShop.name },
+            secretKey
+        );
+
+        const keyStore = await KeyTokenService.createKeyToken({
+            userId: shopId,
+            secretKey,
+            refreshToken: tokens.refreshToken,
+        });
+
+        if (!keyStore)
+            throw new DatabaseError("Database Failed Internal server error!");
+
+        return new Created("Shop login successfully!", {
+            shop: getInfoData({
+                fields: ["_id", "name", "email"],
+                object: holderShop,
+            }),
+            tokens,
+        });
+    };
+
+    static logout = async ({ keyStore }: { keyStore: IKeyToken }) => {
+        const delKey = await KeyTokenService.removeKeyById(keyStore._id);
+        return new Created("logout successfully", delKey);
+    };
+
+    static signUp = async ({
+        name,
+        email,
+        password,
+    }: {
+        name: string;
+        email: string;
+        password: string;
+    }) => {
+        // Step 1: check email exists??
+        const holderShop = await findByEmail({ email });
+
+        if (holderShop) {
+            throw new ConflictRequestError("Shop already registered!");
+        }
+
+        const passwordHash = await bcrypt.hash(password, 10);
+        const newShop = await shopModel.create({
+            name,
+            email,
+            password: passwordHash,
+            roles: RoleShop.SHOP,
+        });
+
+        if (!newShop) {
+            throw new BadRequestError("Shop creation failed");
+        }
+
+        const secretKey = crypto.randomBytes(64).toString("hex");
+
+        const token = await createTokenPair(
+            { userId: newShop._id.toString(), email },
+            secretKey
+        );
+
+        const keyStore = await KeyTokenService.createKeyToken({
+            userId: newShop._id,
+            secretKey,
+            refreshToken: token.refreshToken,
+        });
+
+        if (!keyStore) {
+            throw new BadRequestError("keyStore error");
+        }
+
+        return new Created("Shop registered successfully!", {
+            shop: getInfoData({
+                fields: ["_id", "name", "email"],
+                object: newShop,
+            }),
+            token,
+        });
+    };
+}
+
+export default AccessService;
+````
+
+## File: src/app.ts
+````typescript
+import express from "express";
+import morgan from "morgan";
+import helmet from "helmet";
+import compression from "compression";
+import cors from "cors";
+import router from "./routers";
+import { NotFoundError } from "./core/error-respone";
+import crypto from "node:crypto";
+import mylogger from "./loggers/mylogger";
+
+const app = express();
+
+app.use(cors());
+// init middlewares
+app.use(morgan("dev"));
+app.use(helmet());
+app.use(compression());
+app.use(express.json());
+app.use(
+    express.urlencoded({
+        extended: true,
+    })
+);
+
+app.use((req, res, next) => {
+    const requestId = req.headers["x-request-id"];
+    req.requestId = requestId ? requestId : crypto.randomUUID();
+    mylogger.log("input params", {
+        context: req.path,
+        requestId: req.requestId,
+        metadata: {
+            method: req.method,
+            query: req.query,
+            body: req.body
+        },
+    });
+
+    next();
+});
+
+// init routes
+app.use("/", router);
+
+// init error handling
+app.use((req, res, next) => {
+    next(new NotFoundError("Not Found"));
+});
+
+app.use((error, req, res, next) => {
+    const statusCode = error.status || 500;
+    // REPLACE console.log with mylogger.error
+    mylogger.error(error.message, {
+        context: req.path,
+        requestId: req.requestId,
+        metadata: {
+            stack: error.stack,
+            error: error
+        }
+    });
+    return res.status(statusCode).json({
+        status: "error",
+        code: statusCode,
+        message: error.message || "Internal Server Error",
+    });
+});
+
+export default app;
+````
+
+## File: src/rest/access-post.http
+````
+@url_dev=http://localhost:3055
+@api_key=niggar-api-key
+@client_id=68faf8be0aed27e75e01a594
+@authorization=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZhZjhiZTBhZWQyN2U3NWUwMWE1OTQiLCJlbWFpbCI6IndlbHRlcmlhbDIxOEBnbWFpbC5jb20iLCJpYXQiOjE3NjEyNzg4NjYsImV4cCI6MTc2MTQ1MTY2Nn0.v3ypgyhkLNMgfr0TyWiYywA-jWqI9oT7IO6TnpH1oX0
+@placeholder_api_key=niggar-api-key
+@refresh_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGZmMDQyYmY1Mzg4NDJiNmRlZjUyMzciLCJlbWFpbCI6ImNvbmNhY0BnbWFpbC5jb20iLCJuYW1lIjoiY29uY2FjIiwiaWF0IjoxNzYxNTQ4OTM1LCJleHAiOjE3NjIxNTM3MzV9.l_f6PkY_IeSIBuJvtgpiBI-J9qSmf3b68Wul1XTusz8
+
+### sign up
+POST {{url_dev}}/v1/api/shop/signup
+Content-Type: application/json
+x-api-key: {{placeholder_api_key}}
+
+{
+    "name": "Thai Dinh",
+    "email": "welterial@gmail.com",
+    "password": "Thaihbvn218"
+}
+
+### login
+POST {{url_dev}}/v1/api/shop/login
+Content-Type: application/json
+x-api-key: {{placeholder_api_key}}
+
+{
+    # "email": "welterial@gmail.com",
+    "password": "Thaihbvn218"
+}
+
+### logout
+
+POST {{url_dev}}/v1/api/shop/logout
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: {{client_id}}
+authorization: {{authorization}}
+
+### refresh token
+POST {{url_dev}}/v1/api/shop/refresh-token
+Content-Type: application/json
+x-api-key: {{api_key}}
+x-client-id: 68ff042bf538842b6def5237
+refreshtoken: {{refresh_token}}
+````
+
+## File: src/routers/index.ts
+````typescript
+import express from "express";
+import accessRouter from "./access";
+import productRouter from "./product"; // Import product router
+import discountRouter from "./discount"; // Import discount router
+import cartRouter from "./cart"; // Import cart router
+import checkoutRouter from "./checkout"; // Import checkout router
+import inventoryRouter from "./inventory";
+import commentRouter from "./comment"; // Import comment router
+import notificationRouter from "./notification"; // Import notification router
+import uploadRouter from "./upload";
+import profileRouter from "./profile";
+import rbacRouter from "./rbac";
+import emailRouter from "./email";
+import userRouter from "./user";
+import { apiKey, permission } from "../auth/check-auth";
+
+const router = express.Router();
+router.use("/v1/api/user", userRouter);
+router.use("/v1/api/email", emailRouter);
+router.use("/v1/api/upload", uploadRouter);
+router.use("/v1/api/profile", profileRouter);
+router.use("/v1/api/rbac", rbacRouter);
+// check ApiKey
+router.use(apiKey);
+router.use(permission("0000"));
+
+router.use("/v1/api", accessRouter);
+router.use("/v1/api/product", productRouter); // Mount product router
+router.use("/v1/api/discount", discountRouter); // Mount discount router
+router.use("/v1/api/inventory", inventoryRouter);
+router.use("/v1/api/cart", cartRouter); // Mount cart router
+router.use("/v1/api/checkout", checkoutRouter); // Mount checkout router
+router.use("/v1/api/comment", commentRouter); // Mount comment router
+router.use("/v1/api/notification", notificationRouter); // Mount notification router
+
+export default router;
+````
+
+## File: package.json
+````json
+{
+  "name": "javascript-ecommerce-backend",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev": "docker compose up -d && tsx server.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@anthropic-ai/claude-code": "^2.0.53",
+    "@aws-sdk/client-s3": "^3.940.0",
+    "@aws-sdk/s3-request-presigner": "^3.940.0",
+    "accesscontrol": "^2.2.1",
+    "amqplib": "^0.10.9",
+    "aws-cloudfront-sign": "^3.0.2",
+    "cloudinary": "^2.8.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "http-status-codes": "^2.3.0",
+    "ioredis": "^5.8.2",
+    "kafkajs": "^2.2.4",
+    "multer": "^2.0.2",
+    "nodemailer": "^7.0.11",
+    "slugify": "^1.6.6",
+    "winston": "^3.19.0",
+    "winston-daily-rotate-file": "^5.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.38.0",
+    "@types/amqplib": "^0.10.8",
+    "@types/bcrypt": "^6.0.0",
+    "@types/compression": "^1.8.1",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/lodash": "^4.17.20",
+    "@types/morgan": "^1.9.10",
+    "@types/multer": "^2.0.0",
+    "@types/nodemailer": "^7.0.4",
+    "bcrypt": "^6.0.0",
+    "compression": "^1.8.1",
+    "crypto": "^1.0.1",
+    "dotenv": "^17.2.3",
+    "eslint": "^9.38.0",
+    "globals": "^16.4.0",
+    "helmet": "^8.1.0",
+    "jiti": "^2.6.1",
+    "jsonwebtoken": "^9.0.2",
+    "lodash": "^4.17.21",
+    "mongoose": "^8.19.0",
+    "morgan": "^1.10.1",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.2"
+  }
+}
+````

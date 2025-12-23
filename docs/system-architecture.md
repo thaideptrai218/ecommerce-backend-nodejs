@@ -43,7 +43,7 @@ Models (Data Layer - interacting with MongoDB)
 - **Role**: Provide an abstraction layer over the data persistence mechanism. This is the Data Access Layer.
 - **Responsibilities**:
     - Encapsulate the logic required to access data sources (e.g., MongoDB).
-    - Provide methods for common CRUD (Create, Read, Update, Delete) operations on specific entities.
+    - Provide methods for common CRUD (Create, Read, Update, Delete) operations on specific entities, including `SkuRepository` and `SpuRepository`.
     - Map domain objects to database records and vice-versa.
     - Decouple the Service layer from the underlying database technology.
 - **Characteristics**: Repositories abstract away the details of the database, allowing services to interact with data in a domain-centric manner.
