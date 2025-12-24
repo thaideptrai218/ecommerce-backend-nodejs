@@ -7,6 +7,7 @@ services:
       - "27017:27017"
     volumes:
       - mongodb_data:/data/db
+
   redis:
     image: redis:8.4
     container_name: redis
@@ -15,6 +16,46 @@ services:
     volumes:
       - redis_data:/data
 
+  elasticsearch:
+    image: elasticsearch:9.2.3
+    container_name: elasticsearch_dev
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - xpack.security.enrollment.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - cluster.name=ecommerce-cluster
+      - bootstrap.memory_lock=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    networks:
+      - elk
+
+  kibana:
+    image: kibana:9.2.3
+    container_name: kibana_dev
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    networks:
+      - elk
+
 volumes:
   mongodb_data:
   redis_data:
+  es_data:
+    driver: local
+
+networks:
+  elk:
+    driver: bridge
